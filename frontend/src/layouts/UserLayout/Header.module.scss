@@ -15,30 +15,26 @@
         width: 90%;
         height: 65px;
         display: grid;
-        grid-template-columns: 150px 1fr 150px;
+        grid-template-columns: 150px 1fr 250px; // Điều chỉnh chiều rộng của các cột
         align-items: center;
         gap: 13px;
         color: #5D7B6F;
 
         .logo {
-
-            // flex: 2;
             img {
                 height: 65px;
             }
         }
 
         .category {
-            width: 100%;
-            // flex: 7;
+            width: 90%; // Giảm chiều rộng của category
             display: flex;
             flex-direction: row;
             justify-content: space-around;
             overflow: scroll;
 
             .category-item {
-                //position: relative;
-                min-width: 100px;
+                min-width: 80px; // Giảm chiều rộng tối thiểu của các mục
                 height: 65px;
 
                 >a {
@@ -66,7 +62,7 @@
         }
 
         .user {
-            // flex: 2;
+            width: 100%; // Tăng chiều rộng của user
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -77,6 +73,7 @@
 
             div {
                 position: relative;
+                margin-right: 10px; // Thêm khoảng cách giữa các icon
             }
 
             div:hover {
@@ -107,26 +104,7 @@
                 }
             }
 
-            .card {
-                position: relative;
-
-                p {
-                    position: absolute;
-                    display: inline-block;
-                    background: #da3f3f;
-                    border-radius: 999px;
-                    width: 20px;
-                    height: 20px;
-                    line-height: 20px;
-                    color: #fff;
-                    font-size: 12px;
-                    top: -5px;
-                    right: 10px;
-                    text-align: center;
-                    border: none;
-                }
-            }
-
+            .card,
             .cart {
                 position: relative;
 
@@ -151,7 +129,23 @@
 }
 
 @media only screen and (max-width: 720px) {
-    .category .category-item {
-        min-width: auto; // hoặc bạn có thể đặt giá trị min-width thích hợp cho màn hình nhỏ
+    .box {
+        grid-template-columns: 1fr; // Chuyển sang một cột trên màn hình nhỏ
+        text-align: center; // Căn giữa các mục
+
+        .logo {
+            margin-bottom: 10px; // Thêm khoảng cách dưới logo
+        }
+
+        .category {
+            .category-item {
+                min-width: auto; // Loại bỏ giá trị min-width
+            }
+        }
+
+        .user {
+            flex-direction: column; // Chuyển các mục user thành cột
+            margin-top: 10px; // Thêm khoảng cách trên cùng
+        }
     }
 }

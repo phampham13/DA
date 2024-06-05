@@ -6,6 +6,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import { Button } from "@mui/material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { IoLibrary } from "react-icons/io5";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useSelector } from "react-redux";
@@ -57,6 +58,12 @@ function Header() {
         </div>
         <div className={cx("user")}>
           <div>
+            {token &&
+              (<Button>
+                <NotificationsIcon />
+              </Button>)}
+          </div>
+          <div>
             <Button>
               <PersonIcon />
             </Button>
@@ -83,11 +90,19 @@ function Header() {
           {token && (
             <div className={cx('card')}>
               <Button>
-                <Link to='/borrowerCard'>
-                  <LibraryBooksIcon />
-                </Link>
+                <LibraryBooksIcon />
               </Button>
               {token && listBook.length > 0 ? <p>{listBook.length}</p> : null}
+              {token && (
+                <ul style={{ width: "150px" }}>
+                  <li>
+                    <Link to={"/borrowerCard"}>Thẻ đọc</Link>
+                  </li>
+                  <li>
+                    <Link to={"/slip"}>Phiếu đọc</Link>
+                  </li>
+                </ul>
+              )}
             </div>
           )}
           {token && (
@@ -98,6 +113,16 @@ function Header() {
                 </Link>
               </Button>
               {token && listBook.length > 0 ? <p>{listBook.length}</p> : null}
+              {token && (
+                <ul style={{ width: "150px" }}>
+                  <li>
+                    <Link to={"/cart"}>Giỏ hàng</Link>
+                  </li>
+                  <li>
+                    <Link to={"/order"}>Đơn hàng</Link>
+                  </li>
+                </ul>
+              )}
             </div>
           )}
         </div>
