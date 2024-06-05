@@ -1,0 +1,151 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+    .wrap {
+        margin: 10px 20px;
+
+        .topBar {
+            text-align: right;
+            margin-bottom: 10px;
+
+            .create-btn {
+                border: 0;
+                text-align: center;
+                display: inline-block;
+                padding: 7px;
+                margin: 7px;
+                color: #ffffff;
+                background-color: #36a2eb;
+                border-radius: 8px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: box-shadow 200ms ease-out;
+            }
+
+            .create-btn:hover {
+                background-color: rgba(54, 163, 235, 0.8);
+            }
+
+            .delete-btn {
+                border: 0;
+                text-align: center;
+                display: inline-block;
+                padding: 7px;
+                margin: 7px;
+                color: #ffffff;
+                background-color: rgb(246, 84, 84);
+                border-radius: 8px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: box-shadow 200ms ease-out;
+            }
+
+            .delete-btn:hover {
+                background-color: rgb(246, 84, 84, 0.8);
+            }
+        }
+
+        .search-element {
+            background-color: white;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 10px;
+            gap: 10px;
+
+            select {
+                height: 35px;
+                width: 20%;
+                min-width: 60px;
+                border: 2px solid #ccc;
+                border-radius: 4px;
+                outline: none;
+                transition: border-color 0.3s;
+            }
+
+            select:focus {
+                border-color: #3498db;
+            }
+
+            select option {
+                font-size: 16px;
+                padding: 8px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            .search-bar {
+                width: 79%;
+                height: 100%;
+                outline: #3498db;
+                display: flex;
+
+                .search-box {
+                    width: 93%;
+                    height: 35px;
+                    min-width: 300px;
+                    border-radius: 3px;
+                    outline: none;
+                    border: 2px solid #ccc;
+                    border-right: 0px;
+
+                    &:hover {
+                        border: 2px solid #637381;
+                    }
+
+                    &:focus {
+                        border: 2px solid #3498db;
+                        caret-color: #3498db;
+                    }
+                }
+
+                .search-btn {
+                    width: 7%;
+                    height: 35px;
+                    min-width: fit-content;
+                    background-color: #3498db;
+                    justify-content: center;
+                    border-radius: 0;
+                    vertical-align: middle;
+                    position: relative;
+
+                    &:hover {
+                        font-size: 18px;
+                    }
+                }
+            }
+
+
+        }
+
+        .table {
+            .rdt_Table {
+                .rdt_TableHeader {
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+
+                .rdt_TableRow {
+                    font-size: 5px;
+                }
+            }
+
+            .editIcon {
+                max-width: 50px;
+            }
+
+            .deleteIcon {
+                max-width: 50px;
+            }
+        }
+
+        .image-cell {
+            width: 45px;
+            height: 60px;
+            object-fit: cover;
+            //border-radius: 50%; // Làm tròn góc cho ảnh (nếu muốn)
+        }
+
+    }
+}

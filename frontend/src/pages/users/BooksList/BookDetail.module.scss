@@ -1,0 +1,89 @@
+.wrapper {
+    margin: 30px 50px;
+
+    .book-detail {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        justify-content: center;
+
+        .divLeft {
+            height: calc(100vh - 65px - 60px);
+            width: 400px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+
+        .divRight {
+            margin-top: 20px;
+            padding: 70px 0px 0px 20px;
+
+            h3 {
+                font-family: 'Playfair Display', serif;
+                font-style: oblique;
+                font-weight: 700;
+                margin-bottom: 15px;
+                color: blue;
+            }
+
+            .avail {
+                span {
+                    color: red;
+                    font-size: larger;
+                }
+            }
+
+            .count {
+                margin-top: 10px;
+                border: 1px solid rgb(136, 126, 126);
+                display: inline-block;
+                border-radius: 5px;
+
+                .control {
+                    cursor: pointer;
+                }
+
+                p {
+                    display: inline-block;
+                    color: #8c9196;
+                    font-size: 30px;
+                    font-weight: 400;
+                    padding: 0px 15px;
+                    margin: 0;
+                }
+            }
+
+            .addCard {
+                display: inline-block;
+                height: 50px;
+                border: 1px solid var(--sub-color2);
+                padding: 0 30px;
+                border-radius: 5px;
+                margin-left: 20px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--sub-color2);
+                    font-weight: 400;
+
+                    p {
+                        color: white;
+                    }
+                }
+
+                p {
+                    text-transform: uppercase;
+                    color: var(--sub-color2);
+                    font-weight: 100;
+                    font-size: 16px;
+                    line-height: 55px;
+                    padding-bottom: 5px;
+                }
+            }
+        }
+    }
+}

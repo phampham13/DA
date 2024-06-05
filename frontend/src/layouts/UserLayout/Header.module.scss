@@ -1,0 +1,157 @@
+.wrapper {
+    z-index: 1000;
+    width: 100%;
+    display: flex;
+    position: fixed;
+    top: 0;
+    justify-content: center;
+    align-items: center;
+    height: 65px;
+    border-bottom: 2px solid #D7F9FA;
+    background-color: white;
+    font-weight: 700;
+
+    .box {
+        width: 90%;
+        height: 65px;
+        display: grid;
+        grid-template-columns: 150px 1fr 150px;
+        align-items: center;
+        gap: 13px;
+        color: #5D7B6F;
+
+        .logo {
+
+            // flex: 2;
+            img {
+                height: 65px;
+            }
+        }
+
+        .category {
+            width: 100%;
+            // flex: 7;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            overflow: scroll;
+
+            .category-item {
+                //position: relative;
+                min-width: 100px;
+                height: 65px;
+
+                >a {
+                    display: block;
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    line-height: 65px;
+                    text-decoration: none;
+                    color: #30A7B4;
+                }
+
+                .list-item {
+                    background-color: white;
+                    display: none;
+                }
+            }
+
+            .category-item:hover {
+                background-color: #44bec7;
+
+                >a {
+                    color: white;
+                }
+            }
+        }
+
+        .user {
+            // flex: 2;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            ul {
+                display: none;
+            }
+
+            div {
+                position: relative;
+            }
+
+            div:hover {
+                ul {
+                    background-color: white;
+                    margin: 0;
+                    padding: 0;
+                    box-shadow: 0px 0px 14px 4px rgba(0, 0, 0, 0.1);
+                    position: absolute;
+                    display: block;
+
+                    li {
+                        height: 35px;
+                        text-align: start;
+
+                        a {
+                            color: #30A7B4;
+                            font-size: 12px;
+                            line-height: 35px;
+                            display: block;
+                            padding-left: 5px;
+                        }
+                    }
+
+                    li:hover {
+                        background-color: rgb(216, 219, 222);
+                    }
+                }
+            }
+
+            .card {
+                position: relative;
+
+                p {
+                    position: absolute;
+                    display: inline-block;
+                    background: #da3f3f;
+                    border-radius: 999px;
+                    width: 20px;
+                    height: 20px;
+                    line-height: 20px;
+                    color: #fff;
+                    font-size: 12px;
+                    top: -5px;
+                    right: 10px;
+                    text-align: center;
+                    border: none;
+                }
+            }
+
+            .cart {
+                position: relative;
+
+                p {
+                    position: absolute;
+                    display: inline-block;
+                    background: #da3f3f;
+                    border-radius: 999px;
+                    width: 20px;
+                    height: 20px;
+                    line-height: 20px;
+                    color: #fff;
+                    font-size: 12px;
+                    top: -5px;
+                    right: 10px;
+                    text-align: center;
+                    border: none;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    .category .category-item {
+        min-width: auto; // hoặc bạn có thể đặt giá trị min-width thích hợp cho màn hình nhỏ
+    }
+}

@@ -1,0 +1,34 @@
+.wrapper {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    gap: 20px;
+
+    .Left {
+        text-align: center;
+
+        span {
+            font-size: 28px;
+        }
+
+        .icon {
+            margin-right: 10px;
+            color: red;
+            font-size: 28px;
+        }
+
+    }
+
+    .Right {
+        height: 750px;
+        width: 45%;
+
+        img {
+            width: 100%;
+            height: 80%;
+            object-fit: contain;
+        }
+    }
+}

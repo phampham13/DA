@@ -1,0 +1,65 @@
+@keyframes blink {
+    0% {
+        color: black;
+    }
+
+    50% {
+        color: red;
+    }
+
+    100% {
+        color: black;
+    }
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 30px 40px;
+
+    .event-cover {
+        width: 100%;
+        height: 500px;
+        padding: 10px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+
+    .event-info {
+        .event-name {
+            text-align: center;
+
+            h3 {
+                font-family: 'Playfair Display', serif;
+                font-style: oblique;
+                font-weight: 700;
+                color: var(--main-color);
+            }
+        }
+
+        .time {
+            display: flex;
+            justify-content: space-around;
+
+            p {
+                display: inline-block;
+                font-size: larger;
+
+                span {
+                    display: inline; // Đảm bảo phần tử p là phần tử inline để animation hoạt động đúng
+                    animation: blink 1.5s infinite;
+                }
+            }
+        }
+
+        .desc {
+            padding: 20px;
+            text-align: justify;
+        }
+    }
+}
