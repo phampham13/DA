@@ -10,7 +10,7 @@ import { Modal, Button } from "react-bootstrap";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { addNewBook } from "../../../features/booksSlice";
+import { addNewBook } from "../../../redux/slides/booksSlice";
 
 const cx = classNames.bind(styles);
 const fakeCate = [

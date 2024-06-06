@@ -130,22 +130,22 @@
 
 @media only screen and (max-width: 720px) {
     .box {
-        grid-template-columns: 1fr; // Chuyển sang một cột trên màn hình nhỏ
-        text-align: center; // Căn giữa các mục
+        grid-template-columns: 1fr; 
+        text-align: center; 
 
         .logo {
-            margin-bottom: 10px; // Thêm khoảng cách dưới logo
+            margin-bottom: 10px; 
         }
 
         .category {
             .category-item {
-                min-width: auto; // Loại bỏ giá trị min-width
+                min-width: auto;
             }
         }
 
         .user {
-            flex-direction: column; // Chuyển các mục user thành cột
-            margin-top: 10px; // Thêm khoảng cách trên cùng
+            flex-direction: column; 
+            margin-top: 10px;
         }
     }
 }

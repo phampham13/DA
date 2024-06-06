@@ -23,7 +23,7 @@ export const refreshTokenJwtService = (token) => {
             jwt.verify(token, env.RSECRET_KEY, (err, user) => {
                 if (err) {
                     resolve({
-                        status: "ERROR",
+                        status: "ERR",
                         message: "The authemtication"
                     })
                 }
@@ -31,7 +31,7 @@ export const refreshTokenJwtService = (token) => {
                 //nếu lỗi await general, async err,user
                 const access_token = genneralAccessToken({
                     id: payload?.id,
-                    isAdmin: payload?.isAdmin
+                    role: payload?.role
                 })
                 resolve({
                     status: 'OK',

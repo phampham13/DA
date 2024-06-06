@@ -2,7 +2,7 @@ import classNames from "classnames/bind";
 import styles from "./BorrowerCard.module.scss"
 import React, { useEffect, useState, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBorrowerCard, upBookQuantity, downBookQuantity, deleteBook } from "../../../features/borrowerCardSlice";
+import { fetchBorrowerCard, upBookQuantity, downBookQuantity, deleteBook } from "../../../redux/slides/borrowerCardSlice";
 import ModalBorrowerSlip from "./ModalBorrowerSlip"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast, ToastContainer } from 'react-toastify';

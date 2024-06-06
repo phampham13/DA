@@ -72,7 +72,6 @@ export default function Login() {
                         }
                     }
                     localStorage.setItem('token', JSON.stringify(response?.access_token))
-                    localStorage.setItem('refresh_token', JSON.stringify(response?.refresh_token))
                 } else {
                     toast.error(`Đăng nhập thất bại!!! ${response.message}`);
                 }

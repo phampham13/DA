@@ -1,13 +1,13 @@
 import classNames from 'classnames/bind';
-import styles from './EventList.module.scss';
+import styles from './Orders.module.scss';
 const cx = classNames.bind(styles);
 
-const EventList = () => {
+const Orders = () => {
     return (
         <div>
-            Sự kiện
+            Đơn hàng
         </div>
     )
 }
 
-export default EventList;
+export default Orders;

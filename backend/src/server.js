@@ -1,7 +1,8 @@
 const express = require("express")
 const routes = require('./routes')
-const bodyParser = require('body-parser')
 const cors = require('cors')
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 //const scheduler = require('~/untils/scheduler')
 //const dotenv = require('dotenv')
 //dotenv.config()
@@ -14,6 +15,8 @@ const START_SERVER = () => {
   const app = express()
   //app.use(cors())
   app.use(cors({ credentials: true, origin: true }));
+  app.use(bodyParser.json())
+  app.use(cookieParser())
   app.use(express.json())
 
   routes(app)
@@ -24,8 +27,6 @@ const START_SERVER = () => {
     //console.log(await GET_DB().listCollections().toArray())
     res.end('<h1>Hello World!</h1><hr>')
   })
-
-  app.use(bodyParser.json())
 
   require('./utils/scheduler');
 

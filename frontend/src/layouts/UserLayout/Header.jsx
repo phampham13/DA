@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 const cx = classNames.bind(styles);
 function Header() {
   const { token, user } = useContext(AuthContext);
-  const listBook = useSelector((state) => state.borrowerCard.listBook)
+  //const listBook = useSelector((state) => state.borrowerCard.listBook)
 
   return (
     <div className={cx("wrapper")}>
@@ -92,7 +92,7 @@ function Header() {
               <Button>
                 <LibraryBooksIcon />
               </Button>
-              {token && listBook.length > 0 ? <p>{listBook.length}</p> : null}
+              {/*{token && listBook.length > 0 ? <p>{listBook.length}</p> : null}*/}
               {token && (
                 <ul style={{ width: "150px" }}>
                   <li>
@@ -112,7 +112,7 @@ function Header() {
                   <ShoppingCartIcon />
                 </Link>
               </Button>
-              {token && listBook.length > 0 ? <p>{listBook.length}</p> : null}
+              {/*token && listBook.length > 0 ? <p>{listBook.length}</p> : null}*/}
               {token && (
                 <ul style={{ width: "150px" }}>
                   <li>

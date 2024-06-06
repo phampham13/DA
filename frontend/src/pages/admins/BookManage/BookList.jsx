@@ -10,7 +10,7 @@ import { faEdit, faTrashAlt, faSearch } from "@fortawesome/free-solid-svg-icons"
 import { Modal, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ModalBookDetail from "./ModalBookDetail";
-import { fetchBooks, selectAllBooks, selectBookIds, selectBookById, searchBook, deleteBook } from "../../../features/booksSlice";
+import { fetchBooks, selectAllBooks, selectBookIds, selectBookById, searchBook, deleteBook } from "../../../redux/slides/booksSlice";
 
 import { toast, ToastContainer } from "react-toastify";
 

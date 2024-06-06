@@ -48,11 +48,11 @@ const loginUser = async (req, res) => {
         const { refresh_token, ...newResponse } = response
         res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
-            secure: false,
+            secure: true,
             sameSite: 'strict',
             path: '/',
         })
-        return res.status(200).json(response)
+        return res.status(200).json(newResponse)
     } catch (e) {
         return res.status(404).json({
             message: "controller Error"
@@ -127,19 +127,20 @@ const getDetailUser = async (req, res) => {
 }
 
 const refreshToken = async (req, res) => {
+    console.log('req.cookies', req.cookies)
     try {
-        const token = req.headers.token.split(' ')[1]
+        let token = req.cookies.refresh_token
         if (!token) {
-            resolve({
+            return res.status(200).json({
                 status: 'ERR',
-                message: 'The userId is required'
+                message: 'The token is required'
             })
         }
         const response = await JwtService.refreshTokenJwtService(token)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
-            message: "controller Error"
+            message: e
         })
     }
 }

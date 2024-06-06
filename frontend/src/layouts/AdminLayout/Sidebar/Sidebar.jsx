@@ -20,7 +20,6 @@ function Sidebar({ setToggleButton }) {
     const [details, setDetails] = useState({
         showDetailBook: false,
         showDetailSlip: false,
-        showDetailEvent: false,
         showDetailStats: false,
         showDetailHandmadeItem: false,
     });
@@ -31,9 +30,9 @@ function Sidebar({ setToggleButton }) {
         listBorrower: false,
         listOnSlip: false,
         listOffSlip: false,
-        listEvent: false,
         statisticSale: false,
-        handmadeItem: false
+        listProduct: false,
+        listOrder: false
     });
     const [toggle, setToggle] = useState({
         action: false,
@@ -44,6 +43,8 @@ function Sidebar({ setToggleButton }) {
         setDetails((prevState) => ({
             showDetailBook: false,
             showDetailSlip: false,
+            showDetailStats: false,
+            showDetailHandmadeItem: false,
             [detailName]: !prevState[detailName],
         }));
     };
@@ -55,9 +56,9 @@ function Sidebar({ setToggleButton }) {
             listOnSlip: false,
             listOnSlip: false,
             listOffSlip: false,
-            listEvent: false,
             statisticSale: false,
-            handmadeItem: false,
+            listOrder: false,
+            listProduct: false,
             [detailName]: true,
         }));
     };
@@ -233,53 +234,10 @@ function Sidebar({ setToggleButton }) {
                                 </div>
                             )}
 
-                            {/* Sự kiện*/}
-                            <div
-                                className={cx('homeMenuItem', 'itemNav', {
-                                    active: active.listEvent
-                                })}
-                                onClick={() => handleShowDetail('showDetailEvent')}
-                            >
-                                <div className={cx('wrapIconItem')}>
-                                    <EventIcon />
-                                </div>
-                                {!toggle.action && (
-                                    <>
-                                        <div className={cx('menuItemTitle')}>
-                                            <span>Sự kiện</span>
-                                        </div>
-                                        <div>
-                                            <FontAwesomeIcon
-                                                className={cx('iconArrowRight', {
-                                                    activeIcon: details.showDetailEvent,
-                                                })}
-                                                icon={faAngleRight}
-                                            />
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                            {/* Chi tiết trong quản lý sự kiện */}
-                            {!toggle.action && (
-                                <div
-                                    className={cx('wrapCollapseItem', { showCollapseItem: details.showDetailEvent })}
-                                >
-                                    <Link
-                                        to="/admin/events"
-                                        className={cx('homeMenuItem', 'itemNav', 'innerWrapCollapseItem')}
-                                        onClick={() => handleActive('listEvent')}
-                                    >
-                                        <div className={cx('menuItemTitle')}>
-                                            <span>Danh sách sự kiện</span>
-                                        </div>
-                                    </Link>
-                                </div>
-                            )}
-
                             {/* Tiệm hand*/}
                             <div
                                 className={cx('homeMenuItem', 'itemNav', {
-                                    active: active.handmadeItem
+                                    active: active.listProduct || active.listOrder
                                 })}
                                 onClick={() => handleShowDetail('showDetailHandmadeItem')}
                             >
@@ -302,18 +260,27 @@ function Sidebar({ setToggleButton }) {
                                     </>
                                 )}
                             </div>
-                            {/* Chi tiết trong thống kê */}
+                            {/* Chi tiết trong tiệm hand */}
                             {!toggle.action && (
                                 <div
                                     className={cx('wrapCollapseItem', { showCollapseItem: details.showDetailHandmadeItem })}
                                 >
                                     <Link
-                                        to="/admin/handmade"
+                                        to="/admin/products"
                                         className={cx('homeMenuItem', 'itemNav', 'innerWrapCollapseItem')}
-                                        onClick={() => handleActive('handmadeItem')}
+                                        onClick={() => handleActive('listProduct')}
                                     >
                                         <div className={cx('menuItemTitle')}>
-                                            <span>Sản phẩm</span>
+                                            <span>Sản phẩm Handmade</span>
+                                        </div>
+                                    </Link>
+                                    <Link
+                                        to="/admin/orders"
+                                        className={cx('homeMenuItem', 'itemNav', 'innerWrapCollapseItem')}
+                                        onClick={() => handleActive('listOrder')}
+                                    >
+                                        <div className={cx('menuItemTitle')}>
+                                            <span>Danh sách đơn hàng</span>
                                         </div>
                                     </Link>
                                 </div>

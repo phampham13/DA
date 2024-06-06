@@ -7,10 +7,10 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import { selectBookById } from '../../../features/booksSlice';
-import { fetchBooks } from '../../../features/booksSlice';
+import { selectBookById } from '../../../redux/slides/booksSlice';
+import { fetchBooks } from '../../../redux/slides/booksSlice';
 import { AuthContext } from "../../../contexts/AuthContext";
-import { addBookToCard } from '../../../features/borrowerCardSlice';
+import { addBookToCard } from '../../../redux/slides/borrowerCardSlice';
 
 const cx = classNames.bind(styles);
 
