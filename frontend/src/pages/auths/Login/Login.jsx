@@ -37,16 +37,6 @@ export default function Login() {
         onSubmit: async (values) => {
             try {
                 const response = await login(values);
-                console.log(response)
-
-                /*localStorage.setItem('access_token', JSON.stringify(response?.access_token))
-                localStorage.setItem('refresh_token', JSON.stringify(response?.refresh_token))
-                if (data?.access_token) {
-                    const decoded = jwtDecode(data?.access_token)
-                    if (decoded?.id) {
-                        handleGetDetailsUser(decoded?.id, data?.access_token)
-                    }
-                }*/
 
                 if (response.status === "OK") {
                     const decoded = jwtDecode(response?.access_token)
@@ -56,8 +46,6 @@ export default function Login() {
                     //const re_token = response.refresh_token
                     if (user.id && user.role === "user") {
                         // Nếu thành công, chuyển hướng đến trang Home
-                        // const token = response
-                        // console.log(response);
                         handleLoggedin(token, user);
                         toast.success("Đăng nhập thành công");
                         navigateTo("/");
@@ -71,7 +59,7 @@ export default function Login() {
                             toast.error("Sai email hoặc mật khẩu");
                         }
                     }
-                    localStorage.setItem('token', JSON.stringify(response?.access_token))
+                    //localStorage.setItem('token', JSON.stringify(response?.access_token))
                 } else {
                     toast.error(`Đăng nhập thất bại!!! ${response.message}`);
                 }

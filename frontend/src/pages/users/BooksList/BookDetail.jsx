@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { selectBookById } from '../../../redux/slides/booksSlice';
 import { fetchBooks } from '../../../redux/slides/booksSlice';
 import { AuthContext } from "../../../contexts/AuthContext";
@@ -17,7 +17,7 @@ const cx = classNames.bind(styles);
 export const BookDetail = () => {
   const { id } = useParams();
   const navigateTo = useNavigate();
-  //const { token, user } = useContext(AuthContext);
+  const { token, user } = useContext(AuthContext);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchBooks())
@@ -39,26 +39,26 @@ export const BookDetail = () => {
   };
 
   const handleAddToCard = () => {
-
-    if (book.quantityAvailabel < 1) {
-      toast.info('Đã hết sách, bạn vui lòng quay lại mượn sau !')
-    }
-    /*if (token && user && user.role === "user") {
-      const phoneNumber = user.phoneNumber;
-      dispatch(addBookToCard(phoneNumber, id, count));
-      toast.success("Sản phẩm đã được thêm vào giỏ hàng của bạn");
+    if (token && user && user.role === "user") {
+      if (book.quantityAvailabel < 1) {
+        toast.info('Đã hết sách, bạn vui lòng quay lại mượn sau !')
+      } else {
+        const userId = user.id;
+        dispatch(addBookToCard(userId, id, count));
+        toast.success("Sản phẩm đã được thêm vào giỏ hàng của bạn");
+      }
     } else {
       navigateTo("/login");
       toast.warn("Đăng nhập trước khi thêm vào giỏ hàng!!");
-    }*/
+    }
     //const phoneNumber = '0123456789'
     //dispatch(bookAdded(phoneNumber, bookId, count))
-    else {
+    /*else {
       const phoneNumber = '0123456789'
       dispatch(addBookToCard({ phoneNumber: phoneNumber, bookId: id, count: count }))
       toast.success("Đã thêm sách vào thẻ đọc")
       console.log('thêm giỏ thành công')
-    }
+    }*/
   };
 
   if (!book) {

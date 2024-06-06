@@ -12,7 +12,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { useSelector } from "react-redux";
 const cx = classNames.bind(styles);
 function Header() {
-  const { token, user } = useContext(AuthContext);
+  const { token, user, handleLoggedOut } = useContext(AuthContext);
   //const listBook = useSelector((state) => state.borrowerCard.listBook)
 
   return (
@@ -73,7 +73,7 @@ function Header() {
                   <Link to={"/profile"}>Thông tin cá nhân</Link>
                 </li>
                 <li>
-                  <Link to={"/logout"}>Đăng xuất</Link>
+                  <Link to={"/login"} onClick={handleLoggedOut}>Đăng xuất</Link>
                 </li>
               </ul>
             ) : (

@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { verifyToken, verifyTokenAdmin } from "../services/auth/verifyToken";
+import { verifyToken } from "../services/auth/verifyToken";
+
 
 export const AuthContext = createContext({});
 
@@ -9,7 +10,8 @@ export const AuthContextProvider = ({ children }) => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
-        if (token && role && role.toLowerCase() === "user") {
+        console.log(role)
+        if (token && role) {
             verifyToken(token)
                 .then((res) => {
                     if (res.errCodeCheckLogin === 1) {
@@ -18,24 +20,9 @@ export const AuthContextProvider = ({ children }) => {
                         localStorage.removeItem("token");
                         localStorage.removeItem("role");
                     } else {
-                        setUser(res.data);
+                        setUser(res.data.payload);
                         setToken(token);
-                    }
-                })
-                .catch((err) => {
-                    setToken(null);
-                });
-        } else if (token && role && role.toLowerCase() === "admin") {
-            verifyTokenAdmin(token)
-                .then((res) => {
-                    if (res.errCodeCheckLogin === 1) {
-                        setToken(null);
-                        setUser(null);
-                        localStorage.removeItem("token");
-                        localStorage.removeItem("role");
-                    } else {
-                        setUser(res.data);
-                        setToken(token);
+                        console.log('user', user)
                     }
                 })
                 .catch((err) => {
@@ -45,7 +32,7 @@ export const AuthContextProvider = ({ children }) => {
     }, []);
 
     const handleLoggedin = (token, user) => {
-        console.log(user);
+        //console.log(user);
         localStorage.setItem("token", token);
         localStorage.setItem("role", user.role);
         setUser(user);

@@ -25,11 +25,11 @@ export const fetchBorrowerCard = createAsyncThunk(
 
 export const addBookToCard = createAsyncThunk(
     'borrowerCard/addBookToCard',
-    async ({ phoneNumber, bookId, quantity }) => {
+    async ({ userId, bookId, quantity }) => {
         const response = await fetch("https://jsonplaceholder.typicode.com/posts");
         const data = await response.json();
         //return data;
-        console.log({ phoneNumber, bookId, quantity })
+        console.log({ userId, bookId, quantity })
         return fakeData
     }
 );

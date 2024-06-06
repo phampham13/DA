@@ -1,5 +1,8 @@
 const UserService = require('~/services/UserService')
 const JwtService = require('~/services/JwtService')
+const jwt = require('jsonwebtoken')
+import { env } from '~/config/environment'
+const { verify } = require('jsonwebtoken')
 
 const createUser = async (req, res) => {
     try {
@@ -127,8 +130,8 @@ const getDetailUser = async (req, res) => {
 }
 
 const refreshToken = async (req, res) => {
-    console.log('req.cookies', req.cookies)
     try {
+        //let token = req.headers.token.split(' ')[1]
         let token = req.cookies.refresh_token
         if (!token) {
             return res.status(200).json({
@@ -144,6 +147,38 @@ const refreshToken = async (req, res) => {
         })
     }
 }
+
+const verifyToken = (req, res) => {
+    try {
+        const { token } = req.body;
+        if (!token) {
+            return res.status(400).json({ message: "Token is required" });
+        }
+
+        console.log("Received token:", token);
+
+        const kq = jwt.verify(token, env.SECRET_KEY);
+
+        if (kq) {
+            return res.status(200).json({
+                status: "OK",
+                message: "Verify successful",
+                data: kq
+            })
+        } else {
+            return res.status(401).json({
+                message: "Token verification failed",
+                errCodeCheckLogin: 1
+            })
+        }
+    } catch (error) {
+        console.error("Token verification error:", error.message);
+        return res.status(401).json({
+            message: "Verification failed",
+            error: error.message
+        })
+    }
+};
 
 const logoutUser = async (req, res) => {
     try {
@@ -167,5 +202,6 @@ module.exports = {
     getAllUser,
     getDetailUser,
     refreshToken,
+    verifyToken,
     logoutUser
 }

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast, ToastContainer } from 'react-toastify';
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { getBookById } from "../../../services/user/getBookById";
+//import { getBookById } from "../../../services/user/getBookById";
 import { AuthContext } from "../../../contexts/AuthContext";
 
 const cx = classNames.bind(styles);
@@ -34,7 +34,7 @@ const BorrowerCard = () => {
     };
 
     const handleUpQuantity = async (phoneNumber, bookId, quantity) => {
-        const book = await getBookById(bookId);
+        //const book = await getBookById(bookId);
         const quantityAvail = 10; //book.quantityAvailabel
         if (quantity < quantityAvail) dispatch(upBookQuantity({ phoneNumber: phoneNumber, bookId: bookId, quantity: quantity + 1 }));
         else toast.error("Không còn đủ sách")
