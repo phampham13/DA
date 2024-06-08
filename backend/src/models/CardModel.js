@@ -1,4 +1,10 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema;
+
+const BookSchema = new Schema({
+    bookId: { type: Schema.Types.ObjectId, ref: 'Book' },
+    quantity: { type: Number }
+}, { _id: false })
 
 const borrowerCardSchema = new mongoose.Schema({
     userId: {
@@ -6,10 +12,7 @@ const borrowerCardSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    books: [{
-        bookId: { type: String, ref: 'Book', required: true },
-        quantity: { type: Number, required: true }
-    }]
+    books: [BookSchema]
 },
     {
         timestamps: true,

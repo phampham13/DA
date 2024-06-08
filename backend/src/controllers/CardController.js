@@ -4,7 +4,7 @@ const updateCard = async (req, res) => {
     try {
         const userId = req.params.id
         const data = req.body
-        //console.log(id)
+        //console.log(data, userId)
         if (!userId) {
             resolve({
                 status: 'ERR',
@@ -23,7 +23,8 @@ const updateCard = async (req, res) => {
 
 const addBookToCard = async (req, res) => {
     try {
-        const response = await CardService.addBookToCard(res.body)
+        const userId = req.params.id
+        const response = await CardService.addBookToCard(userId, req.body)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
@@ -47,7 +48,7 @@ const getDetail = async (req, res) => {
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
-            message: "Card controller get detail Error"
+            message: e.message
         })
     }
 }
