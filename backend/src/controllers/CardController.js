@@ -21,6 +21,19 @@ const updateCard = async (req, res) => {
     }
 }
 
+const addBookToCard = async (req, res) => {
+    try {
+        const response = await CardService.addBookToCard(res.body)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: "add book to card controller error",
+            error: e.message
+        })
+    }
+}
+
+
 const getDetail = async (req, res) => {
     try {
         const userId = req.params.id
@@ -41,5 +54,6 @@ const getDetail = async (req, res) => {
 
 module.exports = {
     getDetail,
-    updateCard
+    updateCard,
+    addBookToCard
 };

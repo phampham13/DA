@@ -21,6 +21,18 @@ const updateCart = async (req, res) => {
     }
 }
 
+const addProductToCart = async (req, res) => {
+    try {
+        const response = await CartService.addProductToCart(res.body)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: "add product to cart controller error",
+            error: e.message
+        })
+    }
+}
+
 const getDetail = async (req, res) => {
     try {
         const userId = req.params.id
@@ -41,5 +53,6 @@ const getDetail = async (req, res) => {
 
 module.exports = {
     getDetail,
-    updateCart
+    updateCart,
+    addProductToCart
 };

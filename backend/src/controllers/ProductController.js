@@ -43,9 +43,9 @@ const deleteProduct = async (req, res) => {
     try {
         const productId = req.params.id
         if (!productId) {
-            resolve({
+            return res.status(400).json({
                 status: 'ERR',
-                message: 'The userId is required'
+                message: 'The productId is required'
             })
         }
         const response = await ProductService.deleteProduct(productId)

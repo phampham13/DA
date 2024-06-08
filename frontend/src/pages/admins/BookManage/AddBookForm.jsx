@@ -11,6 +11,7 @@ import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { addNewBook } from "../../../redux/slides/booksSlice";
+import UploadImage from "../../../components/Upload/UploadImage"
 
 const cx = classNames.bind(styles);
 const fakeCate = [
@@ -37,8 +38,14 @@ const fakeCate = [
 ]
 
 const AddBookForm = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
     const dispatch = useDispatch()
+    const [imageUrl, setImageUrl] = useState("")
+    const handleUploadComplete = (url) => {
+        console.log(url)
+        setImageUrl(url)
+        formik.setFieldValue("coverImg", url)
+    };
     const formik = useFormik({
         initialValues: {
             bookId: "",
@@ -46,7 +53,7 @@ const AddBookForm = () => {
             author: "",
             categoryName: "",
             publisher: "",
-            coverImg: "",
+            coverImg: imageUrl,
             quantityTotal: 1,
             quantityAvailabel: 0,
         },
@@ -67,22 +74,23 @@ const AddBookForm = () => {
         }),
 
         onSubmit: (values) => {
-            dispatch(addNewBook(values))
+            console.log(values)
+            //dispatch(addNewBook(values))
         }
     });
 
-    const [categories, setCategories] = useState([]);
-    const [showCancelModal, setShowCancelModal] = useState(false);
+    const [categories, setCategories] = useState([])
+    const [showCancelModal, setShowCancelModal] = useState(false)
 
-    const handleCloseCancelModal = () => setShowCancelModal(false);
+    const handleCloseCancelModal = () => setShowCancelModal(false)
     const handleCancel = () => {
         setShowCancelModal(true);
-    };
+    }
 
     const handleConfirmCancel = () => {
         setShowCancelModal(false);
         navigate("/admin/books");
-    };
+    }
 
     useEffect(() => {
         //get all category
@@ -184,7 +192,8 @@ const AddBookForm = () => {
                             <label htmlFor="coverImg" className={cx("form-label")}>
                                 Url ảnh bìa sách<span> *</span>
                             </label>
-                            <input id="coverImg" name="coverImg" type="text" placeholder="Nhập link ảnh sách" value={formik.values.coverImg} onChange={formik.handleChange} className={cx("form-control")} />
+                            <UploadImage onUploadComplete={handleUploadComplete} />
+                            {/*<input id="coverImg" name="coverImg" type="text" placeholder="Nhập link ảnh sách" value={formik.values.coverImg} onChange={formik.handleChange} className={cx("form-control")} />
                             <div className={cx("imgArea")}>
                                 <p>Ảnh bìa sách</p>
                                 {formik.values.coverImg && (
@@ -193,7 +202,7 @@ const AddBookForm = () => {
                                     </div>
                                 )}
                                 {formik.errors.coverImg && formik.touched.coverImg && <span className={cx("form-message")}>{formik.errors.coverImg}</span>}
-                            </div>
+                            </div>*/}
                         </div>
                         <div className={cx("btn")}>
                             <button className={cx("cancel")} onClick={handleCancel}>
