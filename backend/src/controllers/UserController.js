@@ -68,7 +68,7 @@ const updateUser = async (req, res) => {
         const userId = req.params.id
         const data = req.body
         if (!userId) {
-            resolve({
+            return res.status(400).json({
                 status: 'ERR',
                 message: 'The userId is required'
             })
@@ -86,7 +86,7 @@ const deleteUser = async (req, res) => {
     try {
         const userId = req.params.id
         if (!userId) {
-            resolve({
+            return res.status(400).json({
                 status: 'ERR',
                 message: 'The userId is required'
             })
@@ -154,9 +154,7 @@ const verifyToken = (req, res) => {
         if (!token) {
             return res.status(400).json({ message: "Token is required" });
         }
-
-        console.log("Received token:", token);
-
+        //console.log("Received token:", token);
         const kq = jwt.verify(token, env.SECRET_KEY);
 
         if (kq) {

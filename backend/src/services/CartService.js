@@ -1,5 +1,6 @@
 const Cart = require("../models/CartModel")
 const User = require("~/models/UserModel")
+const Product = require("~/models/ProductModel")
 
 const createCart = async (userId) => {
     try {
@@ -64,6 +65,67 @@ const updateCart = (userId, data) => {
     })
 }
 
+const addProductToCart = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { userId, productId, quantity } = data;
+
+            const product = await Product.findById(productId);
+            if (!product) {
+                return resolve({
+                    status: 'ERR',
+                    message: 'Product not found'
+                });
+            }
+
+            // check cart existed
+            let cart = await Cart.findOne({ userId: userId });
+            if (!cart) {
+                return resolve({
+                    status: 'ERR',
+                    message: 'cart not found'
+                })
+            }
+            // find product in cart
+            const cartProduct = cart.products.find(p => p.productId.toString() === productId);
+
+            if (cartProduct) {
+                if (cartProduct.quantity + quantity > product.quantity) {
+                    return resolve({
+                        status: 'ERR',
+                        message: 'Số lượng trong giỏ vượt quá số lượng sẵn có'
+                    });
+                }
+                cartProduct.quantity += quantity;
+            } else {
+                if (quantity > product.quantity) {
+                    return resolve({
+                        status: 'ERR',
+                        message: 'Số lượng trong giỏ vượt quá số lượng sẵn có'
+                    });
+                }
+                cart.products.push({ productId: productId, quantity: quantity });
+            }
+            await cart.save();
+
+            const totalAmount = cart.products.reduce((sum, item) => sum + item.quantity, 0);
+
+            resolve({
+                status: 'OK',
+                message: 'Product added to cart successfully',
+                data: cart,
+                total: totalAmount
+            });
+        } catch (e) {
+            reject({
+                status: 'ERR',
+                message: 'Error adding product to cart',
+                error: e
+            });
+        }
+    })
+}
+
 const getDetail = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -74,10 +136,12 @@ const getDetail = (userId) => {
                     message: 'Cart not found'
                 });
             } else {
+                const totalAmount = cart.products.reduce((sum, item) => sum + item.quantity, 0);
                 resolve({
                     status: 'OK',
                     message: 'SUCCESS',
-                    data: cart
+                    data: cart,
+                    total: totalAmount
                 })
             }
         } catch (e) {
@@ -90,5 +154,6 @@ module.exports = {
     createCart,
     deleteCart,
     updateCart,
-    getDetail
+    getDetail,
+    addProductToCart
 };

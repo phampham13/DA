@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const ProductSchema = new Schema({
-    productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
     quantity: { type: Number, required: true }
 }, { _id: false })
 
@@ -15,6 +15,13 @@ const orderSchema = new mongoose.Schema({
     //paymentMethod: { type: String, required: true },
     itemsPrice: { type: Number, required: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    note: { type: String },
+    status: {
+        type: String,
+        enum: ['pending', 'shipped', 'returned'],
+        default: 'pending',
+        required: true
+    }
     //isPaid: { type: Boolean, default: false },
     //paidAt: { type: Date },
     //isDelivered: { type: Boolean, default: false },

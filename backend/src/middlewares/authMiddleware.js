@@ -3,7 +3,7 @@ import { env } from '~/config/environment'
 
 const authMiddleWare = (req, res, next) => {
     const token = req.headers.token.split(' ')[1]
-    jwt.verify(token, env.SECRET_KEY, function (err, user) {
+    jwt.verify(token, env.SECRET_KEY, function (err, user) { //user gom ca iat
         if (err) {
             return res.status(404).json({
                 status: 'ERR',
@@ -28,7 +28,6 @@ const authUserMiddleWare = (req, res, next) => {
     //const token = req.cookies.token
     //const userId = req.params.id || decode.payload.id 
     if (token) {
-        console.log(token)
         jwt.verify(token, env.SECRET_KEY, function (err, user) {
             if (err) {
                 return res.status(404).json({

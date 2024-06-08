@@ -122,6 +122,32 @@ const updateUser = (userId, data) => {
                 })
             }
 
+            if (data.email) {
+                const emailExists = await User.findOne({
+                    email: data.email,
+                    _id: { $ne: userId }
+                })
+                if (emailExists) {
+                    return resolve({
+                        status: 'ERR',
+                        message: 'Email này đã được sử dụng'
+                    })
+                }
+            }
+
+            if (data.phoneNumber) {
+                const phoneNumberExists = await User.findOne({
+                    phoneNumber: data.phoneNumber,
+                    _id: { $ne: userId }
+                })
+                if (phoneNumberExists) {
+                    return resolve({
+                        status: 'ERR',
+                        message: 'Số diện thoại này đã được sử dụng'
+                    })
+                }
+            }
+
             const updatedUser = await User.findByIdAndUpdate(userId, data, { new: true })
             //console.log('updateUser', updateUser)
             resolve({
@@ -209,11 +235,26 @@ const getDetailUser = (userId) => {
     })
 }
 
+const isBlockedUser = async (userId) => {
+    try {
+        const user = await User.findById(userId)
+        if (user && user.state === 1) {
+            return true
+        } else {
+            return false
+        }
+    } catch (error) {
+        console.error("Error checking user state:", error)
+        throw error;
+    }
+}
+
 module.exports = {
     createUser,
     loginUser,
     updateUser,
     deleteUser,
     getAllUser,
-    getDetailUser
+    getDetailUser,
+    isBlockedUser
 }

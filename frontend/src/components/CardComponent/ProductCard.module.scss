@@ -1,0 +1,105 @@
+.card {
+    border: 1px solid #4a74cd;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    text-align: left;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    height: 280px;
+    width: 320px;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    &-content {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    &-img {
+        flex: 0 0 50%;
+        width: 90%;
+        height: 70%;
+        min-height: 150px;
+        object-fit: contain;
+    }
+
+    &-left {
+        flex: 0 0 50%;
+        /* Thay đổi từ 1 thành 0 0 60% */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        height: 100%;
+    }
+
+    &-right {
+        /* Đổi tên thành card-right */
+        flex: 0 0 50%;
+        /* Thay đổi từ 1 thành 0 0 40% */
+        margin-left: 10px;
+        padding-left: 5px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        height: 100%;
+    }
+
+    &-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    &-price,
+    &-availability {
+        margin: 5px 0;
+    }
+
+    &-add {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        input {
+            width: 70px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            opacity: 1;
+        }
+
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: inner-spin-button !important;
+            width: 25px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+        }
+
+        button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #4fa8b4;
+            color: #fff;
+            border-radius: 3px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #496f71;
+            }
+        }
+    }
+}
