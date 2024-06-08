@@ -3,8 +3,8 @@ const OrderService = require('../services/OrderService')
 const createOrder = async (req, res) => {
     try {
         //const { paymentMethod, itemsPrice, shippingPrice, totalPrice, fullName, address, phone } = req.body
-        const { orderItems, fullName, address, phoneNumber } = req.body
-        if (!orderItems || !fullName || !address || !phoneNumber) {
+        const { orderItems, name, address, phoneNumber } = req.body
+        if (!orderItems || !name || !address || !phoneNumber) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The input is required'
@@ -14,7 +14,7 @@ const createOrder = async (req, res) => {
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
-            message: e
+            message: e.message
         })
     }
 }

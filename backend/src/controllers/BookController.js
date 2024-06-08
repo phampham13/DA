@@ -12,7 +12,7 @@ const createBook = async (req, res) => {
             })
         }
         const checkCategory = await CategoryService.checkCategory(categoryName)
-        console.log(checkCategory)
+        //console.log(checkCategory)
         if (checkCategory === null) {
             CategoryService.createCategory(categoryName)
         }
@@ -30,7 +30,7 @@ const updateBook = async (req, res) => {
     try {
         const id = req.params.id
         const data = req.body
-        console.log(id)
+        //console.log(id)
         if (!id) {
             resolve({
                 status: 'ERR',

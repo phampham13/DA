@@ -73,7 +73,7 @@ const HandmadeItems = () => {
             </div>
             <div className={cx("itemList")}>
                 {FakeItem.map((item) => (
-                    <ProductCard product={item} key={item.itemId} onAddToCart={handleAddToCart} />
+                    <ProductCard product={item} key={item._id} onAddToCart={handleAddToCart} />
                 ))}
             </div>
         </div>

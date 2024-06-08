@@ -39,6 +39,21 @@ const deleteCard = async (userId) => {
 const updateCard = (userId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const books = data.books
+            for (const book of books) {
+                const checkBook = await Book.findById(book.bookId)
+                if (!checkBook) {
+                    resolve({
+                        status: "ERR",
+                        message: `Khong tìm thấy sách ${book.bookId}`
+                    })
+                } else if (checkBook.quantityAvailabel < book.quantity) {
+                    resolve({
+                        status: "ERR",
+                        message: `Sách ${checkBook.name} không đủ`
+                    })
+                }
+            }
             const card = await Card.findOneAndUpdate(
                 { userId },
                 { $set: { books: data.books } },
@@ -63,17 +78,24 @@ const updateCard = (userId, data) => {
     })
 }
 
-const addBookToCard = (data) => {
+const addBookToCard = (userId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { userId, bookId, quantity } = data;
+            const { bookId, quantity } = data;
 
-            const book = await Book.findOne({ bookId: bookId });
+            const book = await Book.findById(bookId);
             if (!book) {
                 return resolve({
                     status: 'ERR',
-                    message: 'book not found'
+                    message: 'Book not found'
                 });
+            } else {
+                if (book.quantityAvailabel < quantity) {
+                    resolve({
+                        status: "ERR",
+                        message: `Sản phẩm ${book.name} không đủ `
+                    })
+                }
             }
 
             // check cart existed
@@ -88,36 +110,36 @@ const addBookToCard = (data) => {
             const cardBook = card.books.find(p => p.bookId.toString() === bookId);
 
             if (cardBook) {
-                if (cardBook.quantity + quantity > book.quantity) {
+                if (cardBook.quantity + quantity > book.quantityAvailabel) {
                     return resolve({
                         status: 'ERR',
-                        message: 'Số lượng trong thẻ vượt quá số lượng sẵn có'
+                        message: 'Số lượng trong giỏ vượt quá số lượng sẵn có'
                     });
                 }
                 cardBook.quantity += quantity;
             } else {
-                if (quantity > book.quantity) {
+                if (quantity > book.quantityAvailabel) {
                     return resolve({
                         status: 'ERR',
-                        message: 'Số lượng trong thẻ vượt quá số lượng sẵn có'
-                    });
+                        message: 'Số lượng trong giỏ vượt quá số lượng sẵn có'
+                    })
                 }
                 card.books.push({ bookId: bookId, quantity: quantity });
             }
             await card.save();
 
-            const totalAmount = card.books.reduce((sum, book) => sum + book.quantity, 0);
+            const totalAmount = card.books.reduce((sum, item) => sum + item.quantity, 0);
 
             resolve({
                 status: 'OK',
-                message: 'Product added to cart successfully',
-                data: cart,
+                message: 'Book added to card successfully',
+                data: card,
                 total: totalAmount
             });
         } catch (e) {
             reject({
                 status: 'ERR',
-                message: 'Error adding product to cart',
+                message: 'Error adding book to card',
                 error: e
             });
         }
@@ -127,14 +149,14 @@ const addBookToCard = (data) => {
 const getDetail = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const card = await Card.findOne({ userId }).populate('products.bookId');
+            const card = await Card.findOne({ userId }).populate('books.bookId');
             if (!card) {
                 resolve({
                     status: 'ERR',
-                    message: 'Cart not found'
+                    message: 'Card not found'
                 });
             } else {
-                const totalAmount = card.books.reduce((sum, book) => sum + book.quantity, 0);
+                const totalAmount = card.books.reduce((sum, item) => sum + item.quantity, 0);
                 resolve({
                     status: 'OK',
                     message: 'SUCCESS',

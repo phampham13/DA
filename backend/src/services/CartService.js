@@ -41,6 +41,21 @@ const deleteCart = async (userId) => {
 const updateCart = (userId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const products = data.products
+            for (const product of products) {
+                const checkProduct = await Product.findById(product.productId)
+                if (!checkProduct) {
+                    resolve({
+                        status: "ERR",
+                        message: `Khong tìm thấy sản phẩm ${product.ProductId}`
+                    })
+                } else if (checkProduct.quantity < product.quantity) {
+                    resolve({
+                        status: "ERR",
+                        message: `Sản phẩm ${checkProduct.name} không đủ hàng`
+                    })
+                }
+            }
             const cart = await Cart.findOneAndUpdate(
                 { userId },
                 { $set: { products: data.products } },
@@ -65,10 +80,10 @@ const updateCart = (userId, data) => {
     })
 }
 
-const addProductToCart = (data) => {
+const addProductToCart = (userId, data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { userId, productId, quantity } = data;
+            const { productId, quantity } = data;
 
             const product = await Product.findById(productId);
             if (!product) {
@@ -76,6 +91,13 @@ const addProductToCart = (data) => {
                     status: 'ERR',
                     message: 'Product not found'
                 });
+            } else {
+                if (product.quantity < quantity) {
+                    resolve({
+                        status: "ERR",
+                        message: `Sản phẩm ${product.name} không đủ hàng`
+                    })
+                }
             }
 
             // check cart existed
