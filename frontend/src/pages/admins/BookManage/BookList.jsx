@@ -24,16 +24,24 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import ModalForm from "../../../components/ModalUpdateBook";
+import { useMutationHooks } from "../../../hooks/useMutationHook";
 const cx = classNames.bind(styles);
 
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
-import { Handyman } from "@mui/icons-material";
+import { ApiBOOK } from "../../../services/Book/BookService";
 const BookList = () => {
-  const data = useSelector(selectAllBooks);
+  const [data, setData] = useState([]);
+  const [request, setRequest] = useState({
+    limit: 20,
+    page: 0,
+    sort: "quantityTotal",
+  });
+
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [IdDelete, setIdDelete] = useState();
+  const [reload, setReload] = useState(false);
 
   const [selectedRow, setSelectedRow] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -47,13 +55,22 @@ const BookList = () => {
   const searchInput = useRef(null);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchBooks());
-  }, [dispatch]);
+    getAll();
+  }, [reload]);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
+  };
+  const getAll = async () => {
+    const res = await ApiBOOK.getAllBook(
+      request.limit,
+      request.page,
+      request.sort
+    );
+    console.log(res);
+    setData(res.data);
   };
   const handleReset = (clearFilters) => {
     clearFilters();
@@ -265,14 +282,15 @@ const BookList = () => {
     },
   ];
   const dataTable = data?.map((book) => {
-    return { ...book, key: book.bookId };
+    return { ...book, key: book._id };
   });
   const handleDetail = (book) => {
     setSelectedRow(book);
-    console.log("Dratss", book);
+    console.log(selectedRow);
     setShowModal(true);
   };
   const handleEdit = (book) => {
+    console.log("àdsadf", book);
     setSelectedRow(book);
     setShowModalUp(true);
   };
@@ -305,10 +323,10 @@ const BookList = () => {
   };
   const handleSave = (book) => {
     // dispatch(saveBook(book));
-    console.log("Update");
+    setReload(!reload);
     toast.success("Update thành công");
 
-    setShowModal(false);
+    setShowModalUp(false);
   };
   const handleDelete = () => {
     dispatch(deleteBook(IdDelete));
@@ -366,6 +384,10 @@ const BookList = () => {
           columns={columns}
           dataSource={dataTable}
           onChange={onChange}
+          pagination={{
+            pageSize: 10,
+            total: request.limit,
+          }}
           showSorterTooltip={{
             target: "sorter-icon",
           }}

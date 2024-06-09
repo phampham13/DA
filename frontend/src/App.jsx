@@ -1,16 +1,14 @@
-import { useContext, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { userRoutes, adminRoutes } from "../src/routes";
 import DefaultLayoutAdmin from "./layouts/AdminLayout/DefaultLayout/DefaultLayout";
 import DefaultLayoutUser from "./layouts/UserLayout/DefaultLayOutUser";
-import { AuthContext } from "./contexts/AuthContext";
+
 import { ToastContainer } from "react-toastify";
-import axios from "axios";
+
 import "./index.css";
 function App() {
-  const { token, user } = useContext(AuthContext);
   const tokenLocal = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 

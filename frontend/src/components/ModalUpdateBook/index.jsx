@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, InputNumber, Button, Upload } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { Modal, Form, Input, InputNumber, Button } from "antd";
 
+import UploadImage from "../Upload/UploadImage";
+import { ApiBOOK } from "../../services/Book/BookService";
 const ModalForm = ({ visible, onCancel, onSave, book }) => {
   const [form] = Form.useForm();
-  const [imageUrl, setImageUrl] = useState(book ? book.coverImg : null);
+  const [imageUrl, setImageUrl] = useState(book ? book.coverImg : "");
 
   useEffect(() => {
     if (book) {
@@ -12,7 +13,7 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
       setImageUrl(book.coverImg);
     } else {
       form.resetFields();
-      setImageUrl(null);
+      setImageUrl("");
     }
   }, [book, form]);
 
@@ -20,28 +21,22 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
     form
       .validateFields()
       .then((values) => {
-        onSave({ ...values, coverImg: imageUrl });
+        console.log(book);
+
+        values.coverImg = imageUrl; // Include the updated image URL
+        console.log(values.coverImg);
+        onSave(values);
+        const res = ApiBOOK.UpdateBook(book._id, values);
         form.resetFields();
-        setImageUrl(null);
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
       });
   };
 
-  const handleImageChange = ({ file }) => {
-    if (file.status === "done") {
-      // Get this url from response in real world.
-      setImageUrl(file.response.url);
-    }
+  const handleUploadComplete = (url) => {
+    setImageUrl(url);
   };
-
-  const uploadButton = (
-    <div>
-      <UploadOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
 
   return (
     <Modal
@@ -99,27 +94,22 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
         >
           <InputNumber min={0} />
         </Form.Item>
+
         <Form.Item
           name="coverImg"
           label="Hình ảnh"
           rules={[
-            { required: true, message: "Please input the cover image URL!" },
+            { required: true, message: "Please upload the cover image!" },
           ]}
         >
-          <Upload
-            name="coverImg"
-            listType="picture-card"
-            className="avatar-uploader"
-            showUploadList={false}
-            action="/upload" // URL to your upload endpoint
-            onChange={handleImageChange}
-          >
-            {imageUrl ? (
-              <img src={imageUrl} alt="cover" style={{ width: "100%" }} />
-            ) : (
-              uploadButton
-            )}
-          </Upload>
+          <UploadImage onUploadComplete={handleUploadComplete} />
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt="Cover"
+              style={{ width: "100%", marginTop: "10px" }}
+            />
+          )}
         </Form.Item>
       </Form>
     </Modal>
