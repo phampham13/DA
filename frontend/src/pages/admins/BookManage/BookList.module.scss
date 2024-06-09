@@ -2,9 +2,17 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    .editbtn{
+        color: #3498db;
+        cursor: pointer;
+        font-size: 20px;
+        margin: 5px;
+    }
     .colortext{
         color: red;
         cursor: pointer;
+        font-size: 20px;
+        margin: 5px;
     }
     .wrap {
         margin: 10px 20px;

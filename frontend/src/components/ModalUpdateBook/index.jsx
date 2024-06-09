@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { Modal, Form, Input, InputNumber, Button } from "antd";
+import { Modal, Form, Input, InputNumber, Button, Select } from "antd";
+import { toast } from "react-toastify";
 
 import UploadImage from "../Upload/UploadImage";
 import { ApiBOOK } from "../../services/Book/BookService";
+const { Option } = Select;
 const ModalForm = ({ visible, onCancel, onSave, book }) => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(book ? book.coverImg : "");
-
+  const [categories, setCategories] = useState([]);
   useEffect(() => {
+    getAllCate();
     if (book) {
       form.setFieldsValue(book);
       setImageUrl(book.coverImg);
@@ -16,17 +19,28 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
       setImageUrl("");
     }
   }, [book, form]);
-
+  const getAllCate = async () => {
+    const res = await ApiBOOK.getAllCate();
+    setCategories(res.data);
+  };
   const handleSave = () => {
+    console.log(imageUrl);
     form
       .validateFields()
       .then((values) => {
-        console.log(book);
-
         values.coverImg = imageUrl; // Include the updated image URL
         console.log(values.coverImg);
         onSave(values);
-        const res = ApiBOOK.UpdateBook(book._id, values);
+        let res = {};
+        if (book) {
+          res = ApiBOOK.UpdateBook(book._id, values);
+          toast.success("Update thành công");
+        } else {
+          console.log(values);
+          res = ApiBOOK.AddBook(values);
+          toast.success("Tạo thành công");
+        }
+
         form.resetFields();
       })
       .catch((info) => {
@@ -40,7 +54,7 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       title={book ? "Edit Book" : "Add Book"}
       onCancel={onCancel}
       footer={[
@@ -67,6 +81,28 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
         >
           <Input />
         </Form.Item>
+        {!book && (
+          <>
+            <Form.Item
+              name="author"
+              label="Tác giả"
+              rules={[
+                { required: true, message: "Please input the author name!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="publisher"
+              label="Nhà xuất bản"
+              rules={[
+                { required: true, message: "Please input the publisher name!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </>
+        )}
         <Form.Item
           name="categoryName"
           label="Thể loại"
@@ -74,7 +110,13 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
             { required: true, message: "Please input the category name!" },
           ]}
         >
-          <Input />
+          <Select placeholder="Select a category">
+            {categories.map((category) => (
+              <Option key={category._id} value={category.categoryName}>
+                {category.categoryName}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           name="quantityTotal"
@@ -99,7 +141,7 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
           name="coverImg"
           label="Hình ảnh"
           rules={[
-            { required: true, message: "Please upload the cover image!" },
+            { required: book, message: "Please upload the cover image!" },
           ]}
         >
           <UploadImage onUploadComplete={handleUploadComplete} />
@@ -107,7 +149,13 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
             <img
               src={imageUrl}
               alt="Cover"
-              style={{ width: "100%", marginTop: "10px" }}
+              style={{
+                width: "30%",
+                height: "30%",
+                marginTop: "10px",
+                marginLeft: "35%",
+                objectFit: "contain",
+              }}
             />
           )}
         </Form.Item>
