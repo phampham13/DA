@@ -1,6 +1,6 @@
 import classNames from "classnames/bind";
 import styles from "./BookList.module.scss";
-import DataTable from "react-data-table-component";
+
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import customStyles from "./CustomTable";
@@ -40,6 +40,8 @@ const BookList = () => {
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [addModal, setAddModal] = useState(false);
+
   const [IdDelete, setIdDelete] = useState();
   const [reload, setReload] = useState(false);
 
@@ -252,7 +254,7 @@ const BookList = () => {
       render: (_, record) => {
         return (
           <div className={cx("image-cell")}>
-            <img width="45px" height="60px" src={record.coverImg} alt="" />;
+            <img width="45px" height="60px" src={record.coverImg} alt="" />
           </div>
         );
       },
@@ -263,7 +265,7 @@ const BookList = () => {
         return (
           <>
             <div className="flex justify-between">
-              <span className="text-blue-500">
+              <span className={cx("editbtn")}>
                 <FaPen
                   onClick={() => handleEdit(record)}
                   className="text-lg cursor-pointer"
@@ -271,7 +273,7 @@ const BookList = () => {
               </span>
               <span className={cx("colortext")}>
                 <AiFillDelete
-                  onClick={() => handleDelete1(record.bookId)}
+                  onClick={() => handleDelete1(record._id)}
                   className="text-lg"
                 />
               </span>
@@ -290,7 +292,6 @@ const BookList = () => {
     setShowModal(true);
   };
   const handleEdit = (book) => {
-    console.log("àdsadf", book);
     setSelectedRow(book);
     setShowModalUp(true);
   };
@@ -299,7 +300,7 @@ const BookList = () => {
     setIdDelete(id);
   };
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys.length);
     setSelectedRowKeys(newSelectedRowKeys);
   };
   const rowSelection = {
@@ -321,38 +322,65 @@ const BookList = () => {
   const handleCloseModalUP = () => {
     setShowModalUp(false);
   };
+  const handleCloseModalAdd = () => {
+    setAddModal(false);
+  };
   const handleSave = (book) => {
-    // dispatch(saveBook(book));
     setReload(!reload);
-    toast.success("Update thành công");
 
     setShowModalUp(false);
+    setAddModal(false);
   };
   const handleDelete = () => {
-    dispatch(deleteBook(IdDelete));
-    //console.log("xóa")
-    toast.success("Xóa sách thành công");
-    setIdDelete(null);
-    setShowDeleteModal(false);
+    ApiBOOK.DeleteBook(IdDelete)
+      .then((res) => {
+        if (res) {
+          toast.success("Xóa sách thành công");
+          setIdDelete(null);
+          setShowDeleteModal(false);
+          setReload(!reload);
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting book:", error);
+        toast.error("Xóa sách thất bại");
+      });
   };
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
+  const handleShowAdd = () => {
+    setAddModal(true);
+  };
+  const handleDeleteMany = async () => {
+    console.log(selectedRowKeys);
+    const ids = [...selectedRowKeys];
+    const res = await ApiBOOK.DeleteManyBook(ids);
+    setReload(!reload);
+    if (res) {
+      toast.success("Xóa thành công");
+    }
+  };
   return (
     <>
       <div className={cx("wrap")}>
         <div className={cx("topBar")}>
-          <Link to="/admin/addBook" className={cx("create-btn")}>
+          <Button onClick={handleShowAdd} className={cx("create-btn")}>
             Thêm sách
-          </Link>
+          </Button>
+          {selectedRowKeys.length >= 2 && (
+            <>
+              <Button onClick={handleDeleteMany} className={cx("create-btn")}>
+                Xóa tất cả
+              </Button>
+            </>
+          )}
         </div>
+
         <div className={cx("search-element")}>
           <select value={selectedCategory} onChange={handleCategoryChange}>
             <option value="">Tất cả loại</option>
             {categories &&
               categories.map((category) => (
-                <option
-                  key={category.categoryId}
-                  value={category.categoryNameame}
-                >
+                <option key={category.categoryId} value={category.categoryName}>
                   {category.categoryName}
                 </option>
               ))}
@@ -436,6 +464,11 @@ const BookList = () => {
           onCancel={handleCloseModalUP}
           onSave={handleSave}
           book={selectedRow}
+        />
+        <ModalForm
+          visible={addModal}
+          onCancel={handleCloseModalAdd}
+          onSave={handleSave}
         />
       </div>
     </>
