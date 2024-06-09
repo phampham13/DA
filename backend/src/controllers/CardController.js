@@ -37,6 +37,7 @@ const addBookToCard = async (req, res) => {
 
 const getDetail = async (req, res) => {
     try {
+        //console.log("card", req.headers)
         const userId = req.params.id
         if (!userId) {
             resolve({

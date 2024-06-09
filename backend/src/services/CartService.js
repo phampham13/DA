@@ -151,7 +151,7 @@ const addProductToCart = (userId, data) => {
 const getDetail = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const cart = await Cart.findOne({ userId }).populate('products.productId');
+            const cart = await Cart.findOne({ userId }).populate('products.productId', 'name image price');
             if (!cart) {
                 resolve({
                     status: 'ERR',
@@ -162,8 +162,10 @@ const getDetail = (userId) => {
                 resolve({
                     status: 'OK',
                     message: 'SUCCESS',
-                    data: cart,
-                    total: totalAmount
+                    data: {
+                        products: cart.products,
+                        totalAmount: totalAmount
+                    }
                 })
             }
         } catch (e) {

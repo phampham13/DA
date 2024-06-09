@@ -11,6 +11,7 @@ import { AuthContext } from "../../../contexts/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { getDetailsUser } from "../../../services/UserService";
 //import { useMutationHooks } from "../../../hooks/useMutationHook";
 //import { getListItem } from "../../../reactRedux/action/actions";
 import "react-toastify/dist/ReactToastify.css";
@@ -40,21 +41,22 @@ export default function Login() {
 
                 if (response.status === "OK") {
                     const decoded = jwtDecode(response?.access_token)
-                    console.log(decoded)
+                    console.log("decode", decoded)
                     const user = decoded.payload;
                     const token = response.access_token
                     //const re_token = response.refresh_token
                     if (user.id && user.role === "user") {
+                        console.log(user.id)
                         // Nếu thành công, chuyển hướng đến trang Home
                         handleLoggedin(token, user);
-                        toast.success("Đăng nhập thành công");
-                        navigateTo("/");
+                        toast.success("Đăng nhập thành công")
+                        navigateTo("/")
                         //dispatch(getListItem(user.id));
                     } else {
                         if (user.id && user.role === "admin") {
                             handleLoggedin(token, user);
                             toast.success("Đăng nhập thành công");
-                            navigateTo("/admin");
+                            navigateTo("/admin/books");
                         } else {
                             toast.error("Sai email hoặc mật khẩu");
                         }

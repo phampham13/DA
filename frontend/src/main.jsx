@@ -11,16 +11,18 @@ import store from "../src/redux/store.jsx";
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <AuthContextProvider>
-    <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
+
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <AuthContextProvider>
         <GlobalStyles>
           <Router>
             <App />
           </Router>
         </GlobalStyles>
-      </Provider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  </AuthContextProvider>
+      </AuthContextProvider>
+    </Provider>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
+
 );

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 import { env } from '~/config/environment'
 
 const authMiddleWare = (req, res, next) => {
+    //console.log(req.headers)
     const token = req.headers.token.split(' ')[1]
     jwt.verify(token, env.SECRET_KEY, function (err, user) { //user gom ca iat
         if (err) {

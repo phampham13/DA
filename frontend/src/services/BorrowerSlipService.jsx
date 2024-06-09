@@ -5,12 +5,11 @@ const axiosJWT = axios.create({
     withCredentials: true,
 });
 
-export const getDetailsUser = async (id, token) => {
-    const res = await axiosJWT.get(`users/get-detail/${id}`, {
+export const createBorrowerSlip = async (token, data) => {
+    const res = await axiosJWT.post(`borrowerSlip/create`, data, {
         headers: {
             token: `Bearer ${token}`,
         }
     })
-    return res.data
+    return res
 }
-

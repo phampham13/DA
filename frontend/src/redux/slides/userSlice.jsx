@@ -11,7 +11,7 @@ const initialState = {
     refreshToken: ''
 }
 
-export const userSlide = createSlice({
+export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
@@ -40,6 +40,6 @@ export const userSlide = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { updateUser, resetUser } = userSlide.actions
+export const { updateUser, resetUser } = userSlice.actions
 
-export default userSlide.reducer
+export default userSlice.reducer
