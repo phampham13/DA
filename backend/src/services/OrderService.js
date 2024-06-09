@@ -1,6 +1,7 @@
 const Order = require("../models/OrderModel")
 const Product = require("../models/ProductModel")
 const EmailService = require("../services/EmailService")
+const { updateBook } = require("./BookService")
 
 const createOrder = (newOrder) => {
     return new Promise(async (resolve, reject) => {
@@ -12,14 +13,7 @@ const createOrder = (newOrder) => {
                     {
                         _id: item.productId,
                         quantity: { $gte: item.quantity }
-                    },
-                    {
-                        $inc: {
-                            quantity: -item.quantity,
-                            //selled: +order.amount
-                        }
-                    },
-                    { new: true }
+                    }
                 )
                 if (productData) {
                     return {
@@ -47,6 +41,22 @@ const createOrder = (newOrder) => {
                     message: `San pham voi id: ${arrId.join(',')} khong du hang`
                 })
             } else {
+                const updateProduct = orderItems.map(async (item) => {
+                    await Product.findOneAndUpdate(
+                        {
+                            _id: item.productId,
+                            quantity: { $gte: item.quantity }
+                        },
+                        {
+                            $inc: {
+                                quantity: +item.quantity,
+                                //selled: -order.amount
+                            }
+                        },
+                    )
+                })
+                await Promise.all(updateProduct)
+
                 const createdOrder = await Order.create({
                     orderItems,
                     shippingAddress: {
@@ -81,20 +91,20 @@ const createOrder = (newOrder) => {
 const getAllOrderDetails = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const order = await Order.find({
-                userId: id
+            const orders = await Order.find({
+                user: id
             }).sort({ createdAt: -1, updatedAt: -1 })
-            if (order === null) {
+            if (orders === null) {
                 resolve({
                     status: 'ERR',
-                    message: 'The order is not defined'
+                    message: 'The  not defined'
                 })
             }
 
             resolve({
                 status: 'OK',
                 message: 'SUCESSS',
-                data: order
+                data: orders
             })
         } catch (e) {
             // console.log('e', e)
@@ -126,9 +136,17 @@ const getOrderDetails = (id) => {
     })
 }
 
-const cancelOrderDetails = (id, data) => {
+const cancelOrderDetails = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const order = await Order.findById(id)
+            if (order.status !== "pending") {
+                resolve({
+                    status: "ERR",
+                    message: "Không thể hủy đơn sau khi đơn đã được ship"
+                })
+                return
+            }
             const promises = data.map(async (item) => {
                 const productData = await Product.findOneAndUpdate(
                     {
@@ -144,10 +162,10 @@ const cancelOrderDetails = (id, data) => {
                     { new: true }
                 )
                 if (!productData) {
-                    resolve({
-                        status: 'ERR',
+                    return {
+                        status: 'Ok',
                         message: `sản phẩm có id ${item.productId} không còn tồn tại`
-                    })
+                    }
                 } else {
                     return {
                         status: 'OK',
@@ -155,16 +173,12 @@ const cancelOrderDetails = (id, data) => {
                     }
                 }
             })
-            const results = await Promise.all(promises)
-
-            if (results && results.length == data.length) {
-                await Order.findByIdAndDelete(id, { new: true })
-            } else {
-                resolve({
-                    status: "ERR",
-                    message: "Hủy order thất bại"
-                })
-            }
+            await Promise.all(promises)
+            await Order.findByIdAndDelete(id, { new: true })
+            resolve({
+                status: "OK",
+                message: "Hủy order thành công"
+            })
         } catch (e) {
             reject(e)
         }

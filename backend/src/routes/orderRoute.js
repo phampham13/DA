@@ -5,11 +5,11 @@ const { authUserMiddleWare, authMiddleWare } = require('~/middlewares/authMiddle
 
 router.post('/create', authUserMiddleWare, orderController.createOrder)
 router.get('/get-all-order/:id', authUserMiddleWare, orderController.getAllOrderDetails) //get all user's orders
-router.get('/get-details-order/:id', authUserMiddleWare, orderController.getDetailsOrder)
+router.get('/get-detail-order/:id', authUserMiddleWare, orderController.getDetailsOrder)
 router.delete('/cancel-order/:id', authUserMiddleWare, orderController.cancelOrderDetails)
 router.get('/get-all-order', authMiddleWare, orderController.getAllOrder)
 router.post('/delete-many', authMiddleWare, orderController.deleteManyOrder)
 router.delete('/delete/:id', authMiddleWare, orderController.deleteOrder)
-router.put('/updateStatus/:id', authMiddleWare, orderController.updateStatus)
+router.put('/update-status/:id', authMiddleWare, orderController.updateStatus)
 
 module.exports = router

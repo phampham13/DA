@@ -4,8 +4,14 @@ const { genneralAccessToken, genneralRefreshToken } = require("./JwtService")
 
 const createBook = (newBook) => {
     return new Promise(async (resolve, reject) => {
-        const { bookId, name, coverImg, categoryName } = newBook
+        const { bookId, name, coverImg, categoryName, quantityAvailabel, quantityTotal } = newBook
         try {
+            if (quantityAvailabel > quantityTotal) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Sách sẵn có không thể nhiều hơn tổng'
+                })
+            }
             const checkBook = await Book.findOne({
                 bookId: bookId
             })

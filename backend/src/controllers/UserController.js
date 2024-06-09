@@ -58,7 +58,7 @@ const loginUser = async (req, res) => {
         return res.status(200).json(newResponse)
     } catch (e) {
         return res.status(404).json({
-            message: "controller Error"
+            message: e.message
         })
     }
 }
