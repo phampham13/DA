@@ -24,13 +24,14 @@ const createBorrowerSlip = async (req, res) => {
 const getAllUserSlip = async (req, res) => {
     try {
         const userId = req.params.id
+        //console.log(userId)
         if (!userId) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The userId is required'
             })
         }
-        const response = await BorrowerSlip.getAllUserSlip(userId)
+        const response = await BorrowerSlipService.getAllUserSlip(userId)
         return res.status(response.status === 'OK' ? 200 : 400).json(response)
 
     } catch (e) {
@@ -59,17 +60,16 @@ const getDetailBorrowerSlip = async (req, res) => {
     }
 }
 
-const cancelBorrowerSlip = async (req, res) => {
+const cancelBorrow = async (req, res) => {
     try {
-        const booksData = req.body.books
-        const bSlipId = req.body.orderId
-        if (bSlipId) {
+        const bSlipId = req.params.id
+        if (!bSlipId) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The borrower slip id is required'
             })
         }
-        const response = await BorrowerSlipService.cancelOrderDetails(bSlipId, booksData)
+        const response = await BorrowerSlipService.cancelBorrow(bSlipId)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
@@ -91,16 +91,16 @@ const getAllBorrowerSlip = async (req, res) => {
 
 }
 
-/*const deleteManyBorrowerSlip = async (req, res) => {
+const deleteMany = async (req, res) => {
     try {
-
+        const response = await BorrowerSlipService.deleteMany(req.body.ids)
+        return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
-        message: e.message
-    })
+            message: e.message
+        })
+    }
 }
-    
-}*/
 
 const deleteBorrowerSlip = async (req, res) => {
     try {
@@ -123,16 +123,16 @@ const deleteBorrowerSlip = async (req, res) => {
 const updateState = async (req, res) => {
     try {
         const bSlipId = req.params.id;
-        const { newStatus } = req.body;
+        const newState = req.body.newState
 
-        if (!newStatus) {
+        if (!newState) {
             return res.status(400).json({
                 status: 'ERR',
-                message: 'New status is required'
+                message: 'New state is required'
             });
         }
 
-        const response = await BorrowerSlipService.updateStatus(bSlipId, newStatus)
+        const response = await BorrowerSlipService.updateState(bSlipId, newState)
         return res.status(response.status === 'OK' ? 200 : 400).json(response)
     } catch (e) {
         return res.status(404).json({
@@ -145,9 +145,9 @@ module.exports = {
     createBorrowerSlip,
     getAllUserSlip,
     getDetailBorrowerSlip,
-    cancelBorrowerSlip,
+    cancelBorrow,
     getAllBorrowerSlip,
-    //deleteManyBorrowerSlip,
+    deleteMany,
     deleteBorrowerSlip,
     updateState
 }

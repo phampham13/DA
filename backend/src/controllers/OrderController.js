@@ -22,6 +22,7 @@ const createOrder = async (req, res) => {
 const getAllOrderDetails = async (req, res) => {
     try {
         const userId = req.params.id
+        console.log(userId)
         if (!userId) {
             return res.status(200).json({
                 status: 'ERR',
@@ -33,7 +34,7 @@ const getAllOrderDetails = async (req, res) => {
     } catch (e) {
         // console.log(e)
         return res.status(404).json({
-            message: e
+            message: e.message
         })
     }
 }
@@ -59,15 +60,15 @@ const getDetailsOrder = async (req, res) => {
 
 const cancelOrderDetails = async (req, res) => {
     try {
-        const data = req.body.orderItems
-        const orderId = req.body.orderId
+        //const data = req.body.orderItems
+        const orderId = req.params.id
         if (!orderId) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The orderId is required'
             })
         }
-        const response = await OrderService.cancelOrderDetails(orderId, data)
+        const response = await OrderService.cancelOrderDetails(orderId)
         return res.status(200).json(response)
     } catch (e) {
         // console.log(e)
@@ -128,7 +129,7 @@ const deleteManyOrder = async (req, res) => {
 const updateStatus = async (req, res) => {
     try {
         const orderId = req.params.id;
-        const { newStatus } = req.body;
+        const newStatus = req.body.newStatus;
 
         if (!newStatus) {
             return res.status(400).json({

@@ -7,7 +7,8 @@ const createBorrowerSlip = (newBorrowerSlip) => {
     return new Promise(async (resolve, reject) => {
         const { userId, name, phoneNumber, address, books, totalAmount } = newBorrowerSlip
         try {
-            const checkBlockedUser = UserService.isBlockedUser(userId)
+            const checkBlockedUser = await UserService.isBlockedUser(userId)
+            //console.log(checkBlockedUser)
             if (checkBlockedUser) {
                 resolve({
                     status: "ERR",
@@ -15,11 +16,61 @@ const createBorrowerSlip = (newBorrowerSlip) => {
                     data: userId
                 })
             }
-            /**TO DO: check số lượng sách đang mượn và số sách hiện tại có vượt quá không */
+            /**: check số lượng sách đang mượn và số sách hiện tại có vượt quá không */
+            const borroweredSlips = await BorrowerSlip.find({
+                userId: userId,
+                state: { $in: [0, 1] }
+            })
+
+            console.log(borroweredSlips)
+
+            if (borroweredSlips.length > 0) {
+                const count = borroweredSlips.reduce((count, slip) => {
+                    return count + slip.totalAmount
+                }, 0)
+                if (count + totalAmount > 5) {
+                    console.log("t", count + totalAmount)
+                    console.log("count", count)
+                    resolve({
+                        status: "ERR",
+                        message: `Bạn đang mượn ${count} quyển, không thể mượn cùng lúc nhiều hơn 5`
+                    })
+                }
+            }
+
+            /**Kiểm tra số lượng sách còn đủ không */
             const promises = books.map(async (book) => {
-                const bookData = await Book.findOneAndUpdate(
+                const bookData = await Book.findOne(
                     {
-                        bookId: book.bookId,
+                        _id: book.bookId,
+                        quantityAvailabel: { $gte: book.quantity }
+                    }
+                )
+                if (bookData) {
+                    return {
+                        status: 'OK',
+                        message: 'SUCCESS'
+                    }
+                }
+                else {
+                    resolve({
+                        status: "ERR",
+                        message: `Không đủ số lượng sách`
+                    })
+                    return
+                    /*return {
+                        status: 'OK',
+                        message: 'ERR',
+                        bookId: book.bookId
+                    }*/
+                }
+            })
+            await Promise.all(promises)
+
+            const updateBook = books.map(async (book) => {
+                await Book.findOneAndUpdate(
+                    {
+                        _id: book.bookId,
                         quantityAvailabel: { $gte: book.quantity }
                     },
                     {
@@ -29,50 +80,29 @@ const createBorrowerSlip = (newBorrowerSlip) => {
                     },
                     { new: true }
                 )
-                if (bookData) {
-                    return {
-                        status: 'OK',
-                        message: 'SUCCESS'
-                    }
-                }
-                else {
-                    return {
-                        status: 'OK',
-                        message: 'ERR',
-                        bookId: book.bookId
-                    }
-                }
+            }
+            )
+            await Promise.all(updateBook)
+            const createdBorrowerSlip = new BorrowerSlip({
+                books,
+                shippingAddress: {
+                    name,
+                    address,
+                    phoneNumber
+                },
+                userId: userId,
+                totalAmount
             })
-            const results = await Promise.all(promises)
-            const outOfStockBook = results && results.filter((book) => book.bookId)
-            if (outOfStockProduct.length > 0) {
-                const arrId = []
-                outOfStockBook.forEach((item) => {
-                    arrId.push(item.bookId)
-                })
+
+            await createdBorrowerSlip.save()
+
+            if (createdBorrowerSlip) {
+                //await EmailService.sendEmailCreateOrder(email, orderItems)
                 resolve({
-                    status: 'ERR',
-                    message: `Sách có mã: ${arrId.join(',')} không còn đủ số lượng`
+                    status: 'OK',
+                    message: 'success',
+                    data: createdBorrowerSlip
                 })
-            } else {
-                const createdBorrowerSlip = await BorrowerSlip.create({
-                    books,
-                    shippingAddress: {
-                        name,
-                        address,
-                        phoneNumber
-                    },
-                    user: userId,
-                    totalAmount
-                })
-                if (createdOrder) {
-                    //await EmailService.sendEmailCreateOrder(email, orderItems)
-                    resolve({
-                        status: 'OK',
-                        message: 'success',
-                        data: createdBorrowerSlip
-                    })
-                }
             }
 
         } catch (e) {
@@ -86,7 +116,12 @@ const getAllUserSlip = (id) => {
         try {
             const bSlip = await BorrowerSlip.find({
                 userId: id
-            }).sort({ createdAt: -1, updatedAt: -1 })
+            }).sort({
+                createdAt: -1, updatedAt: -1
+            }).populate({
+                path: 'books.bookId',
+                select: 'name coverImg'
+            })
             if (bSlip === null) {
                 resolve({
                     status: 'ERR',
@@ -97,7 +132,7 @@ const getAllUserSlip = (id) => {
             resolve({
                 status: 'OK',
                 message: 'SUCESSS',
-                data: order
+                data: bSlip
             })
         } catch (e) {
             // console.log('e', e)
@@ -109,7 +144,10 @@ const getAllUserSlip = (id) => {
 const getDetailBorrowerSlip = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const bSlip = await BorrowerSlip.findById(id).populate('books.bookId');
+            const bSlip = await BorrowerSlip.findById(id).populate({
+                path: 'books.bookId',
+                select: 'name coverImg author category'
+            })
             if (bSlip === null) {
                 resolve({
                     status: 'ERR',
@@ -120,7 +158,7 @@ const getDetailBorrowerSlip = (id) => {
             resolve({
                 status: 'OK',
                 message: 'SUCESSS',
-                data: order
+                data: bSlip
             })
         } catch (e) {
             // console.log('e', e)
@@ -129,10 +167,19 @@ const getDetailBorrowerSlip = (id) => {
     })
 }
 
-const cancelBorrowerSlip = (id, data) => { //id của slip khác bookId
+const cancelBorrow = (id) => { //id của slip khác bookId
     return new Promise(async (resolve, reject) => {
         try {
-            const promises = data.map(async (book) => {
+            const slip = await BorrowerSlip.findById(id)
+            if (slip.state !== 0) {
+                resolve({
+                    status: "ERR",
+                    message: "Không thể hủy sau khi phiếu mượn đã được xác nhận"
+                })
+                return
+            }
+            const books = slip.books
+            const promises = books.map(async (book) => {
                 const bookData = await Book.findOneAndUpdate(
                     {
                         bookId: book.bookId,
@@ -147,10 +194,10 @@ const cancelBorrowerSlip = (id, data) => { //id của slip khác bookId
                     { new: true }
                 )
                 if (!bookData) {
-                    resolve({
+                    return {
                         status: 'ERR',
                         message: `sách có id ${book.bookId} không còn tồn tại`
-                    })
+                    }
                 } else {
                     return {
                         status: 'OK',
@@ -158,16 +205,15 @@ const cancelBorrowerSlip = (id, data) => { //id của slip khác bookId
                     }
                 }
             })
-            const results = await Promise.all(promises)
+            await Promise.all(promises)
+            console.log("chưa xóa")
+            await BorrowerSlip.findByIdAndDelete(id, { new: true })
+            console.log("xóa roài địu")
+            resolve({
+                status: "OK",
+                message: "cancel borrower success"
+            })
 
-            if (results && results.length == data.length) {
-                await BorrowerSlip.findByIdAndDelete(id, { new: true })
-            } else {
-                resolve({
-                    status: "ERR",
-                    message: "cancel borrowe failed"
-                })
-            }
         } catch (e) {
             reject(e)
         }
@@ -189,21 +235,35 @@ const getAllBorrowerSlip = () => {
     })
 }
 
+const deleteMany = (ids) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await BorrowerSlip.deleteMany({ _id: ids })
+            resolve({
+                status: 'OK',
+                message: 'Delete borrower slip success',
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 const deleteBorrowerSlip = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             const checkBSlip = await BorrowerSlip.findOne({
-                _id: orderId
+                _id: id
             })
-            if (checkOrder === null) {
+            if (checkBSlip === null) {
                 resolve({
                     status: 'ERR',
-                    message: 'The order is not define'
+                    message: 'The borrower slip is not define'
                 })
             }
 
-            listBook = checkBSlip.books
-            if (checkBSlip.state === 0 || checkBSlip.state == 1) { //trạng thái đang chờ hoặc đang mượn
+            const data = checkBSlip.books
+            if (checkBSlip.state === 0 || checkBSlip.state === 1) { //trạng thái đang chờ hoặc đang mượn
                 const promises = data.map(async (book) => {
                     const bookData = await Book.findOneAndUpdate(
                         {
@@ -294,7 +354,7 @@ const updateState = (id, newState) => {
                 })
                 await Promise.all(promises)
             }
-            BorrowerSlip.state = newState
+            bSlip.state = newState
             await bSlip.save()
             if (bSlip.state !== newState) {
                 return resolve({
@@ -320,8 +380,9 @@ module.exports = {
     createBorrowerSlip,
     getAllUserSlip,
     getDetailBorrowerSlip,
-    cancelBorrowerSlip,
+    cancelBorrow,
     getAllBorrowerSlip,
+    deleteMany,
     deleteBorrowerSlip,
     updateState
 }
