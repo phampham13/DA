@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
+import axios from "axios"
 import classNames from "classnames/bind";
 import styles from "./BookDetail.module.scss";
 import { Link } from 'react-router-dom'
@@ -18,13 +19,21 @@ export const BookDetail = () => {
   const { id } = useParams();
   const navigateTo = useNavigate();
   const { token, user } = useContext(AuthContext);
+  const [book, setBook] = useState({})
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchBooks())
-  }, [dispatch])
+    fetchApi()
+    console.log("id", id)
+  }, [])
 
-  const book = useSelector(state => selectBookById(state, id))
-  console.log(1, book)
+  const fetchApi = async () => {
+    const res = await axios.get(`http://localhost:8017/books/getDetail/${id}`);
+    console.log(res.data)
+    setBook(res.data.data);
+  }
+
+  //const book = useSelector(state => selectBookById(state, id))
+  //console.log(1, book)
   //const book = { bookId: 'NNA001', categoryName: 'Nguyễn Ngọc Ánh', author: 'Nguyễn Ngọc Ánh', name: 'Tôi thấy hoa vàng trên cỏ xanh', quantityTotal: 7, quantityAvailabel: 5, publisher: 'Kim Đồng', coverImg: 'https://upload.wikimedia.org/wikipedia/vi/3/3d/T%C3%B4i_th%E1%BA%A5y_hoa_v%C3%A0ng_tr%C3%AAn_c%E1%BB%8F_xanh.jpg' }
 
   const [count, setCount] = useState(1);
@@ -43,8 +52,8 @@ export const BookDetail = () => {
       if (book.quantityAvailabel < 1) {
         toast.info('Đã hết sách, bạn vui lòng quay lại mượn sau !')
       } else {
-        const userId = user.id;
-        dispatch(addBookToCard(userId, id, count));
+        //const userId = user.id;
+        //dispatch(addBookToCard(userId, id, count));
         toast.success("Sản phẩm đã được thêm vào giỏ hàng của bạn");
       }
     } else {

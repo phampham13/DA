@@ -1,6 +1,7 @@
 .wrapper {
-    min-height: 400px;
-    margin: 20px 30px;
+    min-height: 700px;
+    padding: 20px 30px 50px 30px;
+    background-color: rgb(245, 245, 245);
 
     h1 {
         display: block;
@@ -9,45 +10,69 @@
     .cardListBook {
         width: 70%;
         float: left;
-        margin-right: 20px;
-        margin-bottom: 30px;
-        margin-top: 20px;
+        padding-right: 20px;
+        padding-bottom: 30px;
+        padding-top: 20px;
 
         .book {
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 20px;
+            padding: 10px;
+            position: relative;
+
+
 
             span {
+                position: absolute;
+                top: 0px;
+                left: 0px;
                 display: inline-block;
                 font-size: 20px;
                 cursor: pointer;
+                margin-right: 20px;
             }
 
             img {
-                width: 66px;
-                height: 70px;
-                margin: 0px 20px;
+                width: 80px;
+                height: 120px;
+                margin: 0 20px;
+                /* Khoảng cách giữa ảnh và văn bản */
             }
 
-            .title {
-                display: inline-block;
-                font-weight: normal;
-                font-size: 14px;
-                line-height: 1.2;
-                font-family: "Mulish", sans-serif;
-                margin: 0;
+            .text {
+                flex-grow: 1;
 
-                span {
-                    display: block;
+                /* Chiếm hết khoảng trống giữa ảnh và nút control */
+                .id {
                     font-size: 14px;
-                    font-weight: 400;
                     color: #898989;
                     font-family: "Mulish", sans-serif;
+                }
+
+                .title {
+                    font-weight: bolder;
+                    font-size: 14px;
+                    line-height: 1.2;
+                    font-family: "Mulish", sans-serif;
+                    margin: 0;
+
+                    span {
+                        display: block;
+                        font-size: 14px;
+                        font-weight: 400;
+                        color: #898989;
+                        font-family: "Mulish", sans-serif;
+                    }
                 }
             }
 
             .count {
-                float: right;
-                margin-top: 23px;
+                display: flex;
+                align-items: center;
+                /* Canh giữa các phần tử theo chiều dọc */
                 border: 1px solid rgb(136, 126, 126);
                 border-radius: 5px;
 
@@ -64,7 +89,7 @@
                     color: #8c9196;
                     font-size: 20px;
                     font-weight: 400;
-                    padding: 0px 15px;
+                    padding: 0 15px;
                     margin: 0;
                 }
             }
@@ -75,7 +100,7 @@
         float: left;
         width: 25%;
         border-top: none;
-        background: #f7f7f7;
+        background: white;
         border: 3px;
         padding: 20px;
         margin-top: 20px;
@@ -89,7 +114,6 @@
             color: black;
 
             span {
-
                 color: red;
             }
         }
@@ -102,21 +126,14 @@
             padding: 10px 20px;
             width: 100%;
             font-size: 20px;
+            background-color: var(--sub-color2);
+            color: white;
 
             &:hover {
                 height: 60px;
-                background-color: var(--sub-color2);
-                color: white;
-                border: none
+                //background-color: var(--sub-color2);
+                border: none;
             }
-        }
-    }
-
-    ModalCart {
-        select {
-            display: inline-block;
-            background-color: white;
-            color: black;
         }
     }
 

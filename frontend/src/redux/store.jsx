@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import productReducer from './slides/productSlide'
-import userReducer from './slides/userSlide'
-import orderReducer from './slides/orderSlide'
+import productReducer from './slides/productSlice'
+import userReducer from './slides/userSlice'
+import orderReducer from './slides/orderSlice'
 import booksReducer from './slides/booksSlice'
 import borrowerCardReducer from './slides/borrowerCardSlice'
+import cartReducer from './slides/cartSlice'
+
 
 export default configureStore({
   reducer: {
@@ -11,6 +13,7 @@ export default configureStore({
     user: userReducer,
     order: orderReducer,
     books: booksReducer,
-    borrowerCard: borrowerCardReducer
+    borrowerCard: borrowerCardReducer,
+    cart: cartReducer
   }
 })

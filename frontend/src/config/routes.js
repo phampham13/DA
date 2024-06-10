@@ -14,7 +14,7 @@ const routes = {
 
     //admin
 
-    adminHome: '/admin/books',
+    adminHome: '/admin',
     bookListAdmin: '/admin/books',
     addBookForm: '/admin/addBook',
     editBookForm: '/admin/editBook/:id',

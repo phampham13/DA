@@ -42,7 +42,7 @@ const userRoutes = [
 ];
 
 const adminRoutes = [
-    { path: routesConfig.admin, component: BookList, title: 'Quản lý sách' },
+    //{ path: routesConfig.adminHome, component: BookList, title: 'Quản lý sách' },
     { path: routesConfig.categoryListAdmin, component: BookCategory, title: 'Quản lý thể loại sách' },
     { path: routesConfig.bookListAdmin, component: BookList, title: 'Quản lý sách' },
     { path: routesConfig.addBookForm, component: AddBookForm, title: 'Thêm sách mới' },

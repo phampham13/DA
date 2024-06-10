@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { ApiBOOK } from "../../../services/Book/BookService";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBooks, selectAllBooks, selectBookIds, selectBookById, searchBook } from "../../../redux/slides/booksSlice";
 
@@ -35,26 +36,53 @@ const fakeCate = [
 const BooksList = () => {
     const dispatch = useDispatch()
 
-    const books = useSelector(selectAllBooks)
-    const [originalProducts, setOriginalProducts] = useState(books);
+    //const books = useSelector(selectAllBooks)
+    const [books, setBooks] = useState([])
+    const [originalBooks, setOriginalBooks] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("Tất cả");
     const [keyword, setKeyword] = useState('')
     const [categories, setCategories] = useState([])
     const navigate = useNavigate();
+
+    const [data, setData] = useState([]);
+    const [request, setRequest] = useState({
+        limit: 20,
+        page: 0,
+        sort: "quantityTotal",
+    });
+    useEffect(() => {
+        getAll();
+        fetchApi()
+    }, []);
+    const getAll = async () => {
+        const res = await ApiBOOK.getAllBook(
+            request.limit,
+            request.page,
+            request.sort
+        );
+        console.log(res);
+        setData(res.data);
+        setOriginalBooks(res.data)
+        setBooks(res.data)
+    };
 
     //useEffect(() => {
     //    fetchApi()
     //}, [])
 
     const fetchApi = async () => {
-        const res = await axios.get("http://localhost:8017/products/getAll")
-        return res.data
+        const res = await axios.get("http://localhost:8017/bookCategories/getAll")
+        const t = res.data.data
+        console.log("tttttt", t)
+        const cate = t.map(item => item.categoryName);
+        console.log("cate", cate)
+        setCategories(cate)
     }
 
-    const query = useQuery({ queryKey: ['todos'], queryFn: fetchApi })
-    console.log('query', query)
+    //const query = useQuery({ queryKey: ['todos'], queryFn: fetchApi })
+    //console.log('query', query)
 
-    useEffect(() => {
+    /*useEffect(() => {
         async function getAllCategory() {
             const response = await fetch("https://jsonplaceholder.typicode.com/posts");
             const data = await response.json();
@@ -68,10 +96,12 @@ const BooksList = () => {
 
     useEffect(() => {
         dispatch(fetchBooks())
-    }, [dispatch])
+    }, [dispatch])*/
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(event.target.value);
+        const filteredBooks = originalBooks.filter(book => book.categoryName === selectedCategory)
+        setBooks(filteredBooks)
     };
 
     const handleInputChange = (keyword) => {
@@ -80,8 +110,19 @@ const BooksList = () => {
 
     function handleSearch(e) {
         if (keyword.trim()) {
-            dispatch(searchBook(words))
-            setWordsToSearch('')
+            const booksByAuthor = originalBooks.filter(book => book.author.toLowerCase().includes(keyword.toLowerCase()));
+
+            // Lọc sách có tên sách chứa từ khóa
+            const booksByName = originalBooks.filter(book => book.name.toLowerCase().includes(keyword.toLowerCase()));
+
+            // Kết hợp hai mảng kết quả
+            const combinedBooks = [...booksByAuthor, ...booksByName];
+
+            // Loại bỏ các sách trùng lặp trong mảng kết quả
+            const uniqueBooks = combinedBooks.filter((book, index) =>
+                combinedBooks.findIndex(b => b._id === book._id) === index
+            );
+            setBooks(uniqueBooks)
         }
     }
 
@@ -110,9 +151,9 @@ const BooksList = () => {
             <div className={cx('search-bar')}>
                 <select value={selectedCategory} onChange={handleCategoryChange}>
                     <option value="">Tất cả loại</option>
-                    {categories.map((category) => (
-                        <option key={category.categoryId} value={category.categoryName}>
-                            {category.categoryName}
+                    {categories.map((category, index) => (
+                        <option key={index} value={category}>
+                            {category}
                         </option>
                     ))}
                 </select>

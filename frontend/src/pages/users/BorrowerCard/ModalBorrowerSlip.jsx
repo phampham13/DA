@@ -5,14 +5,22 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup"
+import { AuthContext } from "../../../contexts/AuthContext";
+import { createBorrowerSlip } from "../../../services/BorrowerSlipService";
+import { resetCard, updateCard } from "../../../redux/slides/borrowerCardSlice";
+import { useNavigate } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
     const dispatch = useDispatch()
+    const navigateTo = useNavigate()
+    const card = useSelector((state) => state.borrowerCard)
+    const { user, token } = useContext(AuthContext)
+    const [close, setClose] = useState(false)
 
     const [cities, setCities] = useState([]);
     const [selectedCity, setSelectedCity] = useState("");
@@ -74,18 +82,22 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
             district: Yup.string().required("Bạn chưa chọn quận/huyện"),
             ward: Yup.string().required("Bạn chưa chọn phường/xã"),
         }),
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
             const dataToSend = {
-                name: values.name,
-                province: values.city,
-                address: `${values.address}, ${values.ward}, ${values.district}, ${values.city}, ${values.address}`,
-                status: 0,
-                items: cardListBook,
-                total: total
-            };
-            dispatch(createSlipAction(dataToSend.name, dataToSend.phoneNumber, dataToSend.status, dataToSend.address, dataToSend.total, dataToSend.items))
-            toast.success("Mượn sách thành công, CTV sẽ sớm xác nhận phiếu mượn");
-            navigateTo("/borrowerCard");
+                name: values.receiverName,
+                phoneNumber: values.phoneNumber,
+                address: `${values.address}, ${values.ward}, ${values.district}, ${values.city}`,
+                books: cardListBook,
+                totalAmount: total,
+                userId: user.id
+            }
+            console.log("dữ liệu đây", dataToSend)
+            const res = await createBorrowerSlip(token, dataToSend)
+            console.log("nhận được res rồi: ", res.status)
+            dispatch(resetCard())
+            toast.success("Mượn sách thành công, CTV sẽ sớm xác nhận phiếu mượn")
+            //this.onHide = true
+            //navigateTo('/books')
         },
     })
 
@@ -177,9 +189,9 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
                             <div className={cx("book-list")}>
 
                                 {cardListBook.map((book) => (
-                                    <div key={book.bookId} className={cx("item")}>
-                                        <img src={book.coverImg} alt={book.name} className={cx("b-image")} />
-                                        <p className={cx("item-field")}>Tên sách: {book.name}</p>
+                                    <div key={book.bookId._id} className={cx("item")}>
+                                        <img src={book.bookId.coverImg} alt={book.bookId.name} className={cx("b-image")} />
+                                        <p className={cx("item-field")}>Tên sách: {book.bookId.name}</p>
                                         <p className={cx("item-field")}>Số lượng: {book.quantity}</p>
                                     </div>
                                 ))}
