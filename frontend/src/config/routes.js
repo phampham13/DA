@@ -16,9 +16,6 @@ const routes = {
 
     adminHome: '/admin',
     bookListAdmin: '/admin/books',
-    addBookForm: '/admin/addBook',
-    editBookForm: '/admin/editBook/:id',
-    categoryListAdmin: '/admin/bookCategories',
     borrowerListAdmin: '/admin/borrowers',
     onSlipAdmin: '/admin/onSlip',
     offSlipAdmin: '/admin/offSlip',

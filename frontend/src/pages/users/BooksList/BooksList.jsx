@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { ApiBOOK } from "../../../services/Book/BookService";
+import { ApiBOOK } from "../../../services/BookService";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBooks, selectAllBooks, selectBookIds, selectBookById, searchBook } from "../../../redux/slides/booksSlice";
 
@@ -140,7 +140,7 @@ const BooksList = () => {
                 <h5 className={cx('name')}>{book.name}</h5>
                 <p>Tác giả: {book.author}</p>
                 <p>Tổng số lượng: {book.quantityTotal}</p>
-                <p>Sẵn có: <span>{book.quantityAvailabel}</span></p>
+                <p>Sẵn có: <span>{book.quantityAvailable}</span></p>
             </div>
         </div>
     ))

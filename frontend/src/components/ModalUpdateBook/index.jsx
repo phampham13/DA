@@ -3,7 +3,7 @@ import { Modal, Form, Input, InputNumber, Button, Select } from "antd";
 import { toast } from "react-toastify";
 
 import UploadImage from "../Upload/UploadImage";
-import { ApiBOOK } from "../../services/Book/BookService";
+import { ApiBOOK } from "../../services/BookService";
 const { Option } = Select;
 const ModalForm = ({ visible, onCancel, onSave, book }) => {
   const [form] = Form.useForm();
@@ -128,7 +128,7 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
           <InputNumber min={1} />
         </Form.Item>
         <Form.Item
-          name="quantityAvailabel"
+          name="quantityAvailable"
           label="Số lượng sẵn có"
           rules={[
             { required: true, message: "Please input the available quantity!" },

@@ -7,10 +7,11 @@ const bookSchema = new mongoose.Schema(
         name: { type: String, required: true },
         author: { type: String, required: true },
         categoryName: { type: String, default: "Chưa phân loại", required: true },
-        quantityAvailabel: { type: Number, required: true },
+        quantityAvailable: { type: Number, required: true },
         quantityTotal: { type: Number, required: true },
         publisher: { type: String },
         coverImg: { type: String, required: true },
+        description: { type: String },
         branch: { type: Number, default: "1" } //1 cơ sở Đại La, 2 Cầu Giấy
     },
     {

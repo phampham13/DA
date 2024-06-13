@@ -1,7 +1,7 @@
 import classNames from "classnames/bind";
 import styles from "../BookManage/BookList.module.scss";
 import { useEffect, useState, useRef } from "react";
-import { ApiProduct } from "../../../services/Book/ProductService";
+import { ApiProduct } from "../../../services/ProductService";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
@@ -16,7 +16,7 @@ const Products = () => {
   const [data, setData] = useState([]);
   const [product, setProduct] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  
+
   const [request, setRequest] = useState({
     limit: 10,
     page: 0,
@@ -59,13 +59,13 @@ const Products = () => {
     console.log(res.data);
     setShowModal(true)
   };
-  const handleCloseModal= async ()=>{
+  const handleCloseModal = async () => {
     setShowModal(false)
 
   }
-  const handleEdit = async (product) => {};
-  const handleDelete = async (id) => {};
-  const handleDeleteMany = async () => {};
+  const handleEdit = async (product) => { };
+  const handleDelete = async (id) => { };
+  const handleDeleteMany = async () => { };
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -308,7 +308,7 @@ const Products = () => {
           dataSource={dataTable}
         />
 
-<Modal show={showModal} onHide={handleCloseModal} size="lg">
+        <Modal show={showModal} onHide={handleCloseModal} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>Chi tiết sản phẩm</Modal.Title>
           </Modal.Header>

@@ -64,6 +64,9 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
         formik.setFieldValue("ward", wardName);
     };
 
+    const handleCard = () => {
+        dispatch(resetCard())
+    }
     const formik = useFormik({
         initialValues: {
             receiverName: "",
@@ -91,13 +94,16 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
                 totalAmount: total,
                 userId: user.id
             }
-            console.log("dữ liệu đây", dataToSend)
+            //console.log("dữ liệu đây", dataToSend)
             const res = await createBorrowerSlip(token, dataToSend)
-            console.log("nhận được res rồi: ", res.status)
-            dispatch(resetCard())
-            toast.success("Mượn sách thành công, CTV sẽ sớm xác nhận phiếu mượn")
-            //this.onHide = true
-            //navigateTo('/books')
+            if (res.status !== "OK") {
+                toast.error(res.message)
+            } else {
+                //disptach không bắn được ở đây, dù không hiểu vì sao
+                handleCard()
+                toast.success("Mượn sách thành công, CTV sẽ sớm xác nhận phiếu mượn")
+            }
+            handleClose()
         },
     })
 

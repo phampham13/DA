@@ -3,7 +3,6 @@ import styles from "./BookList.module.scss";
 
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import customStyles from "./CustomTable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEdit,
@@ -29,7 +28,7 @@ const cx = classNames.bind(styles);
 
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
-import { ApiBOOK } from "../../../services/Book/BookService";
+import { ApiBOOK } from "../../../services/BookService";
 const BookList = () => {
   const [data, setData] = useState([]);
   const [request, setRequest] = useState({
@@ -244,9 +243,9 @@ const BookList = () => {
     },
     {
       title: "Số lượng sẵn có",
-      dataIndex: "quantityAvailabel",
+      dataIndex: "quantityAvailable",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.quantityAvailabel - b.quantityAvailabel,
+      sorter: (a, b) => a.quantityAvailable - b.quantityAvailable,
     },
     {
       title: "Hình ảnh",
@@ -425,7 +424,7 @@ const BookList = () => {
             <Modal.Title>Xác nhận hủy</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Bạn chắc chắn muốn xóa sách{selectedRow.name}?
+            Bạn chắc chắn muốn xóa sách: {selectedRow.name}?
           </Modal.Body>
           <Modal.Footer>
             <Button

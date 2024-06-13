@@ -3,7 +3,7 @@ import { Modal, Form, Input, InputNumber, Button, Select } from "antd";
 import { toast } from "react-toastify";
 
 import UploadImage from "../Upload/UploadImage";
-import { ApiBOOK } from "../../services/Book/BookService";
+import { ApiBOOK } from "../../services/BookService";
 const { Option } = Select;
 const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
   const [form] = Form.useForm();
@@ -109,7 +109,7 @@ const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
             </Form.Item>
           </>
         )} */}
-         <Form.Item
+        <Form.Item
           name="price"
           label="Giá"
           rules={[
@@ -127,7 +127,7 @@ const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
         >
           <InputNumber min={1} />
         </Form.Item>
-      
+
 
         <Form.Item
           name="image"

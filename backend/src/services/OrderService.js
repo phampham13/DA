@@ -36,7 +36,7 @@ const createOrder = (newOrder) => {
                 outOfStockProduct.forEach((item) => {
                     arrId.push(item.id)
                 })
-                resolve({
+                return resolve({
                     status: 'ERR',
                     message: `San pham voi id: ${arrId.join(',')} khong du hang`
                 })
@@ -95,7 +95,7 @@ const getAllOrderDetails = (id) => {
                 user: id
             }).sort({ createdAt: -1, updatedAt: -1 })
             if (orders === null) {
-                resolve({
+                return resolve({
                     status: 'ERR',
                     message: 'The  not defined'
                 })
@@ -116,9 +116,17 @@ const getAllOrderDetails = (id) => {
 const getOrderDetails = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const order = await Order.findById(id).populate('orderItems.productId');
+            const order = await Order.findById(id)
+                .populate({
+                    path: 'orderItems.productId',
+                    select: 'name image price'
+                })
+                .populate({
+                    path: 'user',
+                    select: 'name phoneNumber' // select only the fields you need
+                })
             if (order === null) {
-                resolve({
+                return resolve({
                     status: 'ERR',
                     message: 'The order is not defined'
                 })
@@ -141,11 +149,10 @@ const cancelOrderDetails = (id) => {
         try {
             const order = await Order.findById(id)
             if (order.status !== "pending") {
-                resolve({
+                return resolve({
                     status: "ERR",
                     message: "Không thể hủy đơn sau khi đơn đã được ship"
                 })
-                return
             }
             const promises = data.map(async (item) => {
                 const productData = await Product.findOneAndUpdate(
@@ -204,7 +211,7 @@ const deleteManyOrder = (ids) => {
     return new Promise(async (resolve, reject) => {
         try {
             await Order.deleteMany({ _id: ids })
-            resolve({
+            return resolve({
                 status: 'OK',
                 message: 'Delete product success',
             })
@@ -221,7 +228,7 @@ const deleteOrder = (orderId) => {
                 _id: orderId
             })
             if (checkOrder === null) {
-                resolve({
+                return resolve({
                     status: 'ERR',
                     message: 'The order is not define'
                 })
@@ -243,7 +250,7 @@ const updateStatus = (orderId, newStatus) => {
         try {
             const order = await Order.findById(orderId)
             if (!order) {
-                resolve({
+                return resolve({
                     status: "ERR",
                     message: "order is not define"
                 })
@@ -280,7 +287,7 @@ const updateStatus = (orderId, newStatus) => {
                         { new: true }
                     )
                     if (!productData) {
-                        resolve({
+                        return resolve({
                             status: 'ERR',
                             message: `sản phẩm có id ${item.productId} không còn tồn tại`
                         })
@@ -315,6 +322,79 @@ const updateStatus = (orderId, newStatus) => {
     })
 }
 
+const totalRevenueStatistic = (year) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            //Tạo mảng để lưu tổng doanh thu theo tháng
+            const monthlyRevenueStats = [];
+
+            //Tạo biến tổng doanh thu
+            let totalRevenue = 0
+            for (let month = 1; month <= 12; month++) {
+                //Xử lý điều kiện date trước khi thống kê doanh thu từng tháng
+                let dateCondition;
+
+                if ([1, 3, 5, 7, 8, 10, 12].includes(month)) {
+                    dateCondition = [new Date(`${year}-0${month}-01`), new Date(`${year}-0${month}-31`)];
+                } else if ([4, 6, 9, 11].includes(month)) {
+                    dateCondition = [new Date(`${year}-0${month}-01`), new Date(`${year}-0${month}-30`)];
+                } else if (month === 2) {
+                    if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) {
+                        dateCondition = [new Date(`${year}-02-01`), new Date(`${year}-02-29`)];
+                    } else {
+                        dateCondition = [new Date(`${year}-02-01`), new Date(`${year}-02-28`)];
+                    }
+                }
+
+                const monthlyStats = await Order.aggregate([
+                    {
+                        $match: {
+                            itemsPrice: { $gt: 0 },
+                            status: 'shipped',
+                            createdAt: { $gte: dateCondition[0], $lte: dateCondition[1] }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            totalRevenue: { $sum: "$itemsPrice" },
+                        }
+                    }
+                ]);
+
+                const monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+                const monthName = monthNames[month - 1];
+
+                // Lưu thông tin thống kê cho tháng vào mảng monthlyRevenueStats
+                if (monthlyStats.length > 0) {
+                    totalRevenue += monthlyStats[0].totalRevenue;
+                    monthlyRevenueStats.push({
+                        month: monthName,
+                        revenue: monthlyStats[0].totalRevenue
+                    });
+                } else {
+                    monthlyRevenueStats.push({
+                        month: monthName,
+                        revenue: 0
+                    });
+                }
+            }
+
+            return resolve({
+                status: "OK",
+                message: "complete statistic",
+                data: {
+                    totalRevenue: totalRevenue,
+                    monthlyRevenueStats: monthlyRevenueStats
+                }
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     createOrder,
     getAllOrderDetails,
@@ -323,5 +403,6 @@ module.exports = {
     getAllOrder,
     deleteManyOrder,
     deleteOrder,
-    updateStatus
+    updateStatus,
+    totalRevenueStatistic
 }

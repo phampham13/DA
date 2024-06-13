@@ -12,7 +12,7 @@ const fakeBookData = [
     author: "Nguyễn Ngọc Ánh",
     name: "Tôi thấy hoa vàng trên cỏ xanh",
     quantityTotal: 7,
-    quantityAvailabel: 5,
+    quantityAvailable: 5,
     publisher: "Kim Đồng",
     coverImg:
       "https://upload.wikimedia.org/wikipedia/vi/3/3d/T%C3%B4i_th%E1%BA%A5y_hoa_v%C3%A0ng_tr%C3%AAn_c%E1%BB%8F_xanh.jpg",
@@ -23,7 +23,7 @@ const fakeBookData = [
     author: "Nguyễn Ngọc Ánh",
     name: "Tôi là Beto",
     quantityTotal: 5,
-    quantityAvailabel: 2,
+    quantityAvailable: 2,
     publisher: "Kim Đồng",
     coverImg:
       "https://upload.wikimedia.org/wikipedia/vi/9/98/T%C3%B4i_l%C3%A0_B%C3%AAt%C3%B4.jpg",
@@ -34,7 +34,7 @@ const fakeBookData = [
     author: "Hae Min",
     name: "Bước chậm lại giữa thế gian vội vã",
     quantityTotal: 3,
-    quantityAvailabel: 1,
+    quantityAvailable: 1,
     publisher: "Nhã Nam",
     coverImg:
       "https://salt.tikicdn.com/cache/w1200/ts/product/7a/18/8e/2f70de3ea7eec9c34f55e402254e27ed.jpg",
@@ -45,7 +45,7 @@ const fakeBookData = [
     author: "Phan Việt",
     name: "Xuyên Mỹ",
     quantityTotal: 1,
-    quantityAvailabel: 1,
+    quantityAvailable: 1,
     publisher: "Dân Trí",
     coverImg:
       "https://salt.tikicdn.com/cache/w1200/media/catalog/product/b/a/bat-hanh-la-mot-tai-san-xuyen-my.jpg",
@@ -56,7 +56,7 @@ const fakeBookData = [
     author: "Phan Việt",
     name: "Về Nhà",
     quantityTotal: 1,
-    quantityAvailabel: 0,
+    quantityAvailable: 0,
     publisher: "Nhã Nam",
     coverImg:
       "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1630678166i/34816365.jpg",
@@ -67,7 +67,7 @@ const fakeBookData = [
     author: "Suzuki Koji",
     name: "Vòng xoáy chết",
     quantityTotal: 3,
-    quantityAvailabel: 2,
+    quantityAvailable: 2,
     publisher: "Nhã Nam",
     coverImg:
       "https://salt.tikicdn.com/cache/w1200/media/catalog/product/v/o/vong-xoay-chet_1.jpg",
@@ -78,7 +78,7 @@ const fakeBookData = [
     author: "Suzuki Koji",
     name: "Vòng xoáy chết 2",
     quantityTotal: 3,
-    quantityAvailabel: 2,
+    quantityAvailable: 2,
     publisher: "Nhã Nam",
     coverImg:
       "https://salt.tikicdn.com/cache/w1200/media/catalog/product/v/o/vong-xoay-chet_1.jpg",
@@ -92,7 +92,7 @@ const fakeBook = [
     author: "Nguyễn Ngọc Ánh",
     name: "Kính vạn hoa 4",
     quantityTotal: 2,
-    quantityAvailabel: 2,
+    quantityAvailable: 2,
     publisher: "Kim Đồng",
     coverImg:
       "https://sachtiengviet.com/cdn/shop/products/e22340ac820731a401bd7fac05dcfe9d.jpg?v=1700783823",

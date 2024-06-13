@@ -1,61 +1,79 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import numeral from 'numeral';
 
-const DailySalesChart = ({ data, nameChart }) => {
-    return (
-        <BarChart width={580} height={350} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis
-                tickFormatter={(value) =>
-                    value >= 1000000 ? `${(value / 1000000).toFixed(2)}Tr` : numeral(value).format('0,0')
-                }
-            />
-            <Tooltip formatter={(value) => numeral(value).format('0,0')} />
-            <Legend />
-            <Bar dataKey="value" fill="#8884d8" name={`Tổng ${nameChart} theo ngày`} />
-        </BarChart>
-    );
-};
-
-const WeeklySalesChart = ({ data, nameChart }) => {
-    return (
-        <BarChart width={580} height={350} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="week" />
-            <YAxis
-                tickFormatter={(value) =>
-                    value >= 1000000 ? `${(value / 1000000).toFixed(2)}Tr` : numeral(value).format('0,0')
-                }
-            />
-            <Tooltip formatter={(value) => numeral(value).format('0,0')} />
-            <Legend />
-            <Bar dataKey="value" fill="#82ca9d" name={`Tổng ${nameChart} theo tuần`} />
-        </BarChart>
-    );
-};
-
 const MonthlySalesChart = ({ data, nameChart }) => {
-    const customTooltipFormatter = (value, name, props) => {
-        // console.log(value, name, props)
-        return numeral(value).format('0,0');
+    const customTooltipFormatter = (revenue, name, props) => {
+        return numeral(revenue).format('0,0');
     };
 
     return (
-        <BarChart width={580} height={350} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis
-                tickFormatter={(value) =>
-                    value >= 1000000 ? `${(value / 1000000).toFixed(2)}Tr` : numeral(value).format('0,0')
-                }
-            />
-            <Tooltip formatter={(value) => numeral(value).format('0,0')} />
-            <Legend />
-            <Bar dataKey="value" fill="#ffc658" name={`Tổng ${nameChart} theo tháng`} />
-        </BarChart>
+        <ResponsiveContainer width="100%" height={500} minWidth={400} minHeight={300}>
+            <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis
+                    tickFormatter={(revenue) =>
+                        revenue >= 1000000 ? `${(revenue / 1000000).toFixed(2)}Tr` : `${numeral(revenue).format('0,0')}đ`
+                    }
+                />
+                <Tooltip formatter={(revenue) => numeral(revenue).format('0,0')} />
+                <Legend />
+                <Bar dataKey="revenue" fill="#ffc658" name={`Tổng ${nameChart} theo tháng`} />
+            </BarChart>
+        </ResponsiveContainer>
     );
 };
 
-export { DailySalesChart, WeeklySalesChart, MonthlySalesChart };
+const BorrowerSlipChart = ({ data }) => {
+    return (
+        <ResponsiveContainer width="100%" height={300} minWidth={400} minHeight={300}>
+            <BarChart
+                data={data}
+                margin={{
+                    top: 20,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                }}
+            >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="pending" stackId="a" fill="#ffc658" />
+                <Bar dataKey="borowing" stackId="a" fill="#59f061" />
+                <Bar dataKey="returned" stackId="a" fill="#42adf5" />
+                <Bar dataKey="overdue" stackId="a" fill="#f05959" />
+            </BarChart>
+        </ResponsiveContainer>
+    );
+};
+
+const OffBorrowerSlipChart = ({ data }) => {
+    return (
+        <ResponsiveContainer width="100%" height={300} minWidth={400} minHeight={300}>
+            <BarChart
+                data={data}
+                margin={{
+                    top: 20,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                }}
+            >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="borowing" stackId="a" fill="#59f061" />
+                <Bar dataKey="returned" stackId="a" fill="#42adf5" />
+                <Bar dataKey="overdue" stackId="a" fill="#f05959" />
+            </BarChart>
+        </ResponsiveContainer>
+    );
+};
+
+export { MonthlySalesChart, BorrowerSlipChart, OffBorrowerSlipChart };

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createAuthHeader } from "../auth/authHeader";
+import { createAuthHeader } from "./auth/authHeader";
 const token = localStorage.getItem("token");
 class ProductAPI {
   async getAllProduct(limit, page, sort) {
