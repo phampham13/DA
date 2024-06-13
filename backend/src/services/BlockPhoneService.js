@@ -1,4 +1,4 @@
-const BlockPhone = require("../models/BlockPhoneModel")
+const BlockPhone = require("../models/BlockedPhoneModel")
 
 const createBlockPhone = async (bPhone) => {
     const addBlockPhone = await BlockPhone.create({

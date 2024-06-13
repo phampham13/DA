@@ -140,7 +140,7 @@ const BooksList = () => {
                 <h5 className={cx('name')}>{book.name}</h5>
                 <p>Tác giả: {book.author}</p>
                 <p>Tổng số lượng: {book.quantityTotal}</p>
-                <p>Sẵn có: <span>{book.quantityAvailabel}</span></p>
+                <p>Sẵn có: <span>{book.quantityAvailable}</span></p>
             </div>
         </div>
     ))

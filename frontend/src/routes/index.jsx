@@ -13,7 +13,6 @@ import HandmadeItems from '../pages/users/handmadeItems/handmadeItems';
 import BorrowerCard from '../pages/users/BorrowerCard/BorrowerCard';
 
 import BookList from '../pages/admins/BookManage/BookList';
-import BookCategory from '../pages/admins/BookManage/BookCategory';
 import OnBorrowerSlip from '../pages/admins/BorrowerSlip/OnBorrowerSlip';
 import OffBorrowerSlip from '../pages/admins/BorrowerSlip/OffBorrowerSlip';
 import BorrowerList from '../pages/admins/BorrowerAcc/BorrowerList';
@@ -21,8 +20,6 @@ import Products from '../pages/admins/HandmadeManage/Products';
 import Orders from '../pages/admins/HandmadeManage/Orders';
 
 import Statistics from '../pages/admins/Statistics/Statistics';
-import AddBookForm from '../pages/admins/BookManage/AddBookForm';
-import EditBookForm from '../pages/admins/BookManage/EditBookForm';
 import DefaultLayout from '../layouts/AdminLayout/DefaultLayout/DefaultLayout';
 import { LibraryAdd } from '@mui/icons-material';
 //import layout
@@ -43,10 +40,7 @@ const userRoutes = [
 
 const adminRoutes = [
     //{ path: routesConfig.adminHome, component: BookList, title: 'Quản lý sách' },
-    { path: routesConfig.categoryListAdmin, component: BookCategory, title: 'Quản lý thể loại sách' },
     { path: routesConfig.bookListAdmin, component: BookList, title: 'Quản lý sách' },
-    { path: routesConfig.addBookForm, component: AddBookForm, title: 'Thêm sách mới' },
-    { path: routesConfig.editBookForm, component: EditBookForm, title: 'Thêm sách mới' },
     { path: routesConfig.onSlipAdmin, component: OnBorrowerSlip, title: 'Quản lý phiếu mượn sách On' },
     { path: routesConfig.offSlipAdmin, component: OffBorrowerSlip, title: 'Quản lý phiếu mượn sách Off' },
     { path: routesConfig.borrowerListAdmin, component: BorrowerList, title: 'Quản lý tài khoản bạn đọc' },

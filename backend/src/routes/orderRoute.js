@@ -11,5 +11,6 @@ router.get('/get-all-order', authMiddleWare, orderController.getAllOrder)
 router.post('/delete-many', authMiddleWare, orderController.deleteManyOrder)
 router.delete('/delete/:id', authMiddleWare, orderController.deleteOrder)
 router.put('/update-status/:id', authMiddleWare, orderController.updateStatus)
+router.get('/revenue/:id', authMiddleWare, orderController.revenueStatistic)
 
 module.exports = router

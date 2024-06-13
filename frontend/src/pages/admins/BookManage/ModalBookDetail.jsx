@@ -10,8 +10,9 @@ const ModalBookDetail = ({ book }) => {
                 <p className="book-field"><strong>Thể loại:</strong> {book.categoryName}</p>
                 <p className="book-field"><strong>Tác giả:</strong> {book.author}</p>
                 <p className="book-field"><strong>Nhà xuất bản:</strong> {book.publisher}</p>
+                <p className="book-field"><strong>Mô tả:</strong> {book.description}</p>
                 <p className="book-field"><strong>Tổng số lượng: </strong> {book.quantityTotal}</p>
-                <p className="book-field"><strong>Sẵn có: </strong>{book.quantityAvailabel}</p>
+                <p className="book-field"><strong>Sẵn có: </strong>{book.quantityAvailable}</p>
             </div>
             <div className="book-details">
                 <div className="book-item">

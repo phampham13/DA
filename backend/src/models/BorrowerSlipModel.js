@@ -19,6 +19,7 @@ const borrowerSlipSchema = new mongoose.Schema(
         },
         books: [BookSchema],
         returnDate: { type: Date },
+        dueDate: { type: Date },
         totalAmount: { type: Number, required: true }
         //borrowedDays: {type: Number}
     },
@@ -30,12 +31,13 @@ const borrowerSlipSchema = new mongoose.Schema(
 // Tạo một pre-hook để tự động tính toán returnDate và penalty
 borrowerSlipSchema.pre('save', function (next) {
     // Nếu state là 1 (Đang mượn) và returnDate chưa được đặt
-    if (!this.returnDate) {
+    if (!this.dueDate) {
         // Lấy ngày hiện tại
         const currentDate = new Date();
         // hạn trả sách là 50 ngày kể từ khi phiếu mượn được tạo
-        const returnDate = new Date(currentDate.getTime() + (50 * 24 * 60 * 60 * 1000));
-        this.returnDate = returnDate;
+        const dueDate = new Date(currentDate.getTime() + (50 * 24 * 60 * 60 * 1000));
+        //const dueDate = new Date(currentDate.getTime() + (3 * 60 * 1000));
+        this.dueDate = dueDate;
     }
     next();
 })

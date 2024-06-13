@@ -128,7 +128,7 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
           <InputNumber min={1} />
         </Form.Item>
         <Form.Item
-          name="quantityAvailabel"
+          name="quantityAvailable"
           label="Số lượng sẵn có"
           rules={[
             { required: true, message: "Please input the available quantity!" },

@@ -11,7 +11,7 @@ const createBorrowerSlip = async (req, res) => {
             })
         }
         const response = await BorrowerSlipService.createBorrowerSlip(req.body)
-        return res.status(response.status === 'OK' ? 200 : 400).json(response)
+        return res.status(200).json(response)
 
     } catch (e) {
         return res.status(404).json({
@@ -28,11 +28,11 @@ const getAllUserSlip = async (req, res) => {
         if (!userId) {
             return res.status(200).json({
                 status: 'ERR',
-                message: 'The userId is required'
+                message: 'The user is required'
             })
         }
         const response = await BorrowerSlipService.getAllUserSlip(userId)
-        return res.status(response.status === 'OK' ? 200 : 400).json(response)
+        return res.status(200).json(response)
 
     } catch (e) {
         return res.status(404).json({
@@ -52,6 +52,24 @@ const getDetailBorrowerSlip = async (req, res) => {
             })
         }
         const response = await BorrowerSlipService.getDetailBorrowerSlip(bSlipId)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e.message
+        })
+    }
+}
+
+const getByPhone = async (req, res) => {
+    try {
+        const phoneNumber = req.params.id
+        if (!phoneNumber) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'The borrower Slip id is required'
+            })
+        }
+        const response = await BorrowerSlipService.getByPhone(phoneNumber)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
@@ -133,9 +151,27 @@ const updateState = async (req, res) => {
         }
 
         const response = await BorrowerSlipService.updateState(bSlipId, newState)
-        return res.status(response.status === 'OK' ? 200 : 400).json(response)
+        return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
+            message: e.message
+        })
+    }
+}
+
+const callSlipStatistic = async (req, res) => {
+    try {
+        const year = req.params.id
+        if (!year) {
+            return res.status(400).json({
+                status: "ERR",
+                message: "year is require"
+            })
+        }
+        const response = await BorrowerSlipService.callSlipStatistic(year)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(400).json({
             message: e.message
         })
     }
@@ -145,9 +181,11 @@ module.exports = {
     createBorrowerSlip,
     getAllUserSlip,
     getDetailBorrowerSlip,
+    getByPhone,
     cancelBorrow,
     getAllBorrowerSlip,
     deleteMany,
     deleteBorrowerSlip,
-    updateState
+    updateState,
+    callSlipStatistic
 }

@@ -139,10 +139,29 @@ const updateStatus = async (req, res) => {
         }
 
         const response = await OrderService.updateStatus(orderId, newStatus)
-        return res.status(response.status === 'OK' ? 200 : 400).json(response)
+        return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
-            message: " product controller update Error"
+            message: e.message
+        })
+    }
+}
+
+//thống kê doanh thu theo các tháng trong năm
+const revenueStatistic = async (req, res) => {
+    try {
+        const year = req.params.id
+        if (!year) {
+            return res.status(400).json({
+                status: "ERR",
+                message: "year is require"
+            })
+        }
+        const response = await OrderService.totalRevenueStatistic(year)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(400).json({
+            message: e.message
         })
     }
 }
@@ -155,5 +174,6 @@ module.exports = {
     getAllOrder,
     deleteOrder,
     deleteManyOrder,
-    updateStatus
+    updateStatus,
+    revenueStatistic
 }

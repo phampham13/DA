@@ -34,11 +34,11 @@ export const BookDetail = () => {
 
   //const book = useSelector(state => selectBookById(state, id))
   //console.log(1, book)
-  //const book = { bookId: 'NNA001', categoryName: 'Nguyễn Ngọc Ánh', author: 'Nguyễn Ngọc Ánh', name: 'Tôi thấy hoa vàng trên cỏ xanh', quantityTotal: 7, quantityAvailabel: 5, publisher: 'Kim Đồng', coverImg: 'https://upload.wikimedia.org/wikipedia/vi/3/3d/T%C3%B4i_th%E1%BA%A5y_hoa_v%C3%A0ng_tr%C3%AAn_c%E1%BB%8F_xanh.jpg' }
+  //const book = { bookId: 'NNA001', categoryName: 'Nguyễn Ngọc Ánh', author: 'Nguyễn Ngọc Ánh', name: 'Tôi thấy hoa vàng trên cỏ xanh', quantityTotal: 7, quantityAvailable: 5, publisher: 'Kim Đồng', coverImg: 'https://upload.wikimedia.org/wikipedia/vi/3/3d/T%C3%B4i_th%E1%BA%A5y_hoa_v%C3%A0ng_tr%C3%AAn_c%E1%BB%8F_xanh.jpg' }
 
   const [count, setCount] = useState(1);
   const increaseCount = () => {
-    if (count < book.quantityAvailabel) setCount(count + 1);
+    if (count < book.quantityAvailable) setCount(count + 1);
   };
 
   const decreaseCount = () => {
@@ -49,7 +49,7 @@ export const BookDetail = () => {
 
   const handleAddToCard = () => {
     if (token && user && user.role === "user") {
-      if (book.quantityAvailabel < 1) {
+      if (book.quantityAvailable < 1) {
         toast.info('Đã hết sách, bạn vui lòng quay lại mượn sau !')
       } else {
         //const userId = user.id;
@@ -90,7 +90,7 @@ export const BookDetail = () => {
           <p className={cx("category")}>Thể loại: {book.categoryName}</p>
           <p style={{ marginBottom: '30px' }}>Nhà xuất bản: {book.publisher}</p>
           <p className={cx("total")}>Tổng số lượng: {book.quantityTotal}</p>
-          <p className={cx("avail")}>Sẵn có để mượn :<span>{book.quantityAvailabel}</span></p>
+          <p className={cx("avail")}>Sẵn có để mượn :<span>{book.quantityAvailable}</span></p>
 
           <div className={cx("count")}>
             <p className={cx("control")} onClick={decreaseCount}>

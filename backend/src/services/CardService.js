@@ -47,7 +47,7 @@ const updateCard = (userId, data) => {
                         status: "ERR",
                         message: `Khong tìm thấy sách ${book.bookId}`
                     })
-                } else if (checkBook.quantityAvailabel < book.quantity) {
+                } else if (checkBook.quantityAvailable < book.quantity) {
                     resolve({
                         status: "ERR",
                         message: `Sách ${checkBook.name} không đủ`
@@ -90,7 +90,7 @@ const addBookToCard = (userId, data) => {
                     message: 'Book not found'
                 });
             } else {
-                if (book.quantityAvailabel < quantity) {
+                if (book.quantityAvailable < quantity) {
                     resolve({
                         status: "ERR",
                         message: `Sản phẩm ${book.name} không đủ `
@@ -110,7 +110,7 @@ const addBookToCard = (userId, data) => {
             const cardBook = card.books.find(p => p.bookId.toString() === bookId);
 
             if (cardBook) {
-                if (cardBook.quantity + quantity > book.quantityAvailabel) {
+                if (cardBook.quantity + quantity > book.quantityAvailable) {
                     return resolve({
                         status: 'ERR',
                         message: 'Số lượng trong giỏ vượt quá số lượng sẵn có'
@@ -118,7 +118,7 @@ const addBookToCard = (userId, data) => {
                 }
                 cardBook.quantity += quantity;
             } else {
-                if (quantity > book.quantityAvailabel) {
+                if (quantity > book.quantityAvailable) {
                     return resolve({
                         status: 'ERR',
                         message: 'Số lượng trong giỏ vượt quá số lượng sẵn có'
