@@ -28,7 +28,7 @@ const cx = classNames.bind(styles);
 
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
-import { ApiBOOK } from "../../../services/Book/BookService";
+import { ApiBOOK } from "../../../services/BookService";
 const BookList = () => {
   const [data, setData] = useState([]);
   const [request, setRequest] = useState({

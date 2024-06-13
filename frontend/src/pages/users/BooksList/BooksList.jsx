@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { ApiBOOK } from "../../../services/Book/BookService";
+import { ApiBOOK } from "../../../services/BookService";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBooks, selectAllBooks, selectBookIds, selectBookById, searchBook } from "../../../redux/slides/booksSlice";
 
