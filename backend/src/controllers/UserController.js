@@ -51,11 +51,11 @@ const loginUser = async (req, res) => {
         const { refresh_token, ...newResponse } = response
         res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
-            secure: true,
+            secure: false, //khi nao desplay dẻ thành true?
             sameSite: 'strict',
             path: '/',
         })
-        return res.status(200).json(newResponse)
+        return res.status(200).json(response) //newResponse
     } catch (e) {
         return res.status(404).json({
             message: e.message
@@ -151,13 +151,17 @@ const refreshToken = async (req, res) => {
 const verifyToken = (req, res) => {
     try {
         const { token } = req.body;
+        console.log("be bắt token ----", token)
         if (!token) {
             return res.status(400).json({ message: "Token is required" });
         }
         //console.log("Received token:", token);
         const kq = jwt.verify(token, env.SECRET_KEY);
 
+        console.log("kq", kq)
+
         if (kq) {
+            console.log("kq", kq)
             return res.status(200).json({
                 status: "OK",
                 message: "Verify successful",

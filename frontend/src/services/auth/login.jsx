@@ -1,8 +1,8 @@
-import request from '../../utils/httpRequest';
+import { req } from "../../utils/httpRequest";
 
 export const login = async ({ phoneNumber, password }) => {
     try {
-        const res = await request.post('users/sign-in', { phoneNumber, password });
+        const res = await req.post('users/sign-in', { phoneNumber, password });
 
         return res.data;
     } catch (err) {

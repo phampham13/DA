@@ -11,6 +11,7 @@ import { BookDetail } from '../pages/users/BooksList/BookDetail';
 import LibraryAddress from '../pages/users/Address/LibraryAddress';
 import HandmadeItems from '../pages/users/handmadeItems/handmadeItems';
 import BorrowerCard from '../pages/users/BorrowerCard/BorrowerCard';
+import Cart from '../pages/users/Cart/Cart';
 
 import BookList from '../pages/admins/BookManage/BookList';
 import OnBorrowerSlip from '../pages/admins/BorrowerSlip/OnBorrowerSlip';
@@ -35,6 +36,7 @@ const userRoutes = [
     { path: routesConfig.address, component: LibraryAddress, layout: null, title: 'Địa chỉ' },
     { path: routesConfig.handmadeItem, component: HandmadeItems, layout: null, title: 'Tiệm hand' },
     { path: routesConfig.borrowerCard, component: BorrowerCard, layout: null, title: 'Thẻ đọc' },
+    { path: routesConfig.cart, component: Cart, layout: null, title: 'Giỏ hàng' },
     { path: routesConfig.notfound404user, component: NotFound404, layout: null, title: '' },
 ];
 

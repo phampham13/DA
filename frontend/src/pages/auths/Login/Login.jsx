@@ -11,7 +11,6 @@ import { AuthContext } from "../../../contexts/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { getDetailsUser } from "../../../services/UserService";
 //import { useMutationHooks } from "../../../hooks/useMutationHook";
 //import { getListItem } from "../../../reactRedux/action/actions";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,7 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 const cx = classNames.bind(styles);
 
 export default function Login() {
-    const dispatch = useDispatch();
+    //const dispatch = useDispatch();
     const { handleLoggedin } = React.useContext(AuthContext);
     const navigateTo = useNavigate();
     const location = useLocation()
@@ -37,24 +36,26 @@ export default function Login() {
         }),
         onSubmit: async (values) => {
             try {
+                console.log("truoc khi login", values)
                 const response = await login(values);
 
                 if (response.status === "OK") {
                     const decoded = jwtDecode(response?.access_token)
-                    console.log("decode", decoded)
+                    console.log("decode login page", decoded)
                     const user = decoded.payload;
                     const token = response.access_token
-                    //const re_token = response.refresh_token
+                    const refresh_token = response.refresh_token
+
                     if (user.id && user.role === "user") {
                         console.log(user.id)
                         // Nếu thành công, chuyển hướng đến trang Home
-                        handleLoggedin(token, user);
+                        handleLoggedin(token, refresh_token, user);
                         toast.success("Đăng nhập thành công")
                         navigateTo("/")
                         //dispatch(getListItem(user.id));
                     } else {
                         if (user.id && user.role === "admin") {
-                            handleLoggedin(token, user);
+                            handleLoggedin(token, refresh_token, user);
                             toast.success("Đăng nhập thành công");
                             navigateTo("/admin/books");
                         } else {
