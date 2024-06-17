@@ -1,9 +1,4 @@
-import axios from "axios";
-
-const axiosJWT = axios.create({
-    baseURL: "http://localhost:8017",
-    withCredentials: true,
-});
+import { axiosJWT } from "../utils/httpRequest";
 
 export const createBorrowerSlip = async (token, data) => {
     try {

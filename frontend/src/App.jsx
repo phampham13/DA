@@ -53,10 +53,10 @@ function App() {
         {
           adminRoutes.map((route, index) => {
             // Check if there is a token and the role is "admin"
-            if (!tokenLocal || !role || role !== "admin") {
-              // Redirect to login if the conditions are not met
-              return null;
-            }
+            //if (!tokenLocal || !role || role !== "admin") {
+            // Redirect to login if the conditions are not met
+            // return null;
+            //}
             const Page = route.component;
             let Layout = DefaultLayoutAdmin;
             if (route.layout) {

@@ -7,6 +7,7 @@ const routes = {
     handmadeItem: '/handmadeItems',
     address: '/address',
     borrowerCard: '/borrowerCard',
+    cart: '/cart',
     forbiden403: '/403',
     notfound404user: '/*',
 

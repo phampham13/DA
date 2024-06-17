@@ -5,7 +5,7 @@ export const genneralAccessToken = (payload) => {
     const access_token = jwt.sign({
         payload
         //...payload
-    }, env.SECRET_KEY, { expiresIn: '6h' })
+    }, env.SECRET_KEY, { expiresIn: '8h' }) //'6h'
 
     return access_token
 }
@@ -14,7 +14,7 @@ export const genneralRefreshToken = (payload) => {
     const refresh_token = jwt.sign({
         payload
         //...payload
-    }, env.RSECRET_KEY, { expiresIn: '365d' })
+    }, env.RSECRET_KEY, { expiresIn: '30d' })
 
     return refresh_token
 }
@@ -26,7 +26,8 @@ export const refreshTokenJwtService = (token) => {
                 if (err) {
                     resolve({
                         status: "ERR",
-                        message: "The authemtication"
+                        message: "can't refresh token",
+                        errCodeCheckLogin: 1
                     })
                 }
                 const { payload } = user
