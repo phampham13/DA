@@ -4,14 +4,16 @@ import { toast } from "react-toastify";
 
 import UploadImage from "../Upload/UploadImage";
 import { ApiBOOK } from "../../services/BookService";
+import { ApiProduct } from "../../services/ProductService";
 const { Option } = Select;
 const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
   const [form] = Form.useForm();
-  const [imageUrl, setImageUrl] = useState(product ? book.coverImg : "");
+  const [imageUrl, setImageUrl] = useState(product ? product.coverImg : "");
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     getAllCate();
     if (product) {
+      console.log(product)
       form.setFieldsValue(product);
       setImageUrl(product.image);
     } else {
@@ -32,11 +34,11 @@ const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
         onSave(values);
         let res = {};
         if (product) {
-          res = ApiBOOK.UpdateBook(product._id, values);
+          res = ApiProduct.updateProduct(product._id, values);
           toast.success("Update thành công");
         } else {
           console.log(values);
-          res = ApiBOOK.AddBook(values);
+          res = ApiProduct.addProduct(values);
           toast.success("Tạo thành công");
         }
 
@@ -65,14 +67,8 @@ const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
         </Button>,
       ]}
     >
-      <Form form={form} layout="vertical" name="bookForm">
-        <Form.Item
-          name="bookId"
-          label="Mã sách"
-          rules={[{ required: true, message: "Please input the book ID!" }]}
-        >
-          <Input disabled={!!product} />
-        </Form.Item>
+      <Form form={form} layout="vertical" name="productForm">
+      
         <Form.Item
           name="name"
           label="Tên sản phẩm"
