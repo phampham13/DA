@@ -9,14 +9,16 @@ import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import { Modal } from "react-bootstrap";
 import ModalProduct from "./ModalHandmade";
+import ModalFormProduct from "../../../components/ModalUpdateCreateProduct";
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
 const Products = () => {
   const [data, setData] = useState([]);
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState({});
   const [showModal, setShowModal] = useState(false);
-
+  const [IdDelete, setIdDelete] = useState();
   const [request, setRequest] = useState({
     limit: 10,
     page: 0,
@@ -30,9 +32,7 @@ const Products = () => {
     );
     setData(res.data);
   };
-  useEffect(() => {
-    getAllProduct();
-  }, []);
+
   const dataTable = data?.map((product, index) => {
     return { ...product, key: product._id, stt: index };
   });
@@ -40,7 +40,13 @@ const Products = () => {
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
   const [addModal, setAddModal] = useState(false);
-
+  const [reload, setReload] = useState(false);
+  const [showModalUp, setShowModalUp] = useState(false);
+  const [showModalUpdate, setshowModalUpdate] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  useEffect(() => {
+    getAllProduct();
+  }, [product,reload]);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -57,15 +63,60 @@ const Products = () => {
     const res = await ApiProduct.getDetailProduct(id);
     setProduct(res.data);
     console.log(res.data);
-    setShowModal(true)
+    setShowModal(true);
   };
   const handleCloseModal = async () => {
-    setShowModal(false)
+    setShowModal(false);
+  };
+  const handleCloseModalAdd = () => {
+    setAddModal(false);
+  };
+  const handleSave = () => {
+    setReload(!reload);
 
-  }
-  const handleEdit = async (product) => { };
-  const handleDelete = async (id) => { };
-  const handleDeleteMany = async () => { };
+    setShowModalUp(false);
+    setAddModal(false);
+    setshowModalUpdate(false);
+    getAllProduct();
+  };
+  const handleEdit = async (product) => {
+    const res = await ApiProduct.getDetailProduct(product._id);
+    setProduct(res.data);
+    setshowModalUpdate(true);
+  };
+  const handleCloseModalUP = () => {
+    setshowModalUpdate(false);
+  };
+  const handleDelete = async (id) => {
+
+    setShowDeleteModal(!showDeleteModal);
+    setIdDelete(id);
+  };
+  const handleDeleteAccept = () => {
+    ApiProduct.deleteProduct(IdDelete)
+      .then((res) => {
+        if (res) {
+          toast.success("Xóa sản phẩm công");
+          setIdDelete(null);
+          setShowDeleteModal(false);
+          setReload(!reload);
+        }
+      })
+      .catch((error) => {
+        toast.error("Xóa sản phẩm thất bại");
+      });
+  };
+  const handleCloseDeleteModal = () => setShowDeleteModal(false);
+  const handleDeleteMany = async () => {
+
+    const ids = [...selectedRowKeys];
+    const res = await ApiProduct.deleteProductmany(ids);
+    setReload(!reload);
+    if (res) {
+      toast.success("Xóa thành công");
+      selectedRowKeys.length=0;
+    }
+  };
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -291,12 +342,13 @@ const Products = () => {
     <>
       <div className={cx("wrap")}>
         <div className={cx("topBar")}>
-          <Button onClick={handleShowAdd} className={cx("create-btn")}>
+          <Button onClick={handleShowAdd} type="primary">
             Thêm sản phẩm
           </Button>
+          <p></p>
           {selectedRowKeys.length >= 2 && (
             <>
-              <Button onClick={handleDeleteMany} className={cx("create-btn")}>
+              <Button onClick={handleDeleteMany} danger>
                 Xóa tất cả
               </Button>
             </>
@@ -307,7 +359,26 @@ const Products = () => {
           columns={columns}
           dataSource={dataTable}
         />
-
+   <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Xác nhận hủy</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Bạn chắc chắn muốn xóa sản phẩm này ?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+         
+              danger
+              onClick={handleCloseDeleteModal}
+            >
+              Hủy
+            </Button>
+            <Button variant="danger" type="primary" onClick={handleDeleteAccept}>
+              Xóa
+            </Button>
+          </Modal.Footer>
+        </Modal>
         <Modal show={showModal} onHide={handleCloseModal} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>Chi tiết sản phẩm</Modal.Title>
@@ -326,6 +397,17 @@ const Products = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+        <ModalFormProduct
+          visible={showModalUpdate}
+          onCancel={handleCloseModalUP}
+          onSave={handleSave}
+          product={product}
+        />
+        <ModalFormProduct
+          visible={addModal}
+          onCancel={handleCloseModalAdd}
+          onSave={handleSave}
+        />
       </div>
     </>
   );
