@@ -1,12 +1,14 @@
 import axios from "axios";
 import { createAuthHeader } from "./auth/authHeader";
+import { axiosJWT } from "../utils/httpRequest";
+
 const token = localStorage.getItem("token");
 class APIBOOK {
   async getAllBook(limit, page, sort) {
     let res = {};
     try {
-      res = await axios.get(
-        `${process.env.REACT_API_URL_BACKEND}/books/getAll?limit=${limit}&page=${page}&sort=asc&sort=${sort}`
+      res = await axiosJWT.get(
+        `/books/getAll?limit=${limit}&page=${page}&sort=asc&sort=${sort}`
       );
       return res.data;
     } catch (error) {
@@ -17,8 +19,8 @@ class APIBOOK {
   async UpdateBook(id, body) {
     let res = {};
     try {
-      res = await axios.put(
-        `${process.env.REACT_API_URL_BACKEND}/books/update/${id}`,
+      res = await axiosJWT.put(
+        `/books/update/${id}`,
         body,
         {
           headers: createAuthHeader(token),
@@ -33,8 +35,8 @@ class APIBOOK {
   async DeleteBook(id) {
     let res = {};
     try {
-      res = await axios.delete(
-        `${process.env.REACT_API_URL_BACKEND}/books/delete/${id}`,
+      res = await axiosJWT.delete(
+        `/books/delete/${id}`,
         {
           headers: createAuthHeader(token),
         }
@@ -51,8 +53,8 @@ class APIBOOK {
       const body = {
         ids: ids,
       };
-      res = await axios.post(
-        `${process.env.REACT_API_URL_BACKEND}/books/delete-many`,
+      res = await axiosJWT.post(
+        `/books/delete-many`,
         body,
         {
           headers: createAuthHeader(token),
@@ -67,8 +69,8 @@ class APIBOOK {
   async AddBook(body) {
     let res = {};
     try {
-      res = await axios.post(
-        `${process.env.REACT_API_URL_BACKEND}/books/create`,
+      res = await axiosJWT.post(
+        `/books/create`,
         body,
         {
           headers: createAuthHeader(token),
@@ -83,8 +85,8 @@ class APIBOOK {
   async getAllCate() {
     let res = {};
     try {
-      res = await axios.get(
-        `${process.env.REACT_API_URL_BACKEND}/bookCategories/getAll`
+      res = await axiosJWT.get(
+        `/bookCategories/getAll`
       );
       return res.data;
     } catch (error) {

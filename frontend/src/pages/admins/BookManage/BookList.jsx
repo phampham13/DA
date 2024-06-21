@@ -70,7 +70,6 @@ const BookList = () => {
       request.page,
       request.sort
     );
-    console.log(res);
     setData(res.data);
   };
   const handleReset = (clearFilters) => {
@@ -287,7 +286,6 @@ const BookList = () => {
   });
   const handleDetail = (book) => {
     setSelectedRow(book);
-    console.log(selectedRow);
     setShowModal(true);
   };
   const handleEdit = (book) => {
@@ -299,7 +297,6 @@ const BookList = () => {
     setIdDelete(id);
   };
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys.length);
     setSelectedRowKeys(newSelectedRowKeys);
   };
   const rowSelection = {
