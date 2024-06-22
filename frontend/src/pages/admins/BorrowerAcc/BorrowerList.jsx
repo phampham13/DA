@@ -24,7 +24,7 @@ const BorrowerList = () => {
     page: 0,
     sort: "price",
   });
-  const getAllProduct = async () => {
+  const getAllData = async () => {
     const res = await ApiUserBr.GetAll();
     setData(res.data);
   };
@@ -41,7 +41,7 @@ const BorrowerList = () => {
   const [showModalUpdate, setshowModalUpdate] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   useEffect(() => {
-    getAllProduct();
+    getAllData();
   }, [product, reload]);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -73,7 +73,7 @@ const BorrowerList = () => {
     setShowModalUp(false);
     setAddModal(false);
     setshowModalUpdate(false);
-    getAllProduct();
+    getAllData();
   };
   const handleEdit = async (userid,staterq) => {
     let body= {};
@@ -110,7 +110,7 @@ const BorrowerList = () => {
         }
       })
       .catch((error) => {
-        toast.error("Xóa sản phẩm thất bại");
+        toast.error("Xóa tài khoản thất bại");
       });
   };
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
