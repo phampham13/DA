@@ -6,32 +6,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { ApiBOOK } from "../../../services/BookService";
 import { useQuery } from "@tanstack/react-query";
-import { fetchBooks, selectAllBooks, selectBookIds, selectBookById, searchBook } from "../../../redux/slides/booksSlice";
 
 const cx = classNames.bind(styles);
-
-const fakeCate = [
-    {
-        categoryId: 1,
-        categoryName: 'Nguyễn Ngọc Ánh',
-    },
-    {
-        categoryId: 2,
-        categoryName: 'Kinh dị',
-    },
-    {
-        categoryId: 3,
-        categoryName: 'Lãng mạn',
-    },
-    {
-        categoryId: 4,
-        categoryName: 'Tiểu sử - hồi ký',
-    },
-    {
-        categoryId: 5,
-        categoryName: 'Tản văn',
-    },
-]
 
 const BooksList = () => {
     const dispatch = useDispatch()

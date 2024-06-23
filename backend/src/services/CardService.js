@@ -93,7 +93,7 @@ const addBookToCard = (userId, data) => {
                 if (book.quantityAvailable < quantity) {
                     resolve({
                         status: "ERR",
-                        message: `Sản phẩm ${book.name} không đủ `
+                        message: `Sách ${book.name} không đủ `
                     })
                 }
             }

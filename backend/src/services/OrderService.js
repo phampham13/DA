@@ -1,17 +1,16 @@
 const Order = require("../models/OrderModel")
 const Product = require("../models/ProductModel")
 const EmailService = require("../services/EmailService")
-const { updateBook } = require("./BookService")
 
 const createOrder = (newOrder) => {
     return new Promise(async (resolve, reject) => {
         //const { orderItems,paymentMethod, itemsPrice, shippingPrice, totalPrice, fullName, address, city, phone,user, isPaid, paidAt,email } = newOrder
-        const { orderItems, itemsPrice, name, address, phoneNumber, userId, note } = newOrder
+        const { orderItems, itemsPrice, name, address, phoneNumber, userId, note, email } = newOrder
         try {
             const promises = orderItems.map(async (item) => {
-                const productData = await Product.findOneAndUpdate(
+                const productData = await Product.findOne(
                     {
-                        _id: item.productId,
+                        _id: item.productId._id,
                         quantity: { $gte: item.quantity }
                     }
                 )
@@ -25,40 +24,43 @@ const createOrder = (newOrder) => {
                     return {
                         status: 'OK',
                         message: 'ERR',
-                        id: item.productId
+                        name: item.productId.name
                     }
                 }
             })
             const results = await Promise.all(promises)
-            const outOfStockProduct = results && results.filter((item) => item.id)
+            const outOfStockProduct = results && results.filter((item) => item.name)
             if (outOfStockProduct.length > 0) {
                 const arrId = []
                 outOfStockProduct.forEach((item) => {
-                    arrId.push(item.id)
+                    arrId.push(item.name)
                 })
                 return resolve({
                     status: 'ERR',
-                    message: `San pham voi id: ${arrId.join(',')} khong du hang`
+                    message: `San pham: ${arrId.join(',')} khong du hang`
                 })
             } else {
                 const updateProduct = orderItems.map(async (item) => {
                     await Product.findOneAndUpdate(
                         {
-                            _id: item.productId,
+                            _id: item.productId._id,
                             quantity: { $gte: item.quantity }
                         },
                         {
                             $inc: {
-                                quantity: +item.quantity,
-                                //selled: -order.amount
+                                quantity: -item.quantity,
                             }
                         },
                     )
                 })
                 await Promise.all(updateProduct)
+                const transformedOrderItems = orderItems.map((item) => ({
+                    productId: item.productId._id,
+                    quantity: item.quantity
+                }));
 
                 const createdOrder = await Order.create({
-                    orderItems,
+                    orderItems: transformedOrderItems,
                     shippingAddress: {
                         name,
                         address,
@@ -73,7 +75,7 @@ const createOrder = (newOrder) => {
                     //isPaid, paidAt
                 })
                 if (createdOrder) {
-                    //await EmailService.sendEmailCreateOrder(email, orderItems)
+                    await EmailService.sendEmailCreateOrder(email, orderItems)
                     resolve({
                         status: 'OK',
                         message: 'success',
@@ -81,6 +83,10 @@ const createOrder = (newOrder) => {
                     })
                 }
             }
+            resolve({
+                status: 'OK',
+                message: 'success'
+            })
         } catch (e) {
             //   console.log('e', e)
             reject(e)

@@ -151,7 +151,7 @@ const addProductToCart = (userId, data) => {
 const getDetail = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const cart = await Cart.findOne({ userId }).populate('products.productId', 'name image price');
+            const cart = await Cart.findOne({ userId }).populate('products.productId', 'name image price quantity');
             if (!cart) {
                 resolve({
                     status: 'ERR',

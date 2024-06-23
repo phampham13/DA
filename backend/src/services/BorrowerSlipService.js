@@ -2,11 +2,12 @@ const BorrowerSlip = require("../models/BorrowerSlipModel")
 const Book = require("../models/BookModel")
 const UserService = require("../services/UserService")
 const BlockedPhone = require("../models/BlockedPhoneModel")
+const EmailService = require("../services/EmailService")
 const User = require("../models/UserModel")
 
 const createBorrowerSlip = (newBorrowerSlip) => {
     return new Promise(async (resolve, reject) => {
-        const { userId, name, phoneNumber, address, books, totalAmount } = newBorrowerSlip
+        const { userId, name, phoneNumber, address, books, totalAmount, email } = newBorrowerSlip
         try {
             const checkBlockedUser = await UserService.isBlockedUser(userId)
             if (checkBlockedUser) {
@@ -38,22 +39,26 @@ const createBorrowerSlip = (newBorrowerSlip) => {
                 }
             }
 
+            const dataToSave = books.map((book) => ({
+                bookId: book.bookId._id,
+                quantity: book.quantity
+            }));
+
             /**Kiểm tra số lượng sách còn đủ không */
-            for (const book of books) {
+            for (const book of dataToSave) {
                 const bookData = await Book.findOne({
                     _id: book.bookId,
-                    quantityAvailable: { $gte: book.quantity }
+                    quantityAvailable: { $lte: book.quantity }
                 });
-                if (!bookData) {
+                if (bookData) {
                     return resolve({
                         status: "ERR",
-                        message: `Không đủ số lượng sách`
+                        message: `Không đủ số lượng sách ${bookData.name}`
                     });
                 }
             }
-            //await Promise.all(promises)
 
-            const updateBook = books.map(async (book) => {
+            const updateBook = dataToSave.map(async (book) => {
                 await Book.findOneAndUpdate(
                     {
                         _id: book.bookId,
@@ -66,9 +71,9 @@ const createBorrowerSlip = (newBorrowerSlip) => {
                     },
                     { new: true }
                 )
-            }
-            )
+            })
             await Promise.all(updateBook)
+
             const createdBorrowerSlip = new BorrowerSlip({
                 books,
                 shippingAddress: {
@@ -83,7 +88,9 @@ const createBorrowerSlip = (newBorrowerSlip) => {
             await createdBorrowerSlip.save()
 
             if (createdBorrowerSlip) {
-                //await EmailService.sendEmailCreateOrder(email, orderItems)
+                if (email) {
+                    await EmailService.sendEmailCreateSlipBorrower(email, books)
+                }
                 resolve({
                     status: 'OK',
                     message: 'success',

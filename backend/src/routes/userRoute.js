@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const userController = require('~/controllers/UserController')
+const userController = require('../controllers/UserController')
 const { authMiddleWare, authUserMiddleWare } = require('~/middlewares/authMiddleware')
 
 router.post('/sign-up', userController.createUser)
