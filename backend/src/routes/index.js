@@ -7,6 +7,7 @@ const CartRouter = require('./cartRoute')
 const CardRouter = require('./cardRoute')
 const BorrowerSlip = require('./borrowerSlipRoute')
 const OffBorrowerSlip = require('./offBorrowerSlipRoute')
+const Momo = require('./momoRoute')
 
 const routes = (app) => {
     app.use('/users', UserRouter)
@@ -18,6 +19,7 @@ const routes = (app) => {
     app.use('/card', CardRouter)
     app.use('/borrowerSlip', BorrowerSlip)
     app.use('/offBorrowerSlip', OffBorrowerSlip)
+    app.use('/momo', Momo)
 }
 
 module.exports = routes

@@ -1,5 +1,5 @@
 import classNames from "classnames/bind";
-import styles from "./ModalBorrowerSlip.module.scss"
+import styles from "./ModalOrder.module.scss"
 import React, { useEffect, useState, useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -11,15 +11,14 @@ import { useFormik } from "formik";
 import * as Yup from "yup"
 import { AuthContext } from "../../../contexts/AuthContext";
 import { createBorrowerSlip } from "../../../services/BorrowerSlipService";
-import { resetCard, updateCard } from "../../../redux/slides/borrowerCardSlice";
+//import { resetCard, updateCard } from "../../../redux/slides/borrowerCardSlice";
+import { convertPrice } from "../../../utils/utils";
 import { useNavigate } from "react-router-dom";
 
 const cx = classNames.bind(styles);
-const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
+const ModalOrder = ({ show, handleClose, listProduct, itemsPrice }) => {
     const dispatch = useDispatch()
     const navigateTo = useNavigate()
-    const card = useSelector((state) => state.borrowerCard)
-    const userInfo = useSelector((state) => state.user)
     const { user, token } = useContext(AuthContext)
     const [close, setClose] = useState(false)
 
@@ -42,6 +41,7 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
         };
 
         fetchData();
+        console.log(listProduct, itemsPrice)
     }, []);
 
     const handleCityChange = (e) => {
@@ -75,7 +75,8 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
             city: "",
             district: "",
             ward: "",
-            status: 0
+            paymentMethod: "",
+            status: 0,
         },
         validationSchema: Yup.object({
             receiverName: Yup.string().required("Vui lòng nhập tên người nhận"),
@@ -84,40 +85,32 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
             city: Yup.string().required("Bạn chưa chọn tỉnh/ thành phố"),
             district: Yup.string().required("Bạn chưa chọn quận/huyện"),
             ward: Yup.string().required("Bạn chưa chọn phường/xã"),
+            paymentMethod: Yup.string().required("Vui lòng chọn hình thức thanh toán"),
         }),
-        onSubmit: async (values) => {
+        onSubmit: (values) => { //async
             const dataToSend = {
                 name: values.receiverName,
                 phoneNumber: values.phoneNumber,
                 address: `${values.address}, ${values.ward}, ${values.district}, ${values.city}`,
-                books: cardListBook,
-                totalAmount: total,
+                products: listProduct,
                 userId: user.id,
-                email: userInfo?.email
+                paymentMethod: values.paymentMethod,
             }
             //console.log("dữ liệu đây", dataToSend)
-            const res = await createBorrowerSlip(token, dataToSend)
-            if (res.status !== "OK") {
-                toast.error(res.message)
-            } else {
-                //disptach không bắn được ở đây, dù không hiểu vì sao
-                handleCard()
-                toast.success("Mượn sách thành công, CTV sẽ sớm xác nhận phiếu mượn")
-            }
-            handleClose()
+            console.log("Tạm sì tóp đây đã", dataToSend)
         },
     })
 
     return (
         <Modal show={show} onHide={handleClose} size="lg" backdrop="static" centered>
             <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">Phiếu mượn</Modal.Title>
+                <Modal.Title id="contained-modal-title-vcenter">Đơn hàng</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <form action="" method="POST" className={cx("form")} onSubmit={formik.handleSubmit} id={cx("form-1")}>
                     <div className={cx("container")}>
                         <div className={cx("delivery-info")}>
-                            <p className={cx("header")}><strong>Thông tin giao sách:</strong></p>
+                            <p className={cx("header")}><strong>Thông tin hàng:</strong></p>
                             <div className={cx("form-input")}>
                                 <input id={cx("receiverName")} name="receiverName" type="text" placeholder="Tên người nhận" value={formik.values.receiverName} onChange={formik.handleChange} className={cx("form-control")} />
                                 {formik.errors.receiverName && formik.touched.receiverName && <span className={cx("form-message")}>{formik.errors.receiverName}</span>}
@@ -189,25 +182,59 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
                                     {formik.errors.address && formik.touched.address && <span className={cx("form-message")}>{formik.errors.address}</span>}
                                 </div>
                             </div>
+                            <div className={cx('payment')}>
+                                <p><strong>Chọn hình thức thanh toán: </strong></p>
+                                <div className={cx("form-input")}>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value="cashOnDelivery"
+                                            checked={formik.values.paymentMethod === "cashOnDelivery"}
+                                            onChange={formik.handleChange}
+                                        />
+                                        Thanh toán khi nhận hàng
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value="momo"
+                                            checked={formik.values.paymentMethod === "momo"}
+                                            onChange={formik.handleChange}
+                                        />
+                                        Thanh toán qua Momo
+                                    </label>
+                                    {formik.errors.paymentMethod && formik.touched.paymentMethod && (
+                                        <span className={cx("form-message")}>'
+                                            <br></br>
+                                            {formik.errors.paymentMethod}
+                                        </span>
+                                    )}
+                                </div>
+
+                            </div>
                         </div>
 
                         <div className={cx("books-details")}>
                             <p className={cx("header")}><strong>Sách:</strong></p>
                             <div className={cx("book-list")}>
 
-                                {cardListBook.map((book) => (
-                                    <div key={book.bookId._id} className={cx("item")}>
-                                        <img src={book.bookId.coverImg} alt={book.bookId.name} className={cx("b-image")} />
-                                        <p className={cx("item-field")}>Tên sách: {book.bookId.name}</p>
-                                        <p className={cx("item-field")}>Số lượng: {book.quantity}</p>
+                                {listProduct.map((product) => (
+                                    <div key={product.productId._id} className={cx("item")}>
+                                        <img src={product.productId.image} alt={product.productId.name} className={cx("b-image")} />
+                                        <p className={cx("item-field")}>Tên sản phẩm: {product.productId.name}</p>
+                                        <p className={cx("item-field")}>Số lượng: {product.quantity}</p>
+                                        <p className={cx("item-field")}>Giá: {convertPrice(product.productId.price * product.quantity)}</p>
                                     </div>
                                 ))}
                             </div>
+                            <p style={{ fontWeight: '550' }}>Tổng giá: {itemsPrice}</p>
                         </div>
                     </div>
                     <Modal.Footer>
                         <Button variant="primary" className={cx("form-submit")} type="submit" value="Submit Form">
-                            Tạo phiếu mượn
+                            Đặt hàng
                         </Button>
                     </Modal.Footer>
                 </form>
@@ -216,4 +243,4 @@ const ModalBorrowerSlip = ({ show, handleClose, cardListBook, total }) => {
     )
 }
 
-export default ModalBorrowerSlip;
+export default ModalOrder;
