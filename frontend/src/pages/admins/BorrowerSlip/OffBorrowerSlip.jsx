@@ -22,10 +22,13 @@ const cx = classNames.bind(styles);
 
 const OffBorrowerSlip = () => {
   const [data, setData] = useState([]);
-  const [defaultState, setdefaultState] = useState(1);
+
+  const [defaultState, setdefaultState] = useState(0);
+  const [selectedRow, setSelectedRow] = useState([]);
 
   const [datasrc, setDatasrc] = useState({});
   const [showModal, setShowModal] = useState(false);
+
   const [showDetailModal, setShowDetailModal] = useState(false);
 
   const [IdDelete, setIdDelete] = useState();
@@ -58,6 +61,7 @@ const OffBorrowerSlip = () => {
   const dataTable = data?.map((product, index) => {
     return { ...product, key: product._id, stt: index };
   });
+
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
@@ -69,8 +73,12 @@ const OffBorrowerSlip = () => {
   const [showDeleteModalMany, setShowDeleteModalMany] = useState(false);
 
   useEffect(() => {
-    getAllData();
-  }, [reload]);
+    const fetchData = async () => {
+      await getAllData();
+    };
+
+    fetchData();
+  }, [selectedRow, reload]);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -84,6 +92,8 @@ const OffBorrowerSlip = () => {
     setSearchText("");
   };
   const handleViewDetail = async (id) => {
+    setSelectedRow(id);
+
     const res = await getDetailBr(token, id);
     setDatasrc(res.data);
     console.log(res.data);
@@ -97,18 +107,31 @@ const OffBorrowerSlip = () => {
     setAddModal(false);
   };
   const handleSave = async () => {
-    setAddModal(false);
-    setReload(!reload);
+    const fetchBooks = async () => {
+      try {
+        setAddModal(false);
+        setTimeout(() => {
+          const res = getAll(token).then((res) => {
+            setData(res.data);
+            setSelectedRow(res.data);
+            setReload(!reload);
+          });
+        }, 3000);
+      } catch (error) {
+        console.error("Failed to fetch books:", error);
+      }
+    };
+
+    fetchBooks();
   };
   const handleEdit = async (src) => {
     // setProduct(res.data);
+
     setDatasrc(src);
     setdefaultState(src.state);
     setshowModalUpdate(true);
   };
-  const handleCloseModalUP = () => {
-    setshowModalUpdate(false);
-  };
+
   const handleDelete = async (id) => {
     setShowDeleteModal(!showDeleteModal);
     setIdDelete(id);
@@ -144,6 +167,10 @@ const OffBorrowerSlip = () => {
       selectedRowKeys.length = 0;
       setShowDeleteModalMany(false);
     }
+  };
+  const onSelectChange = (newSelectedRowKeys) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
   };
   const UpdateState = async () => {
     const body = {
@@ -361,10 +388,7 @@ const OffBorrowerSlip = () => {
     },
   ];
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
+
   const OpenModalDelMany = async () => {
     setShowDeleteModalMany(true);
   };
@@ -426,95 +450,91 @@ const OffBorrowerSlip = () => {
           columns={columns}
           dataSource={dataTable}
         />
-        <Modal show={showModalUpdate} onHide={handleCloseModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Xác thay đổi trạng thái</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div>
-              <Radio.Group defaultValue={defaultState} onChange={onChange}>
-                {ListstateUpdate.map((item) => (
-                  <Radio key={item.state} value={item.state}>
-                    {item.name}
-                  </Radio>
-                ))}
-              </Radio.Group>
-            </div>
-
-            <Space>
-              <Button onClick={UpdateState} type="primary">
-                Cập nhật
-              </Button>
-              <Button htmlType="reset">Hủy</Button>
-            </Space>
-          </Modal.Body>
-          <Modal.Footer></Modal.Footer>
-        </Modal>
-        <Modal show={showDetailModal} onHide={handleCloseModalDetail}>
-          <Modal.Header closeButton>
-            <Modal.Title>Xem chi tiết</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <ModalDetailBr datasrc={datasrc} />
-          </Modal.Body>
-        </Modal>
-        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Xác nhận hủy</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Bạn chắc chắn muốn xóa thẻ mượn này ?</Modal.Body>
-          <Modal.Footer>
-            <Button danger onClick={handleCloseDeleteModal}>
-              Hủy
-            </Button>
-            <Button
-              variant="danger"
-              type="primary"
-              onClick={handleDeleteAccept}
-            >
-              Xóa
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={showDeleteModalMany} onHide={handleCloseDeleteModalMany}>
-          <Modal.Header closeButton>
-            <Modal.Title>Xác nhận hủy</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Bạn chắc chắn muốn xóa ?</Modal.Body>
-          <Modal.Footer>
-            <Button danger onClick={handleCloseDeleteModalMany}>
-              Hủy
-            </Button>
-            <Button variant="danger" type="primary" onClick={handleDeleteMany}>
-              Xóa
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal show={showModal} onHide={handleCloseModal} size="lg">
-          <Modal.Header closeButton>
-            <Modal.Title>Chi tiết sản phẩm</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div></div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              className={cx("btn-close-modal")}
-              style={{ backgroundColor: "#36a2eb" }}
-              onClick={handleCloseModal}
-            >
-              Đóng
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <ModalCreateUpdateBorrowerSlip
-          visible={addModal}
-          onCancel={handleCloseModalAdd}
-          onSave={handleSave}
-        />
       </div>
+      <Modal show={showModalUpdate} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Xác thay đổi trạng thái</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <Radio.Group defaultValue={defaultState} onChange={onChange}>
+              {ListstateUpdate.map((item) => (
+                <Radio key={item.state} value={item.state}>
+                  {item.name}
+                </Radio>
+              ))}
+            </Radio.Group>
+          </div>
+
+          <Space>
+            <Button onClick={UpdateState} type="primary">
+              Cập nhật
+            </Button>
+            <Button htmlType="reset">Hủy</Button>
+          </Space>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+      <Modal show={showDetailModal} onHide={handleCloseModalDetail}>
+        <Modal.Header closeButton>
+          <Modal.Title>Xem chi tiết</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ModalDetailBr datasrc={datasrc} />
+        </Modal.Body>
+      </Modal>
+      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Xác nhận hủy</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Bạn chắc chắn muốn xóa thẻ mượn này ?</Modal.Body>
+        <Modal.Footer>
+          <Button danger onClick={handleCloseDeleteModal}>
+            Hủy
+          </Button>
+          <Button variant="danger" type="primary" onClick={handleDeleteAccept}>
+            Xóa
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showDeleteModalMany} onHide={handleCloseDeleteModalMany}>
+        <Modal.Header closeButton>
+          <Modal.Title>Xác nhận hủy</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Bạn chắc chắn muốn xóa ?</Modal.Body>
+        <Modal.Footer>
+          <Button danger onClick={handleCloseDeleteModalMany}>
+            Hủy
+          </Button>
+          <Button variant="danger" type="primary" onClick={handleDeleteMany}>
+            Xóa
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showModal} onHide={handleCloseModal} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Chi tiết sản phẩm</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div></div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            className={cx("btn-close-modal")}
+            style={{ backgroundColor: "#36a2eb" }}
+            onClick={handleCloseModal}
+          >
+            Đóng
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <ModalCreateUpdateBorrowerSlip
+        visible={addModal}
+        onCancel={handleCloseModalAdd}
+        onSave={handleSave}
+      />
     </>
   );
 };
