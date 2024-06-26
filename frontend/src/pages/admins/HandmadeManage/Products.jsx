@@ -46,7 +46,7 @@ const Products = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   useEffect(() => {
     getAllProduct();
-  }, [product,reload]);
+  }, [product, reload]);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -88,7 +88,6 @@ const Products = () => {
     setshowModalUpdate(false);
   };
   const handleDelete = async (id) => {
-
     setShowDeleteModal(!showDeleteModal);
     setIdDelete(id);
   };
@@ -108,13 +107,12 @@ const Products = () => {
   };
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
   const handleDeleteMany = async () => {
-
     const ids = [...selectedRowKeys];
     const res = await ApiProduct.deleteProductmany(ids);
     setReload(!reload);
     if (res) {
       toast.success("Xóa thành công");
-      selectedRowKeys.length=0;
+      selectedRowKeys.length = 0;
     }
   };
   const getColumnSearchProps = (dataIndex) => ({
@@ -359,22 +357,20 @@ const Products = () => {
           columns={columns}
           dataSource={dataTable}
         />
-   <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
           <Modal.Header closeButton>
             <Modal.Title>Xác nhận hủy</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            Bạn chắc chắn muốn xóa sản phẩm này ?
-          </Modal.Body>
+          <Modal.Body>Bạn chắc chắn muốn xóa sản phẩm này ?</Modal.Body>
           <Modal.Footer>
-            <Button
-         
-              danger
-              onClick={handleCloseDeleteModal}
-            >
+            <Button danger onClick={handleCloseDeleteModal}>
               Hủy
             </Button>
-            <Button variant="danger" type="primary" onClick={handleDeleteAccept}>
+            <Button
+              variant="danger"
+              type="primary"
+              onClick={handleDeleteAccept}
+            >
               Xóa
             </Button>
           </Modal.Footer>
