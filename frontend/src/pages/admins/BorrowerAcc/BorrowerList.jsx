@@ -75,20 +75,20 @@ const BorrowerList = () => {
     setshowModalUpdate(false);
     getAllData();
   };
-  const handleEdit = async (userid,staterq) => {
-    let body= {};
-    if(staterq===1){
-      body={
-        state:0
-      }
+  const handleEdit = async (userid, staterq) => {
+    let body = {};
+    if (staterq === 1) {
+      body = {
+        state: 0,
+      };
     }
-    if(staterq===0){
-      body={
-        state:1
-      }
+    if (staterq === 0) {
+      body = {
+        state: 1,
+      };
     }
-    const res = await ApiUserBr.UpdateState(userid,body);
-    console.log("aa")
+    const res = await ApiUserBr.UpdateState(userid, body);
+    console.log("aa");
     setProduct(res.data);
     setshowModalUpdate(true);
   };
@@ -117,6 +117,7 @@ const BorrowerList = () => {
   const handleDeleteMany = async () => {
     const ids = [...selectedRowKeys];
     const res = await ApiProduct.deleteProductmany(ids);
+
     setReload(!reload);
     if (res) {
       toast.success("Xóa thành công");
@@ -305,13 +306,10 @@ const BorrowerList = () => {
                   description=""
                   okText="Yes"
                   cancelText="No"
-                  onConfirm={()=>handleEdit(record._id,record.state)}
+                  onConfirm={() => handleEdit(record._id, record.state)}
                 >
                   <Button className={cx("editbtn")}>
-                    <FaPen
-                     
-                      className="text-lg cursor-pointer"
-                    />
+                    <FaPen className="text-lg cursor-pointer" />
                   </Button>
                 </Popconfirm>
               </span>
@@ -329,7 +327,6 @@ const BorrowerList = () => {
   ];
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
   const rowSelection = {
@@ -373,7 +370,6 @@ const BorrowerList = () => {
     <>
       <div className={cx("wrap")}>
         <div className={cx("topBar")}>
-         
           {selectedRowKeys.length >= 2 && (
             <>
               <Button onClick={handleDeleteMany} danger>

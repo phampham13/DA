@@ -33,12 +33,14 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
         onSave(values);
         let res = {};
         if (book) {
-          res = ApiBOOK.UpdateBook(book._id, values);
-          toast.success("Update thành công");
+          res = ApiBOOK.UpdateBook(book._id, values).then((res) => {
+            toast.success("Update thành công");
+          });
         } else {
           console.log(values);
-          res = ApiBOOK.AddBook(values);
-          toast.success("Tạo thành công");
+          res = ApiBOOK.AddBook(values).then((res) => {
+            toast.success("Tạo thành công");
+          });
         }
 
         form.resetFields();

@@ -4,6 +4,7 @@ import { ApiBOOK } from "../../services/BookService";
 import { createBorrowerSlip } from "../../services/OffBorrowerSlipService";
 import { AuthContext } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
+
 const ModalCreateUpdateBorrowerSlip = ({
   visible,
   onCancel,
@@ -50,7 +51,7 @@ const ModalCreateUpdateBorrowerSlip = ({
     } else {
       form.resetFields();
     }
-  }, [reload]);
+  }, [form, initialData, reload]);
 
   const handleSave = () => {
     form.validateFields().then((values) => {
@@ -59,14 +60,14 @@ const ModalCreateUpdateBorrowerSlip = ({
       onSave(values);
       createBorrowerSlip(token, values).then((res) => {
         console.log(res);
-        if (res.status != "OK") {
+        if (res.status !== "OK") {
           toast.error(res.message);
+          setReload(!reload);
         } else {
           toast.success("Tạo phiếu mượn thành công");
         }
       });
       form.resetFields();
-      setReload(!reload);
     });
   };
 
@@ -156,10 +157,10 @@ const ModalCreateUpdateBorrowerSlip = ({
             { required: true, message: "Vui lòng nhập danh sách ID sách!" },
           ]}
         >
-          <Input />
+          <Input onChange={handleBookIdsChange} />
         </Form.Item>
         <Form.Item name="totalAmount" label="Tổng số lượng">
-          <Input />
+          <Input readOnly />
         </Form.Item>
       </Form>
     </Modal>

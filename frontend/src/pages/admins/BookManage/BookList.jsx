@@ -53,11 +53,9 @@ const BookList = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+
   const searchInput = useRef(null);
   const dispatch = useDispatch();
-  useEffect(() => {
-    getAll();
-  }, [reload]);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -72,6 +70,13 @@ const BookList = () => {
     );
     setData(res.data);
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      await getAll();
+    };
+
+    fetchData();
+  }, [selectedRow, reload]);
   const handleReset = (clearFilters) => {
     clearFilters();
     setSearchText("");
@@ -284,6 +289,7 @@ const BookList = () => {
   const dataTable = data?.map((book) => {
     return { ...book, key: book._id };
   });
+
   const handleDetail = (book) => {
     setSelectedRow(book);
     setShowModal(true);
@@ -321,11 +327,12 @@ const BookList = () => {
   const handleCloseModalAdd = () => {
     setAddModal(false);
   };
-  const handleSave = (book) => {
-    setReload(!reload);
-
+  const handleSave = () => {
     setShowModalUp(false);
     setAddModal(false);
+
+    getAll();
+    setReload(!reload);
   };
   const handleDelete = () => {
     ApiBOOK.DeleteBook(IdDelete)
@@ -351,6 +358,8 @@ const BookList = () => {
     const ids = [...selectedRowKeys];
     const res = await ApiBOOK.DeleteManyBook(ids);
     setReload(!reload);
+    selectedRowKeys.length = 0;
+
     if (res) {
       toast.success("Xóa thành công");
     }
