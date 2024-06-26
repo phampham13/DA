@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from "react";
-import { verifyToken } from "../services/auth/verifyToken";
 import { getDetailsUser, refreshToken } from "../services/UserService";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
@@ -21,7 +20,6 @@ export const AuthContextProvider = ({ children }) => {
         const { decoded, a_token, r_token } = handleDecoded()
         if (a_token && decoded?.payload.id) {
             setUser(decoded.payload)
-            console.log("id khi reload", decoded?.payload.id)
             handleGetDetailsUser(decoded.payload.id, decoded.payload.role, a_token)
         }
     }, []);
@@ -51,9 +49,9 @@ export const AuthContextProvider = ({ children }) => {
         // Do something before request is sent
         const currentTime = new Date()
         const { decoded, a_token, r_token } = handleDecoded()
-        console.log("mấy giá trị decode interceptor", decoded, a_token, r_token)
+        //console.log("mấy giá trị decode interceptor", decoded, a_token, r_token)
         //let storageRefreshToken = localStorage.getItem('refresh_token')
-        console.log("refresh_token inter", r_token)
+        //console.log("refresh_token inter", r_token)
         if (a_token && r_token) {
             console.log(1)
             if (decoded?.exp < currentTime.getTime() / 1000) {
@@ -109,7 +107,6 @@ export const AuthContextProvider = ({ children }) => {
         token,
         setToken,
         setUser,
-        handleDecoded,
         handleLoggedin,
         handleLoggedOut,
     };

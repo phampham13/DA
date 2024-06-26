@@ -28,40 +28,40 @@ class ProductAPI {
       throw error;
     }
   }
-  async addProduct  (body) {
-    const res = await axiosJWT.post(`/products/create`,body, {
-        headers: {
-            token: `Bearer ${token}`,
-        }
+  async addProduct(body) {
+    const res = await axiosJWT.post(`/products/create`, body, {
+      headers: {
+        token: `Bearer ${token}`,
+      }
     })
     return res.data
-}
-async updateProduct  (id,body) {
-  const res = await axiosJWT.put(`/products/update/${id}`,body, {
+  }
+  async updateProduct(id, body) {
+    const res = await axiosJWT.put(`/products/update/${id}`, body, {
       headers: {
-          token: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       }
-  })
-  return res.data
-}
-async deleteProduct  (id) {
-  const res = await axiosJWT.delete(`/products/delete/${id}`, {
+    })
+    return res.data
+  }
+  async deleteProduct(id) {
+    const res = await axiosJWT.delete(`/products/delete/${id}`, {
       headers: {
-          token: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       }
-  })
-  return res.data
-}
-async deleteProductmany  (ids) {
-  const body = {
-    ids: ids,
-  };
-  const res = await axiosJWT.post(`/products/delete-many`, body, {
+    })
+    return res.data
+  }
+  async deleteProductmany(ids) {
+    const body = {
+      ids: ids,
+    };
+    const res = await axiosJWT.post(`/products/delete-many`, body, {
       headers: {
-          token: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       }
-  })
-  return res.data
-}
+    })
+    return res.data
+  }
 }
 export const ApiProduct = new ProductAPI();

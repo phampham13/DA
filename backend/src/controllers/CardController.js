@@ -4,7 +4,6 @@ const updateCard = async (req, res) => {
     try {
         const userId = req.params.id
         const data = req.body
-        //console.log(data, userId)
         if (!userId) {
             resolve({
                 status: 'ERR',

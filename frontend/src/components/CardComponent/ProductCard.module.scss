@@ -8,6 +8,7 @@
     display: flex;
     height: 280px;
     width: 320px;
+    background-color: #fff;
     transition: box-shadow 0.3s ease;
 
     &:hover {
@@ -21,16 +22,8 @@
         justify-content: space-between;
     }
 
-    &-img {
-        flex: 0 0 50%;
-        width: 90%;
-        height: 70%;
-        min-height: 150px;
-        object-fit: contain;
-    }
-
     &-left {
-        flex: 0 0 50%;
+        flex: 0 0 55%;
         /* Thay đổi từ 1 thành 0 0 60% */
         display: flex;
         flex-direction: column;
@@ -38,12 +31,27 @@
         height: 100%;
     }
 
+    &-img {
+        flex: 0 0 70%;
+        width: 95%;
+        display: block;
+        border: 1px dotted red;
+        min-height: 150px;
+        object-fit: contain;
+        transition: box-shadow 0.3s ease;
+    }
+
+    &-img:hover {
+        width: 100%;
+        flex: 0 0 73%;
+    }
+
     &-right {
         /* Đổi tên thành card-right */
-        flex: 0 0 50%;
+        flex: 0 0 45%;
         /* Thay đổi từ 1 thành 0 0 40% */
         margin-left: 10px;
-        padding-left: 5px;
+        //padding-left: 5px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;

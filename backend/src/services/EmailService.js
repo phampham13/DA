@@ -19,9 +19,9 @@ const sendEmailCreateOrder = async (email, orderItems) => {
   orderItems.forEach((product) => {
     listItem += `<div>
     <div>
-      Bạn đã đặt sản phẩm <b>${product.productId.name}</b> với số lượng: <b>${product.quantity}</b> và giá là: <b>${product.productId.price} VND</b></div>
+      Bạn đã đặt sản phẩm <b>${product.productId.name}</b> có là: <b>${product.productId.price} VND</b> với số lượng: <b>${product.quantity}</b></div>
       <div>Hình ảnh của sản phẩm</div>
-      <img src=${product.productId.image} alt=${product.productId.name}>
+      <img src=${product.productId.image} alt=${product.productId.name} width="100" height="100">
     </div>`
     // attachImage.push({path: order.image})
   })
@@ -37,6 +37,72 @@ const sendEmailCreateOrder = async (email, orderItems) => {
   });
 }
 
+const sendEmailCreateSlipBorrower = async (email, books, dueDate) => {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // true for 465, false for other ports
+    auth: {
+      user: env.MAIL_ACCOUNT, // generated ethereal user
+      pass: env.MAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let year = dueDate.getFullYear()
+  let month = dueDate.getMonth() + 1
+  let date = dueDate.getDate()
+  let listBook = '';
+  books.forEach((book) => {
+    listBook += `<div>
+    <div>
+      Bạn đã đặt mượn sách <b>${book.bookId.name}</b> với số lượng: <b>${book.quantity} quyển</b></div>
+      <div>Bìa sách
+      <img  src=${book.bookId.coverImg} alt=${book.bookId.name} width="75" height="100">
+      </div>
+      <strong>Hạn trả: ${date}-${month}-${year}</strong>
+    </div>`
+  })
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: env.MAIL_ACCOUNT, // sender address
+    to: email, // list of receivers
+    subject: "Bạn đã tạo phiếu mượn tại DFreeBook", // Subject line
+    text: "Hello world?", // plain text body
+    html: `<div><b>Bạn đã tạo phiếu mượn thành công</b></div> ${listBook}`, //
+    //attachments: attachImage,
+  });
+}
+
+const sendReminderEmail = async (emails) => {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // true for 465, false for other ports
+    auth: {
+      user: env.MAIL_ACCOUNT, // generated ethereal user
+      pass: env.MAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  const listEmail = emails.map(email => `'${email}'`);
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: env.MAIL_ACCOUNT, // sender address
+    to: listEmail.join(','), // list of receivers
+    subject: "Bạn có phiếu mượn quá hạn",
+    text: "Hello world?",
+    html: `<div>
+    Bạn đọc có phiếu mượn quá hạn tại DFreebook. Bạn hãy kiểm tra và sớm trả lại sách cho bọn
+    mình. Nếu không tài khoản của bạn sẽ bị khóa và sẽ tính phí phạt theo quy định của thư viện.
+    </div>`, //
+    //attachments: attachImage,
+  });
+}
+
 module.exports = {
-  sendEmailCreateOrder
+  sendEmailCreateOrder,
+  sendEmailCreateSlipBorrower,
+  sendReminderEmail
 }

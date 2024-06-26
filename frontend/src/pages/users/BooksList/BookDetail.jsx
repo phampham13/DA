@@ -1,5 +1,4 @@
 import { useSelector, useDispatch } from 'react-redux'
-import axios from "axios"
 import classNames from "classnames/bind";
 import styles from "./BookDetail.module.scss";
 import { Link } from 'react-router-dom'
@@ -8,8 +7,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from 'react';
-import { selectBookById } from '../../../redux/slides/booksSlice';
-import { fetchBooks } from '../../../redux/slides/booksSlice';
+import { ApiBOOK } from '../../../services/BookService';
+import { apiAddBookToCard } from '../../../services/CardService';
 import { AuthContext } from "../../../contexts/AuthContext";
 import { addBookToCard } from '../../../redux/slides/borrowerCardSlice';
 
@@ -23,13 +22,11 @@ export const BookDetail = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     fetchApi()
-    console.log("id", id)
   }, [])
 
   const fetchApi = async () => {
-    const res = await axios.get(`http://localhost:8017/books/getDetail/${id}`);
-    console.log(res.data)
-    setBook(res.data.data);
+    const res = await ApiBOOK.getDetail(id);
+    setBook(res.data);
   }
 
   //const book = useSelector(state => selectBookById(state, id))
@@ -47,27 +44,27 @@ export const BookDetail = () => {
     }
   };
 
-  const handleAddToCard = () => {
+  const handleAddToCard = async () => {
     if (token && user && user.role === "user") {
       if (book.quantityAvailable < 1) {
         toast.info('Đã hết sách, bạn vui lòng quay lại mượn sau !')
       } else {
-        //const userId = user.id;
-        //dispatch(addBookToCard(userId, id, count));
-        toast.success("Sản phẩm đã được thêm vào giỏ hàng của bạn");
+        const userId = user.id;
+        const res = await apiAddBookToCard(token, userId, {
+          bookId: book._id,
+          quantity: count
+        })
+        if (res.status !== "OK") {
+          toast.error(res.message)
+          return
+        }
+        dispatch(addBookToCard({ book, count }));
+        toast.success("Sách đã được thêm vào thẻ đọc của bạn");
       }
     } else {
       navigateTo("/login");
       toast.warn("Đăng nhập trước khi thêm vào giỏ hàng!!");
     }
-    //const phoneNumber = '0123456789'
-    //dispatch(bookAdded(phoneNumber, bookId, count))
-    /*else {
-      const phoneNumber = '0123456789'
-      dispatch(addBookToCard({ phoneNumber: phoneNumber, bookId: id, count: count }))
-      toast.success("Đã thêm sách vào thẻ đọc")
-      console.log('thêm giỏ thành công')
-    }*/
   };
 
   if (!book) {
@@ -85,25 +82,30 @@ export const BookDetail = () => {
           <img src={book.coverImg} alt="Bìa sách"></img>
         </div>
         <div className={cx('divRight')}>
-          <h3 className={cx("name")}>{book.name}</h3>
-          <p className={cx("author")}>Tác giả: {book.author}</p>
-          <p className={cx("category")}>Thể loại: {book.categoryName}</p>
-          <p style={{ marginBottom: '30px' }}>Nhà xuất bản: {book.publisher}</p>
-          <p className={cx("total")}>Tổng số lượng: {book.quantityTotal}</p>
-          <p className={cx("avail")}>Sẵn có để mượn :<span>{book.quantityAvailable}</span></p>
-
-          <div className={cx("count")}>
-            <p className={cx("control")} onClick={decreaseCount}>
-              -
-            </p>
-            <p>{count}</p>
-            <p className={cx("control")} onClick={increaseCount}>
-              +
-            </p>
+          <div className={cx('top')}>
+            <h3 className={cx("name")}>{book.name}</h3>
+            <p className={cx("author")}><b>Tác giả: </b>{book.author}</p>
+            <p className={cx("category")}><b>Thể loại: </b> {book.categoryName}</p>
+            <p className={cx("publisher")}><b>Nhà xuất bản:</b> {book.publisher}</p>
+            <p className={cx("description")}><b>Giới thiệu:</b> <i>{book.description} </i></p>
           </div>
+          <div className={cx('bottom')}>
+            <p className={cx("total")}><strong>Tổng số lượng: {book.quantityTotal}</strong></p>
+            <p className={cx("avail")}><strong>Sẵn có để mượn: <span>{book.quantityAvailable}</span></strong></p>
 
-          <div onClick={() => handleAddToCard()} className={cx("addCard")}>
-            <p>Thêm vào thẻ đọc</p>
+            <div className={cx("count")}>
+              <p className={cx("control")} onClick={decreaseCount}>
+                -
+              </p>
+              <p>{count}</p>
+              <p className={cx("control")} onClick={increaseCount}>
+                +
+              </p>
+            </div>
+
+            <div onClick={() => handleAddToCard()} className={cx("addCard")}>
+              <p>Thêm vào thẻ đọc</p>
+            </div>
           </div>
         </div>
       </div>

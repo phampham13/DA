@@ -1,10 +1,10 @@
 import classNames from "classnames/bind";
 import styles from "./Cart.module.scss";
 import React, { useEffect, useState, useMemo } from 'react'
-import { Checkbox, InputNumber, Form } from 'antd'
+import { Checkbox, InputNumber } from 'antd'
 import { useContext } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { updateCard } from "../../../services/CardService";
+import { updateCart } from "../../../services/CartService";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { removeOrderProduct, removeAllOrderProduct, increaseAmount, decreaseAmount, selectedOrder } from "../../../redux/slides/cartSlice";
 import { convertPrice } from "../../../utils/utils";
@@ -15,10 +15,13 @@ import { getCart } from "../../../services/CartService";
 
 const cx = classNames.bind(styles);
 const Cart = () => {
-    const { token, user } = useContext(AuthContext)
+    const user = useSelector((state) => state.user)
+    const token = localStorage.getItem("token")
     const cart = useSelector((state) => state.cart)
     const [listChecked, setListChecked] = useState([])
     const [showModal, setShowModal] = useState(false)
+    const [showModalPay, setShowModalPay] = useState(false)
+    const [urlPayOrder, setUrlPayOrder] = useState("")
 
     const dispatch = useDispatch()
 
@@ -46,15 +49,19 @@ const Cart = () => {
             setListChecked([])
         }
     }
-    const handleRemoveAllOrder = () => {
-        console.log("list check", listChecked)
+    const handleRemoveAllOrder = async () => {
         if (listChecked?.length > 1) {
             dispatch(removeAllOrderProduct({ listChecked }))
+            const newlist = cart?.products.filter((item) => !listChecked.includes(item.productId._id))
+            const dataToSave = newlist.map((product) => ({
+                productId: product.productId._id,
+                quantity: product.quantity
+            }))
+            await updateCart(user.id, token, { products: dataToSave })
         }
     }
 
     const handleChangeCount = (type, idProduct, limited) => {
-        console.log("tang, giam")
         if (type === 'increase') {
             if (!limited) {
                 dispatch(increaseAmount({ idProduct }))
@@ -64,11 +71,16 @@ const Cart = () => {
                 dispatch(decreaseAmount({ idProduct }))
             }
         }
-        console.log("check lại", cart)
     }
 
-    const handleDeleteOrder = (idProduct) => {
+    const handleDeleteOrder = async (idProduct) => {
         dispatch(removeOrderProduct({ idProduct }))
+        const newlist = cart?.products.filter((item) => item?.productId._id !== idProduct)
+        const dataToSave = newlist.map((product) => ({
+            productId: product.productId._id,
+            quantity: product.quantity
+        }))
+        await updateCart(user.id, token, { products: dataToSave })
     }
 
     const handleShowModal = () => {
@@ -83,6 +95,12 @@ const Cart = () => {
     const handleOnclickEmpty = () => {
         navigate("/handmadeItems");
     };
+
+    const handlePayOrder = (payUrl) => {
+        setUrlPayOrder(payUrl);
+        console.log("em lấy được url rồi", urlPayOrder)
+        //setShowModalPay(true)
+    }
 
     const totalPriceMemo = useMemo(() => {
         const result = cart?.productsSelected?.reduce((total, cur) => {
@@ -116,10 +134,13 @@ const Cart = () => {
                             </div>
                             <div className={cx('list-product')}>
                                 {cart?.products.map((product) => {
+                                    const isOutOfStock = product.productId.quantity === 0
                                     return (
-                                        <div className={cx('wrapper-items')} key={product.productId._id}>
-                                            <div style={{ width: '380px', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                                <Checkbox onChange={onChange} value={product.productId._id} checked={listChecked.includes(product.productId._id)}></Checkbox>
+                                        <div className={cx('wrapper-items')}
+                                            key={product.productId._id}
+                                        >
+                                            <div style={{ width: '380px', display: 'flex', alignItems: 'center', gap: 4, opacity: isOutOfStock ? 0.5 : 1 }}>
+                                                <Checkbox onChange={onChange} value={product.productId._id} checked={listChecked.includes(product.productId._id)} disabled={isOutOfStock} ></Checkbox>
                                                 <img src={product?.productId.image} style={{ width: '88px', height: '90px', objectFit: 'cover' }} />
                                                 <div style={{
                                                     marginLeft: '10px',
@@ -133,15 +154,19 @@ const Cart = () => {
                                                 <span>
                                                     <span style={{ fontSize: '16px', color: '#242424' }}>{convertPrice(product?.productId.price)}</span>
                                                 </span>
-                                                <div className={cx('count-item')}>
-                                                    <div style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', product?.productId._id, product?.quantity === 1)}>
-                                                        <MinusOutlined style={{ color: '#000', fontSize: '13px' }} />
+                                                {isOutOfStock ? (
+                                                    <div style={{ color: 'red', fontWeight: 'bold' }}>Hết hàng</div>
+                                                ) : (
+                                                    <div className={cx('count-item')}>
+                                                        <div style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', product?.productId._id, product?.quantity === 1)}>
+                                                            <MinusOutlined style={{ color: '#000', fontSize: '13px' }} />
+                                                        </div>
+                                                        <InputNumber style={{ width: '40px', borderTop: 'none', borderBottom: 'none', borderRadius: '0px' }} defaultValue={product?.quantity} value={product?.quantity} size="small" min={1} max={product?.productId.quantity} />
+                                                        <div style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', product?.productId._id, product?.quantity === product?.productId.quantity)}>
+                                                            <PlusOutlined style={{ color: '#000', fontSize: '13px' }} />
+                                                        </div>
                                                     </div>
-                                                    <InputNumber style={{ width: '40px', borderTop: 'none', borderBottom: 'none', borderRadius: '0px' }} defaultValue={product?.quantity} value={product?.quantity} size="small" min={1} max={product?.productId.quantity} />
-                                                    <div style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', product?.productId._id, product?.quantity === product?.productId.quantity, product?.quantity === 1)}>
-                                                        <PlusOutlined style={{ color: '#000', fontSize: '13px' }} />
-                                                    </div>
-                                                </div>
+                                                )}
                                                 <span style={{ color: 'rgb(255, 66, 78)', fontSize: '16px', fontWeight: 500 }}>{convertPrice(product?.productId.price * product?.quantity)}</span>
                                                 <DeleteFilled style={{ cursor: 'pointer', color: 'red' }} onClick={() => handleDeleteOrder(product?.productId._id)} />
                                             </div>
@@ -165,14 +190,14 @@ const Cart = () => {
                 ) : (
                     <div className={cx("empty")}>
                         <div>
-                            <img src="https://theme.hstatic.net/1000277297/1001091004/14/cart_empty_background.png?v=244" alt="empty cart" />
+                            <img src="../cart_empty_background.png" alt="empty cart" />
                         </div>
                         <h3>Bạn chưa thêm sản phẩm nào vào giỏ hết</h3>
                         <p>Về trang "Tiệm hand" để lựa sản phẩm nhé!!</p>
                         <button onClick={handleOnclickEmpty}>Tới tiệm hand</button>
                     </div>
                 )}
-                <ModalOrder show={showModal} handleClose={() => setShowModal(false)} listProduct={cart?.productsSelected} itemsPrice={totalPriceMemo} />
+                <ModalOrder show={showModal} handleClose={() => setShowModal(false)} listProduct={cart?.productsSelected} itemsPrice={totalPriceMemo} listChecked={listChecked} handlePayOrder={handlePayOrder} />
             </div>
         </div>
     )

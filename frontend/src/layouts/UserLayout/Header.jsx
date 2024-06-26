@@ -100,7 +100,7 @@ function Header() {
                     <Link to={"/borrowerCard"}>Thẻ đọc</Link>
                   </li>
                   <li>
-                    <Link to={"/slip"}>Phiếu đọc</Link>
+                    <Link to={"/borrowerSlips"}>Phiếu đọc</Link>
                   </li>
                 </ul>
               )}
@@ -120,7 +120,7 @@ function Header() {
                     <Link to={"/cart"}>Giỏ hàng</Link>
                   </li>
                   <li>
-                    <Link to={"/order"}>Đơn hàng</Link>
+                    <Link to={"/orders"}>Đơn hàng</Link>
                   </li>
                 </ul>
               )}

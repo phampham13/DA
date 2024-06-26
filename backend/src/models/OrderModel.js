@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema({
         default: 'pending',
         required: true
     },
-    isPaidByMomo: { type: Boolean, default: false },
+    isPaid: { type: Boolean, default: false },
     //paidAt: { type: Date },
     //isDelivered: { type: Boolean, default: false },
     //deliveredAt: { type: Date },

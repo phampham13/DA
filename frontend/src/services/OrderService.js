@@ -13,3 +13,18 @@ export const revenueStatistic = async (token, id) => {
         throw err
     }
 }
+
+export const createOrder = async (token, data) => {
+    try {
+        const res = await axiosJWT.post(`order/create`, data, {
+            headers: {
+                token: `Bearer ${token}`,
+            }
+        })
+        return res.data
+    } catch (err) {
+        console.log("err", err);
+        throw err
+    }
+}
+

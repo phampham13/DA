@@ -32,6 +32,7 @@ const authMiddleWare = (req, res, next) => {
 }
 
 const authUserMiddleWare = (req, res, next) => {
+
     const token = req.headers.token.split(' ')[1]
     //const token = req.cookies.token
     //const userId = req.params.id || decode.payload.id 

@@ -8,8 +8,10 @@
     align-items: center;
     height: 65px;
     border-bottom: 2px solid #D7F9FA;
+    //border-bottom: 2px solid var(--sub-color);
     background-color: white;
     font-weight: 700;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 
     .box {
         width: 90%;
