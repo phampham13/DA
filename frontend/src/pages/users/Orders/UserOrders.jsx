@@ -1,8 +1,8 @@
 import classNames from "classnames/bind";
-import styles from "./Profile.module.scss"
+import styles from "./UserOrders.module.scss"
 
 const cx = classNames.bind(styles);
-const Profile = () => {
+const UserOrders = () => {
     return (
         <div className={cx("wrapper")}>
             Profile
@@ -10,4 +10,4 @@ const Profile = () => {
     )
 }
 
-export default Profile;
+export default UserOrders;

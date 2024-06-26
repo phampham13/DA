@@ -15,8 +15,24 @@ const cartSlice = createSlice({
             state.totalAmount = action.payload.totalAmount
         },
         addProductToCart: (state, action) => {
-            const product = action.payload
-
+            const newProduct = action.payload.product
+            const count = action.payload.quantity
+            const existProduct = state.products.find(p => p.productId._id === newProduct._id)
+            if (existProduct) {
+                existProduct.quantity += count
+            } else {
+                let data = {
+                    productId: {
+                        _id: newProduct._id,
+                        name: newProduct.name,
+                        image: newProduct.image,
+                        quantity: newProduct.quantity,
+                        price: newProduct.price
+                    },
+                    quantity: count
+                }
+                state.products.push(data)
+            }
         },
         removeOrderProduct: (state, action) => {
             const { idProduct } = action.payload

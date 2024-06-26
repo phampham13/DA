@@ -54,7 +54,7 @@ const UploadImage = ({ onUploadComplete }) => {
         Upload
       </button>
       {progress > 0 && <p>Upload is {progress}% done</p>}
-      {url && <img src={url} alt="Uploaded" className={cx("imagePreview")} />}
+      {/*{url && <img src={url} alt="Uploaded" className={cx("imagePreview")} />}*/}
     </div>
   );
 };

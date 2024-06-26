@@ -68,7 +68,7 @@ const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
       ]}
     >
       <Form form={form} layout="vertical" name="productForm">
-      
+
         <Form.Item
           name="name"
           label="Tên sản phẩm"

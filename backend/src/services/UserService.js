@@ -1,4 +1,5 @@
 const User = require("../models/UserModel")
+const BlockPhone = require("../models/BlockedPhoneModel")
 const bcrypt = require("bcrypt")
 const { genneralAccessToken, genneralRefreshToken } = require("./JwtService")
 const cartService = require("./CartService");
@@ -241,7 +242,10 @@ const isBlockedUser = async (userId) => {
         if (user && user.state === 1) {
             return true
         } else {
-            return false
+            const phone = await BlockPhone.findOne({ phoneNumber: user.phoneNumber })
+            if (phone) {
+                return true
+            }
         }
     } catch (error) {
         console.error("Error checking user state:", error)

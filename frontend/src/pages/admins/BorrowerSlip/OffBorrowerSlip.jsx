@@ -457,7 +457,7 @@ const OffBorrowerSlip = () => {
         </Modal.Header>
         <Modal.Body>
           <div>
-            <Radio.Group defaultValue={defaultState} onChange={onChange}>
+            <Radio.Group defaultValue={defaultState} onChange={onChange} style={{ padding: '15px' }}>
               {ListstateUpdate.map((item) => (
                 <Radio key={item.state} value={item.state}>
                   {item.name}
@@ -465,15 +465,15 @@ const OffBorrowerSlip = () => {
               ))}
             </Radio.Group>
           </div>
-
+        </Modal.Body>
+        <Modal.Footer>
           <Space>
             <Button onClick={UpdateState} type="primary">
               Cập nhật
             </Button>
             <Button htmlType="reset">Hủy</Button>
           </Space>
-        </Modal.Body>
-        <Modal.Footer></Modal.Footer>
+        </Modal.Footer>
       </Modal>
       <Modal show={showDetailModal} onHide={handleCloseModalDetail}>
         <Modal.Header closeButton>

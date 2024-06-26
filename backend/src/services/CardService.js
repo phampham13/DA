@@ -149,7 +149,7 @@ const addBookToCard = (userId, data) => {
 const getDetail = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const card = await Card.findOne({ userId }).populate('books.bookId', 'bookId name coverImg');
+            const card = await Card.findOne({ userId }).populate('books.bookId', 'bookId name coverImg quantityAvailable');
             if (!card) {
                 resolve({
                     status: 'ERR',

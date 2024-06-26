@@ -3,6 +3,7 @@ const Book = require("../models/BookModel")
 const UserService = require("../services/UserService")
 const BlockedPhone = require("../models/BlockedPhoneModel")
 const EmailService = require("../services/EmailService")
+const OffBrSlip = require("../models/OffBorrowerSlipModel")
 const User = require("../models/UserModel")
 
 const createBorrowerSlip = (newBorrowerSlip) => {
@@ -13,14 +14,14 @@ const createBorrowerSlip = (newBorrowerSlip) => {
             if (checkBlockedUser) {
                 return resolve({
                     status: "ERR",
-                    message: "User is blocked. Please check your borrower slip",
+                    message: "Tài khoản của bạn đã bị khóa do có phiếu chưa trả",
                     data: userId
                 })
             }
             /**: check số lượng sách đang mượn và số sách hiện tại có vượt quá không */
             const borroweredSlips = await BorrowerSlip.find({
                 userId: userId,
-                state: { $in: [0, 1] }
+                state: { $in: [0, 1, 3] }
             })
 
             //console.log(borroweredSlips)
@@ -48,7 +49,7 @@ const createBorrowerSlip = (newBorrowerSlip) => {
             for (const book of dataToSave) {
                 const bookData = await Book.findOne({
                     _id: book.bookId,
-                    quantityAvailable: { $lte: book.quantity }
+                    quantityAvailable: { $lt: book.quantity }
                 });
                 if (bookData) {
                     return resolve({
@@ -89,7 +90,7 @@ const createBorrowerSlip = (newBorrowerSlip) => {
 
             if (createdBorrowerSlip) {
                 if (email) {
-                    await EmailService.sendEmailCreateSlipBorrower(email, books)
+                    await EmailService.sendEmailCreateSlipBorrower(email, books, createdBorrowerSlip.dueDate)
                 }
                 resolve({
                     status: 'OK',
@@ -114,6 +115,9 @@ const getAllUserSlip = (id) => {
             }).populate({
                 path: 'books.bookId',
                 select: 'name coverImg'
+            }).populate({
+                path: 'userId',
+                select: 'name phoneNumber'
             })
             if (bSlip === null) {
                 return resolve({
@@ -197,7 +201,7 @@ const cancelBorrow = (id) => { //id của slip khác bookId
             const promises = books.map(async (book) => {
                 const bookData = await Book.findOneAndUpdate(
                     {
-                        bookId: book.bookId,
+                        _id: book.bookId,
                         //selled: { $gte: order.amount }
                     },
                     {
@@ -322,6 +326,7 @@ const updateState = (id, newState) => {
                 await BlockedPhone.create({ phoneNumber: user.phoneNumber })
             } else if (newState === 2) {
                 if (currentState === 3) {
+                    //từ 3-> 2 không đổi userState vì chưa biết user thanh toán phí phạt chưa
                     const p = await BlockedPhone.findOne({ phoneNumber: bSlip.phoneNumber })
                     if (p) {
                         await BlockedPhone.findOneAndDelete({
@@ -465,6 +470,61 @@ const callSlipStatistic = (year) => {
     });
 }
 
+const payFeeSuccess = async (slipId) => {
+    try {
+        console.log("đến được đây rồi")
+        const bslip = await BorrowerSlip.findById(slipId)
+        const user = await User.findOne({ _id: bslip.userId })
+        user.state = 0
+        await user.save()
+        const lateOffSlip = await OffBrSlip.find({
+            phoneNumber: user.phoneNumber,
+            state: 3
+        })
+
+        if (lateOffSlip.length === 0) {
+            await BlockedPhone.findOneAndDelete({ phoneNumber: user.phoneNumber })
+        }
+        // Tìm và cập nhật các phiếu mượn có state là 2 và lateFee > 0
+        await BorrowerSlip.updateMany(
+            { userId: user._id, state: 2, returnDate: { $exists: true }, lateFee: { $gt: 0 } },
+            { $set: { lateFee: 0 } }
+        );
+
+        // Tìm các phiếu mượn có state là 3
+        const slips = await BorrowerSlip.find({ userId: user._id, state: 3 });
+
+        const today = new Date();
+
+        for (const slip of slips) {
+            try {
+                slip.state = 2;
+                slip.returnDate = today;
+
+                for (const book of slip.books) {
+                    try {
+                        await Book.updateOne(
+                            { _id: book.bookId },
+                            { $inc: { quantityTotal: -book.quantity } }
+                        );
+                    } catch (bookError) {
+                        console.error(`Failed to update book with ID ${book.bookId}:`, bookError);
+                    }
+                }
+
+                await slip.save();
+            } catch (slipError) {
+                console.error(`Failed to update slip with ID ${slip._id}:`, slipError);
+            }
+        }
+
+        console.log("Phí phạt đã được thanh toán thành công.");
+    } catch (error) {
+        console.error("Có lỗi xảy ra:", error);
+        throw new Error("Không thể thanh toán phí phạt.");
+    }
+};
+
 module.exports = {
     createBorrowerSlip,
     getAllUserSlip,
@@ -475,6 +535,7 @@ module.exports = {
     deleteMany,
     deleteBorrowerSlip,
     updateState,
-    callSlipStatistic
+    callSlipStatistic,
+    payFeeSuccess
 }
 

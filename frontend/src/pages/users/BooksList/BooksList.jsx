@@ -28,7 +28,7 @@ const BooksList = () => {
     });
     useEffect(() => {
         getAll();
-        fetchApi()
+        getCategory()
     }, []);
     const getAll = async () => {
         const res = await ApiBOOK.getAllBook(
@@ -36,7 +36,6 @@ const BooksList = () => {
             request.page,
             request.sort
         );
-        console.log(res);
         setData(res.data);
         setOriginalBooks(res.data)
         setBooks(res.data)
@@ -46,12 +45,10 @@ const BooksList = () => {
     //    fetchApi()
     //}, [])
 
-    const fetchApi = async () => {
-        const res = await axios.get("http://localhost:8017/bookCategories/getAll")
-        const t = res.data.data
-        console.log("tttttt", t)
+    const getCategory = async () => {
+        const res = await ApiBOOK.getAllCate()
+        const t = res.data
         const cate = t.map(item => item.categoryName);
-        console.log("cate", cate)
         setCategories(cate)
     }
 

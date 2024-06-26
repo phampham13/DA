@@ -240,7 +240,7 @@ const deleteOrder = (orderId) => {
                 })
             }
 
-            await Product.findByIdAndDelete(orderId, { new: true })
+            await Order.findByIdAndDelete(orderId, { new: true })
             resolve({
                 status: 'OK',
                 message: 'Delete order success',
@@ -401,6 +401,23 @@ const totalRevenueStatistic = (year) => {
     })
 }
 
+const payOrderSuccess = async (orderId) => {
+    try {
+        const order = await Order.findById(orderId)
+        order.isPaid = true;
+        await order.save()
+        return {
+            status: "OK",
+            message: "Update order payment success"
+        }
+    } catch (e) {
+        return {
+            status: "ERR",
+            message: e.message
+        }
+    }
+}
+
 module.exports = {
     createOrder,
     getAllOrderDetails,
@@ -410,5 +427,6 @@ module.exports = {
     deleteManyOrder,
     deleteOrder,
     updateStatus,
-    totalRevenueStatistic
+    totalRevenueStatistic,
+    payOrderSuccess
 }

@@ -31,7 +31,7 @@ function App() {
                   <Page />
                   <ToastContainer
                     position="top-right"
-                    autoClose={2000}
+                    autoClose={1500}
                     hideProgressBar={false}
                     newestOnTop={false}
                     closeOnClick={false}
@@ -72,7 +72,7 @@ function App() {
                     <Page />
                     <ToastContainer
                       position="top-right"
-                      autoClose={2000}
+                      autoClose={1500}
                       hideProgressBar={false}
                       newestOnTop={false}
                       closeOnClick={false}

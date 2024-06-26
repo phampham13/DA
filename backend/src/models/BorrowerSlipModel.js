@@ -20,7 +20,8 @@ const borrowerSlipSchema = new mongoose.Schema(
         books: [BookSchema],
         returnDate: { type: Date },
         dueDate: { type: Date },
-        totalAmount: { type: Number, required: true }
+        totalAmount: { type: Number, required: true },
+        lateFee: { type: Number }
         //borrowedDays: {type: Number}
     },
     {

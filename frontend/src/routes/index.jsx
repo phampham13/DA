@@ -12,6 +12,9 @@ import LibraryAddress from '../pages/users/Address/LibraryAddress';
 import HandmadeItems from '../pages/users/handmadeItems/handmadeItems';
 import BorrowerCard from '../pages/users/BorrowerCard/BorrowerCard';
 import Cart from '../pages/users/Cart/Cart';
+import Profile from '../pages/users/Profile/Profile';
+import BorrowerSlips from '../pages/users/BorrowerSlips/BorrowerSlips';
+import UserOrders from '../pages/users/Orders/UserOrders';
 
 import BookList from '../pages/admins/BookManage/BookList';
 import OnBorrowerSlip from '../pages/admins/BorrowerSlip/OnBorrowerSlip';
@@ -37,6 +40,9 @@ const userRoutes = [
     { path: routesConfig.handmadeItem, component: HandmadeItems, layout: null, title: 'Tiệm hand' },
     { path: routesConfig.borrowerCard, component: BorrowerCard, layout: null, title: 'Thẻ đọc' },
     { path: routesConfig.cart, component: Cart, layout: null, title: 'Giỏ hàng' },
+    { path: routesConfig.borrowerSlips, component: BorrowerSlips, layout: null, title: 'Phiếu mượn của bạn đọc' },
+    { path: routesConfig.orders, component: UserOrders, layout: null, title: 'Đơn hàng' },
+    { path: routesConfig.profile, component: Profile, layout: null, title: 'Thông tin bạn đọc' },
     { path: routesConfig.notfound404user, component: NotFound404, layout: null, title: '' },
 ];
 

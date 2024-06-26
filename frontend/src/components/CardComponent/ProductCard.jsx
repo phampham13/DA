@@ -3,6 +3,7 @@ import { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ProductCard.module.scss';
 import { toast } from 'react-toastify';
+import { convertPrice } from '../../utils/utils';
 const cx = classNames.bind(styles);
 
 const ProductCard = ({ product, onAddToCart }) => {
@@ -21,7 +22,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         if (productAmount === 0) {
             toast.warning("Vui lòng điều chỉnh số lượng")
         } else {
-            onAddToCart(product._id, productAmount);
+            onAddToCart(product, productAmount);
         }
     };
 
@@ -30,11 +31,11 @@ const ProductCard = ({ product, onAddToCart }) => {
             <div className={cx("card-content")}>
                 <div className={cx("card-left")}>
                     <img src={product.image} alt={product.name} className={cx("card-img")} />
-                    <p className={cx("card-desc")}>{product.description}</p>
+                    <p style={{ fontSize: '0.9em' }} className={cx("card-desc")}><i>{product.description}</i></p>
                 </div>
                 <div className={cx("card-right")}>
                     <h2 className={cx("card-title")}>{product.name}</h2>
-                    <p className={cx("card-price")}>Giá: {product.price}</p>
+                    <p className={cx("card-price")}>Giá: {convertPrice(product.price)}</p>
                     <p className={cx("card-availability")}>Sẵn có: {product.quantity}</p>
                     <div className={cx("card-add")}>
                         <input type="number" min="1" max={product.quantity} onChange={handleInputChange} defaultValue="0" />

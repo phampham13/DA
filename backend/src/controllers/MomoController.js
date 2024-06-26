@@ -1,10 +1,12 @@
 const axios = require('axios');
 const crypto = require('crypto');
 const momoConfig = require('../config/momo');
-const Order = require('../models/OrderModel');
+const OrderService = require('../services/OrderService');
+const BorrowerSlipService = require('../services/BorrowerSlipService');
 
 const createPayment = async (req, res) => {
-    const { orderId, amount } = req.body;
+    const { orderId, amount, ipn } = req.body;
+    console.log("req body", req.body)
     //const requestId = `${orderId}_${Date.now()}`;
     //const orderInfo = `Thanh toán đơn hàng ${orderId}`;
     //const redirectUrl = 'http://localhost:5173/'; //url điều hướng đến khi thanh toán thành công
@@ -14,7 +16,8 @@ const createPayment = async (req, res) => {
         orderInfo,
         partnerCode,
         redirectUrl,
-        ipnUrl,
+        ipnBase,
+        //ipnUrl,
         requestType,
         extraData,
         orderGroupId,
@@ -24,7 +27,10 @@ const createPayment = async (req, res) => {
 
     //var amount = '10000';
     //var orderId = partnerCode + new Date().getTime();
-    var requestId = orderId;
+    var ipnUrl = ipnBase + ipn
+    console.log("call", ipnUrl)
+    //var orderId = id + new Date().getTime()
+    var requestId = orderId + new Date().getTime();
 
     //const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=captureMoMoWallet`;
 
@@ -65,6 +71,9 @@ const createPayment = async (req, res) => {
         orderInfo: orderInfo,
         redirectUrl: redirectUrl,
         ipnUrl: ipnUrl,
+        userInfo: {
+            name: "pham pham"
+        },
         lang: lang,
         requestType: requestType,
         autoCapture: autoCapture,
@@ -81,25 +90,47 @@ const createPayment = async (req, res) => {
                 'Content-Type': 'application/json',
             },
         });
+        console.log(result)
         const { payUrl } = result.data;
 
         //await Order.create({ orderId, amount, status: 'pending' });
         res.json({ payUrl });
         //res.status(200).json(result.data)
     } catch (error) {
-        //console.error(error);
+        console.error(error);
         res.status(500).json({ error: 'Something went wrong!' });
     }
 };
 
-const check = async (req, res) => {
+const handlePayPenalty = async (req, res) => {
     /**
       resultCode = 0: giao dịch thành công.
       resultCode = 9000: giao dịch được cấp quyền (authorization) thành công .
       resultCode <> 0: giao dịch thất bại.
      */
-    //console.log('callback: ');
     console.log(req.body);
+    const { orderId, resultCode } = req.body;
+    console.log("eeee", orderId)
+    try {
+        if (resultCode === 0) {
+            console.log("vô đây chưa")
+            await BorrowerSlipService.payFeeSuccess(orderId) //thực chất là slipId đầu tiên trong mảng phiếu bị phạt
+            res.status(200).json({ status: "OK", message: 'IPN received' });
+        }
+        else {
+            res.status(200).json({ message: 'IPN received' })
+        }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Đã xảy ra lỗi khi thanh toán phí phạt!' });
+    }
+    //const result = req.body.resultCode
+    //if(result !== 0){
+    //    return res.status(500).json({ error: 'Giao dịch thất bại!' })
+    //} else {
+    //    const lg = 
+    //}
     /**
      * Dựa vào kết quả này để update trạng thái đơn hàng
      * Kết quả log:
@@ -120,7 +151,26 @@ const check = async (req, res) => {
         }
      */
 
-    return res.status(204).json(req.body);
+
+    //return res.status(204).json(req.body);
+};
+
+const handlePayOrder = async (req, res) => {
+    console.log(req.body);
+    const { orderId, resultCode } = req.body;
+    try {
+        if (resultCode === 0) {
+            const response = await OrderService.payOrderSuccess(orderId)
+            res.status(200).json(response);
+        }
+        else {
+            res.status(200).json({ message: 'chưa thanh toán' })
+        }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Đã xảy ra lỗi khi thanh toán phí phạt!' });
+    }
 };
 
 const transactionCheck = async (req, res) => {
@@ -162,7 +212,7 @@ const refund = async (req, res) => {
         orderInfo,
         partnerCode,
         redirectUrl,
-        ipnUrl,
+        ipnBase,
         requestType,
         extraData,
         orderGroupId,
@@ -206,7 +256,8 @@ const refund = async (req, res) => {
 
 module.exports = {
     createPayment,
-    check,
+    handlePayPenalty,
+    handlePayOrder,
     transactionCheck,
     refund
 }

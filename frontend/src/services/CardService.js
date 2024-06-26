@@ -10,10 +10,27 @@ export const getCard = async (id, token) => {
 }
 
 export const updateCard = async (id, token, newBooks) => {
-    const res = await axiosJWT.put(`card/${id}`, newBooks, {
-        headers: {
-            token: `Bearer ${token}`,
-        }
-    })
-    return res.data
+    try {
+        const res = await axiosJWT.put(`card/update/${id}`, newBooks, {
+            headers: {
+                token: `Bearer ${token}`,
+            }
+        })
+        return res.data
+    } catch (err) {
+        throw err
+    }
+}
+
+export const apiAddBookToCard = async (token, id, book) => {
+    try {
+        const res = await axiosJWT.post(`card/addBook/${id}`, book, {
+            headers: {
+                token: `Bearer ${token}`,
+            }
+        })
+        return res.data
+    } catch (err) {
+        throw err
+    }
 }

@@ -8,6 +8,9 @@ const routes = {
     address: '/address',
     borrowerCard: '/borrowerCard',
     cart: '/cart',
+    borrowerSlips: '/borrowerSlips',
+    orders: '/orders',
+    profile: '/profile',
     forbiden403: '/403',
     notfound404user: '/*',
 

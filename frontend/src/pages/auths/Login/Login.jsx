@@ -82,7 +82,7 @@ export default function Login() {
             </div>
 
             <form action="" method="POST" className={cx("form")} onSubmit={formikForm.handleSubmit} id="form-2">
-                <h3 className={cx("info")}>Thông tin cá nhân</h3>
+                <h3 className={cx("info")} style={{ minWidth: 'fitContent', width: '100%', textAlign: 'center' }}>Thông tin cá nhân</h3>
 
                 <div className="spacer"></div>
 

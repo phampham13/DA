@@ -1,13 +1,13 @@
 import axios from "axios";
 import { createAuthHeader } from "./auth/authHeader";
-import { axiosJWT } from "../utils/httpRequest";
+import { axiosJWT, req } from "../utils/httpRequest";
 
 const token = localStorage.getItem("token");
 class APIBOOK {
   async getAllBook(limit, page, sort) {
     let res = {};
     try {
-      res = await axiosJWT.get(
+      res = await req.get(
         `/books/getAll?limit=${limit}&page=${page}&sort=asc&sort=${sort}`
       );
       return res.data;
@@ -85,8 +85,21 @@ class APIBOOK {
   async getAllCate() {
     let res = {};
     try {
-      res = await axiosJWT.get(
+      res = await req.get(
         `/bookCategories/getAll`
+      );
+      return res.data;
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      throw error;
+    }
+  }
+
+  async getDetail(id) {
+    let res = {};
+    try {
+      res = await req.get(
+        `/books/getDetail/${id}`,
       );
       return res.data;
     } catch (error) {
