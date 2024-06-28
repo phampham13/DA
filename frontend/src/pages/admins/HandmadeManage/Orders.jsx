@@ -10,6 +10,7 @@ import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import {
   DeleteOrder,
+  DeleteOrderMany,
   UpdateOrderStatus,
   getAllOrder,
 } from "../../../services/OrderService";
@@ -35,8 +36,10 @@ const Orders = () => {
   const [IdDelete, setIdDelete] = useState();
 
   const [reload, setReload] = useState(false);
+  const [page, setPage] = useState(10);
 
   const [defaultState, setdefaultState] = useState("pending");
+  const [showDeleteModalMany, setShowDeleteModalMany] = useState(false);
 
   const [showDetailModal, setShowDetailModal] = useState(false);
   const ListstateUpdate = [
@@ -62,6 +65,9 @@ const Orders = () => {
         return { ...order, userDetails: userDetails?.data };
       })
     );
+    if (res.data.length > 10) {
+      setPage(res.data.length);
+    }
     setData(ordersWithUserDetails);
   };
 
@@ -117,7 +123,7 @@ const Orders = () => {
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
-
+  const handleCloseDeleteModalMany = () => setShowDeleteModalMany(false);
   const handleReset = (clearFilters) => {
     clearFilters();
     setSearchText("");
@@ -152,10 +158,15 @@ const Orders = () => {
     setShowDetailModal(false);
     setshowModalUpdate(false);
   };
+  const OpenModalDelMany = async () => {
+    setShowDeleteModalMany(true);
+  };
+
   const UpdateState = async () => {
     const body = {
       newStatus: defaultState,
     };
+
     UpdateOrderStatus(token, order._id, body).then((res) => {
       if (res) {
         if (res.status != "OK") {
@@ -168,13 +179,25 @@ const Orders = () => {
         toast.error("Hành động thất bại");
       }
     });
-    setshowModalUpdate(false)
+    setshowModalUpdate(false);
   };
   const handleViewDetail = async (id) => {
     const res = await getDetailOrder(token, id);
     console.log(res.data);
     setOrder(res.data);
     setShowDetailModal(true);
+  };
+  const handleDeleteMany = async () => {
+    const ids = [...selectedRowKeys];
+    const body = {
+      ids: ids,
+    };
+    const res = await DeleteOrderMany(token, body);
+    setReload(!reload);
+    if (res) {
+      toast.success("Xóa thành công");
+      selectedRowKeys.length = 0;
+    }
   };
   const onChange = (e) => {
     setdefaultState(e.target.value);
@@ -327,7 +350,9 @@ const Orders = () => {
         <div className={cx("topBar")}>
           {selectedRowKeys.length >= 2 && (
             <>
-              <Button danger>Xóa tất cả</Button>
+              <Button onClick={OpenModalDelMany} danger>
+                Xóa tất cả
+              </Button>
             </>
           )}
         </div>
@@ -335,6 +360,13 @@ const Orders = () => {
           rowSelection={rowSelection}
           columns={columns}
           dataSource={dataTable}
+          pagination={{
+            pageSize: 10,
+            total: page,
+          }}
+          showSorterTooltip={{
+            target: "sorter-icon",
+          }}
         />
         <Modal show={showModalUpdate} onHide={handleCloseModal}>
           <Modal.Header closeButton>
@@ -342,7 +374,11 @@ const Orders = () => {
           </Modal.Header>
           <Modal.Body>
             <div>
-              <Radio.Group defaultValue={defaultState} onChange={onChange} style={{ padding: '15px' }}>
+              <Radio.Group
+                defaultValue={defaultState}
+                onChange={onChange}
+                style={{ padding: "15px" }}
+              >
                 {ListstateUpdate.map((item) => (
                   <Radio key={item.state} value={item.state}>
                     {item.name}
@@ -356,7 +392,9 @@ const Orders = () => {
               <Button onClick={UpdateState} type="primary">
                 Cập nhật
               </Button>
-              <Button htmlType="reset" onClick={handleCloseModal}>Hủy</Button>
+              <Button htmlType="reset" onClick={handleCloseModal}>
+                Hủy
+              </Button>
             </Space>
           </Modal.Footer>
         </Modal>
@@ -382,6 +420,20 @@ const Orders = () => {
               type="primary"
               onClick={handleDeleteAccept}
             >
+              Xóa
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={showDeleteModalMany} onHide={handleCloseDeleteModalMany}>
+          <Modal.Header closeButton>
+            <Modal.Title>Xác nhận hủy</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Bạn chắc chắn muốn xóa ?</Modal.Body>
+          <Modal.Footer>
+            <Button danger onClick={handleCloseDeleteModalMany}>
+              Hủy
+            </Button>
+            <Button variant="danger" type="primary" onClick={handleDeleteMany}>
               Xóa
             </Button>
           </Modal.Footer>

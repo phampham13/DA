@@ -83,3 +83,16 @@ export const DeleteOrder = async (token, id) => {
         throw err
     }
 }
+export const DeleteOrderMany = async (token, body) => {
+    try {
+        const res = await axiosJWT.post(`/order/delete-many`,body, {
+            headers: {
+                token: `Bearer ${token}`,
+            }
+        })
+        return res.data
+    } catch (err) {
+        console.log("err:", err);
+        throw err
+    }
+}
