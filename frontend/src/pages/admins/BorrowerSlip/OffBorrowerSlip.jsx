@@ -55,6 +55,9 @@ const OffBorrowerSlip = () => {
   });
   const getAllData = async () => {
     const res = await getAll(token);
+    if (res.data.length > 10) {
+      setPage(res.data.length);
+    }
     setData(res.data);
   };
 
@@ -71,6 +74,7 @@ const OffBorrowerSlip = () => {
   const [showModalUpdate, setshowModalUpdate] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeleteModalMany, setShowDeleteModalMany] = useState(false);
+  const [page, setPage] = useState(10);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -449,6 +453,13 @@ const OffBorrowerSlip = () => {
           rowSelection={rowSelection}
           columns={columns}
           dataSource={dataTable}
+          pagination={{
+            pageSize: 10,
+            total: page,
+          }}
+          showSorterTooltip={{
+            target: "sorter-icon",
+          }}
         />
       </div>
       <Modal show={showModalUpdate} onHide={handleCloseModal}>
@@ -457,7 +468,11 @@ const OffBorrowerSlip = () => {
         </Modal.Header>
         <Modal.Body>
           <div>
-            <Radio.Group defaultValue={defaultState} onChange={onChange} style={{ padding: '15px' }}>
+            <Radio.Group
+              defaultValue={defaultState}
+              onChange={onChange}
+              style={{ padding: "15px" }}
+            >
               {ListstateUpdate.map((item) => (
                 <Radio key={item.state} value={item.state}>
                   {item.name}

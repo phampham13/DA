@@ -109,3 +109,16 @@ export const UpdateSlipOn = async (token,id,body) => {
         throw err
     }
 }
+export const DeleteManySlipOn = async (token,body) => {
+    try {
+        const res = await axiosJWT.post(`borrowerSlip/delete-many`,body, {
+            headers: {
+                token: `Bearer ${token}`,
+            }
+        })
+        return res.data
+    } catch (err) {
+        console.log("err:", err);
+        throw err
+    }
+}

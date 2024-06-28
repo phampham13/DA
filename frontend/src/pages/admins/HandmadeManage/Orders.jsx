@@ -36,6 +36,7 @@ const Orders = () => {
   const [IdDelete, setIdDelete] = useState();
 
   const [reload, setReload] = useState(false);
+  const [page, setPage] = useState(10);
 
   const [defaultState, setdefaultState] = useState("pending");
   const [showDeleteModalMany, setShowDeleteModalMany] = useState(false);
@@ -64,6 +65,9 @@ const Orders = () => {
         return { ...order, userDetails: userDetails?.data };
       })
     );
+    if (res.data.length > 10) {
+      setPage(res.data.length);
+    }
     setData(ordersWithUserDetails);
   };
 
@@ -356,6 +360,13 @@ const Orders = () => {
           rowSelection={rowSelection}
           columns={columns}
           dataSource={dataTable}
+          pagination={{
+            pageSize: 10,
+            total: page,
+          }}
+          showSorterTooltip={{
+            target: "sorter-icon",
+          }}
         />
         <Modal show={showModalUpdate} onHide={handleCloseModal}>
           <Modal.Header closeButton>

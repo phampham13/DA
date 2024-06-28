@@ -19,6 +19,7 @@ import ModalDetailBr from "../../../components/ModalDetailBr";
 import { getDetailBr } from "../../../services/OffBorrowerSlipService";
 import { UpdateBr } from "../../../services/OffBorrowerSlipService";
 import {
+  DeleteManySlipOn,
   DeleteSlipOn,
   GetAllSlipOn,
   GetDetailSlipOn,
@@ -97,12 +98,18 @@ const OnBorrowerSlip = () => {
   }, [selectedRow, reload]);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    setSearchText(selectedKeys[0]);
+    if (dataIndex === "dueDate") {
+      const dateOutput = moment(selectedKeys[0], "DD/MM/YYYY").format(
+        "YYYY-MM-DD"
+      );
+      setSearchText(dateOutput);
+      console.log(searchText);
+    } else {
+      setSearchText(selectedKeys[0]);
+    }
     setSearchedColumn(dataIndex);
   };
-  const handleShowAdd = () => {
-    setAddModal(true);
-  };
+
   const handleReset = (clearFilters) => {
     clearFilters();
     setSearchText("");
@@ -177,7 +184,7 @@ const OnBorrowerSlip = () => {
   const handleDeleteMany = async () => {
     const ids = [...selectedRowKeys];
 
-    const res = await DeleteManyBr(token, ids);
+    const res = await DeleteManySlipOn(token, ids);
     setReload(!reload);
     if (res) {
       toast.success("Xóa thành công");
@@ -186,7 +193,6 @@ const OnBorrowerSlip = () => {
     }
   };
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
   const UpdateState = async () => {
@@ -352,7 +358,7 @@ const OnBorrowerSlip = () => {
     {
       title: "Ngày trả",
       dataIndex: "dueDate",
-
+      ...getColumnSearchProps("dueDate"),
       render: (_, record) => {
         return (
           <>
