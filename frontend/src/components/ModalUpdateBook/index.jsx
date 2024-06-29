@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import UploadImage from "../Upload/UploadImage";
 import { ApiBOOK } from "../../services/BookService";
 const { Option } = Select;
+const { TextArea } = Input;
 const ModalForm = ({ visible, onCancel, onSave, book }) => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(book ? book.coverImg : "");
@@ -24,13 +25,12 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
     setCategories(res.data);
   };
   const handleSave = () => {
-    console.log(imageUrl);
     form
       .validateFields()
       .then((values) => {
         values.coverImg = imageUrl; // Include the updated image URL
-        console.log(values.coverImg);
         onSave(values);
+        console.log(values);
         let res = {};
         if (book) {
           res = ApiBOOK.UpdateBook(book._id, values).then((res) => {
@@ -105,6 +105,9 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
             </Form.Item>
           </>
         )}
+        <Form.Item label="Mô tả" name="description">
+          <TextArea rows={4} />
+        </Form.Item>
         <Form.Item
           name="categoryName"
           label="Thể loại"
