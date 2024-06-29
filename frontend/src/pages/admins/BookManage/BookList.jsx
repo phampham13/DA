@@ -26,8 +26,10 @@ import { AiFillDelete } from "react-icons/ai";
 import { ApiBOOK } from "../../../services/BookService";
 const BookList = () => {
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(10);
+
   const [request, setRequest] = useState({
-    limit: 20,
+    limit: 80,
     page: 0,
     sort: "quantityTotal",
   });
@@ -63,6 +65,9 @@ const BookList = () => {
       request.page,
       request.sort
     );
+    if (res.data.length > 10) {
+      setPage(res.data.length);
+    }
     setData(res.data);
   };
   useEffect(() => {
@@ -180,6 +185,13 @@ const BookList = () => {
   });
   const columns = [
     {
+      title: "STT",
+      dataIndex: "stt",
+      defaultSortOrder: "stt",
+      sorter: (a, b) => b.stt - a.stt,
+      ...getColumnSearchProps("stt"),
+    },
+    {
       title: "Mã sách",
       dataIndex: "bookId",
       showSorterTooltip: {
@@ -201,6 +213,7 @@ const BookList = () => {
         );
       },
     },
+
     {
       title: "Tên sách",
       dataIndex: "name",
@@ -281,8 +294,8 @@ const BookList = () => {
       },
     },
   ];
-  const dataTable = data?.map((book) => {
-    return { ...book, key: book._id };
+  const dataTable = data?.map((book, index) => {
+    return { ...book, key: book._id, stt: index };
   });
 
   const handleDetail = (book) => {
@@ -307,12 +320,7 @@ const BookList = () => {
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
-  const handleCategoryChange = (e) => {
-    console.log(e);
-  };
-  function handleSearchTab() {
-    console.log("kiếm e", keyword);
-  }
+
   const handleCloseModal = () => {
     setShowModal(false);
   };
@@ -379,14 +387,6 @@ const BookList = () => {
           rowSelection={rowSelection}
           columns={columns}
           dataSource={dataTable}
-          onChange={onChange}
-          pagination={{
-            pageSize: 10,
-            total: request.limit,
-          }}
-          showSorterTooltip={{
-            target: "sorter-icon",
-          }}
         />
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
           <Modal.Header closeButton>

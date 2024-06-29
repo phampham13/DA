@@ -19,8 +19,10 @@ const Products = () => {
   const [product, setProduct] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [IdDelete, setIdDelete] = useState();
+  const [page, setPage] = useState(10);
+
   const [request, setRequest] = useState({
-    limit: 10,
+    limit: 40,
     page: 0,
     sort: "price",
   });
@@ -30,7 +32,11 @@ const Products = () => {
       request.page,
       request.sort
     );
+    if (res.data.length > 10) {
+      setPage(res.data.length);
+    }
     setData(res.data);
+    console.log(res.data);
   };
 
   const dataTable = data?.map((product, index) => {
@@ -58,6 +64,9 @@ const Products = () => {
   const handleReset = (clearFilters) => {
     clearFilters();
     setSearchText("");
+  };
+  const onChange = (pagination, filters, sorter, extra) => {
+    console.log("params", pagination, filters, sorter, extra);
   };
   const handleViewDetail = async (id) => {
     const res = await ApiProduct.getDetailProduct(id);
@@ -115,6 +124,7 @@ const Products = () => {
       selectedRowKeys.length = 0;
     }
   };
+
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -296,7 +306,6 @@ const Products = () => {
   ];
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
   const rowSelection = {
@@ -352,10 +361,19 @@ const Products = () => {
             </>
           )}
         </div>
+
         <Table
           rowSelection={rowSelection}
           columns={columns}
           dataSource={dataTable}
+          onChange={onChange}
+          pagination={{
+            pageSize: 10,
+            total: page,
+          }}
+          showSorterTooltip={{
+            target: "sorter-icon",
+          }}
         />
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
           <Modal.Header closeButton>
