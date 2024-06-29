@@ -3,7 +3,17 @@ import styles from "../BookManage/BookList.module.scss";
 import { useEffect, useState, useRef, useContext } from "react";
 import { ApiProduct } from "../../../services/ProductService";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Flex, Tag, Form, Radio } from "antd";
+import {
+  Button,
+  Input,
+  Space,
+  Table,
+  Flex,
+  Tag,
+  Form,
+  Radio,
+  DatePicker,
+} from "antd";
 import Highlighter from "react-highlight-words";
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
@@ -19,7 +29,7 @@ import ModalDetailBr from "../../../components/ModalDetailBr";
 import { getDetailBr } from "../../../services/OffBorrowerSlipService";
 import { UpdateBr } from "../../../services/OffBorrowerSlipService";
 const cx = classNames.bind(styles);
-
+const { RangePicker } = DatePicker;
 const OffBorrowerSlip = () => {
   const [data, setData] = useState([]);
 
@@ -348,6 +358,18 @@ const OffBorrowerSlip = () => {
       },
     },
     {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      ...getColumnSearchProps("createdAt"),
+      render: (_, record) => {
+        return (
+          <>
+            <p>{moment(record.createdAt).format("DD/MM/YYYY")}</p>
+          </>
+        );
+      },
+    },
+    {
       title: "Trạng thái",
       dataIndex: "state",
 
@@ -434,10 +456,36 @@ const OffBorrowerSlip = () => {
       },
     ],
   };
+  const handleDateChange = (dates, dateStrings) => {
+    // dates: [moment, moment]
+    // dateStrings: ["YYYY-MM-DD", "YYYY-MM-DD"]
+    console.log(dates, dateStrings);
+    const [startDate, endDate] = dateStrings;
+
+    if (startDate && endDate) {
+      const filteredData = data.filter((item) => {
+        const itemDate = moment(item.createdAt, moment.ISO_8601).format(
+          "YYYY-MM-DD"
+        );
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+      setData(filteredData);
+    } else {
+      setReload(!reload); // reset to original data if no date range selected
+    }
+  };
+
   return (
     <>
       <div className={cx("wrap")}>
         <div className={cx("topBar")}>
+          <Space
+            direction="vertical"
+            style={{ marginBottom: 16, marginRight: 16 }}
+          >
+            <RangePicker onChange={handleDateChange} />
+          </Space>
+
           <Button onClick={handleShowAdd} type="primary">
             Thêm phiếu mượn
           </Button>
