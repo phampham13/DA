@@ -3,7 +3,17 @@ import styles from "../BookManage/BookList.module.scss";
 import { useEffect, useState, useRef, useContext } from "react";
 import { ApiProduct } from "../../../services/ProductService";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Flex, Tag, Form, Radio } from "antd";
+import {
+  Button,
+  Input,
+  Space,
+  Table,
+  Flex,
+  Tag,
+  Form,
+  Radio,
+  DatePicker,
+} from "antd";
 import Highlighter from "react-highlight-words";
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
@@ -28,20 +38,28 @@ import {
 import { getDetailsUser } from "../../../services/UserService";
 import ModalDetail from "../../../components/ModalBrSlipDetail/ModalDetail";
 const cx = classNames.bind(styles);
-
+const { RangePicker } = DatePicker;
 const OnBorrowerSlip = () => {
   const [data, setData] = useState([]);
 
   const [defaultState, setdefaultState] = useState(0);
+  const [lateFee, setLateFee] = useState("");
+
   const [selectedRow, setSelectedRow] = useState([]);
 
   const [datasrc, setDatasrc] = useState({});
   const [showModal, setShowModal] = useState(false);
 
+  const [showInput, setshowInput] = useState(false);
+
   const [showDetailModal, setShowDetailModal] = useState(false);
 
   const [IdDelete, setIdDelete] = useState();
   const ListstateUpdate = [
+    {
+      name: "Đang chờ",
+      state: 0,
+    },
     {
       name: "Đang mượn",
       state: 1,
@@ -52,7 +70,7 @@ const OnBorrowerSlip = () => {
     },
     {
       name: "Quá hạn",
-      state: 0,
+      state: 3,
     },
   ];
 
@@ -65,6 +83,7 @@ const OnBorrowerSlip = () => {
   const getAllData = async () => {
     const res = await GetAllSlipOn(token);
     const orders = res.data;
+    console.log(orders);
     const ordersWithUserDetails = await Promise.all(
       orders.map(async (order) => {
         const userDetails = await getDetailsUser(order.userId, token);
@@ -72,7 +91,6 @@ const OnBorrowerSlip = () => {
       })
     );
     setData(ordersWithUserDetails);
-    console.log(data);
   };
 
   const dataTable = data?.map((product, index) => {
@@ -126,6 +144,7 @@ const OnBorrowerSlip = () => {
   const handleCloseModal = async () => {
     setshowModalUpdate(false);
     setShowModal(false);
+    setshowInput(false);
   };
   const handleCloseModalAdd = () => {
     setAddModal(false);
@@ -151,6 +170,7 @@ const OnBorrowerSlip = () => {
   const handleEdit = async (src) => {
     // setProduct(res.data);
     console.log("fasfsdfs", src);
+
     setDatasrc(src);
     setdefaultState(src.state);
     setshowModalUpdate(true);
@@ -180,6 +200,11 @@ const OnBorrowerSlip = () => {
   const handleCloseModalDetail = () => setShowDetailModal(false);
   const onChange = (e) => {
     setdefaultState(e.target.value);
+    if (e.target.value === 2 && datasrc.state === 3) {
+      setshowInput(true);
+    } else {
+      setshowInput(false);
+    }
   };
   const handleDeleteMany = async () => {
     const ids = [...selectedRowKeys];
@@ -196,9 +221,17 @@ const OnBorrowerSlip = () => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
   const UpdateState = async () => {
-    const body = {
-      newState: defaultState,
-    };
+    let body = {};
+    if (showInput === true) {
+      body = {
+        newState: defaultState,
+        lateFee: lateFee,
+      };
+    } else {
+      body = {
+        newState: defaultState,
+      };
+    }
     UpdateSlipOn(token, datasrc._id, body).then((res) => {
       if (res) {
         if (res.status != "OK") {
@@ -368,6 +401,18 @@ const OnBorrowerSlip = () => {
       },
     },
     {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      ...getColumnSearchProps("createdAt"),
+      render: (_, record) => {
+        return (
+          <>
+            <p>{moment(record.createdAt).format("DD/MM/YYYY")}</p>
+          </>
+        );
+      },
+    },
+    {
       title: "Trạng thái",
       dataIndex: "state",
 
@@ -381,10 +426,12 @@ const OnBorrowerSlip = () => {
               </div>
             ) : record.state === 2 ? (
               <Tag color="green">Đã trả</Tag>
-            ) : record.state === 0 ? (
+            ) : record.state === 3 ? (
               <Tag color="red">Quá hạn</Tag>
             ) : (
-              <div></div>
+              <div>
+                <Tag color="yellow">Đang chờ</Tag>
+              </div>
             )}
           </>
         );
@@ -456,10 +503,38 @@ const OnBorrowerSlip = () => {
       },
     ],
   };
+  const handleChange = (event) => {
+    setLateFee(event.target.value);
+  };
+
+  const handleDateChange = (dates, dateStrings) => {
+    // dates: [moment, moment]
+    // dateStrings: ["YYYY-MM-DD", "YYYY-MM-DD"]
+    console.log(dates, dateStrings);
+    const [startDate, endDate] = dateStrings;
+
+    if (startDate && endDate) {
+      const filteredData = data.filter((item) => {
+        const itemDate = moment(item.createdAt, moment.ISO_8601).format(
+          "YYYY-MM-DD"
+        );
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+      setData(filteredData);
+    } else {
+      setReload(!reload); // reset to original data if no date range selected
+    }
+  };
+
   return (
     <>
       <div className={cx("wrap")}>
         <div className={cx("topBar")}>
+          <Flex gap="middle" align="start" vertical>
+            <Space direction="vertical" style={{ marginBottom: 16 }}>
+              <RangePicker onChange={handleDateChange} />
+            </Space>
+          </Flex>
           {selectedRowKeys.length >= 2 && (
             <>
               <Button onClick={OpenModalDelMany} danger>
@@ -485,12 +560,25 @@ const OnBorrowerSlip = () => {
               onChange={onChange}
               style={{ padding: "15px" }}
             >
-              {ListstateUpdate.map((item) => (
-                <Radio key={item.state} value={item.state}>
-                  {item.name}
-                </Radio>
-              ))}
+              {ListstateUpdate.filter((item) => item.state !== 0).map(
+                (item) => (
+                  <Radio key={item.state} value={item.state}>
+                    {item.name}
+                  </Radio>
+                )
+              )}
             </Radio.Group>
+            {showInput == true && (
+              <div>
+                <label htmlFor="lateFeeInput">Phí phạt trả muộn:</label>
+                <input
+                  type="text"
+                  id="lateFeeInput"
+                  value={lateFee}
+                  onChange={handleChange}
+                />
+              </div>
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer>
