@@ -338,6 +338,7 @@ const updateState = (id, newState, lateFee) => {
                     }
                     bSlip.lateFee = lateFee
                     await bSlip.save()
+                    console.log("lưu", bSlip)
                 }
                 const promises = listBook.map(async (book) => {
                     const bookData = await Book.findOneAndUpdate(
