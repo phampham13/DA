@@ -8,6 +8,9 @@
 
 .order-info {
     width: 45%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px
 }
 
 .order-details {
@@ -26,7 +29,8 @@
     margin-right: 10px;
 }
 
-.order-field, .item-field {
+.order-field,
+.item-field {
     margin: 5px 0;
 }
 

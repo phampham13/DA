@@ -12,11 +12,6 @@ import {
 import { Modal, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ModalBookDetail from "./ModalBookDetail";
-import {
-  fetchBooks,
-  selectAllBooks,
-  deleteBook,
-} from "../../../redux/slides/booksSlice";
 
 import { toast } from "react-toastify";
 import { SearchOutlined } from "@ant-design/icons";
@@ -378,38 +373,6 @@ const BookList = () => {
               </Button>
             </>
           )}
-        </div>
-
-        <div className={cx("search-element")}>
-          <select value={selectedCategory} onChange={handleCategoryChange}>
-            <option value="">Tất cả loại</option>
-            {categories &&
-              categories.map((category) => (
-                <option key={category.categoryId} value={category.categoryName}>
-                  {category.categoryName}
-                </option>
-              ))}
-          </select>
-          <div className={cx("search-bar")}>
-            <input
-              type="text"
-              className={cx("search-box")}
-              placeholder="Tìm kiếm theo tên sản phẩm"
-              onChange={(e) => setKeyword(e.target.value)}
-            />
-            <button className={cx("search-btn")} onClick={handleSearchTab}>
-              <FontAwesomeIcon
-                icon={faSearch}
-                style={{
-                  color: "white",
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                }}
-              />
-            </button>
-          </div>
         </div>
 
         <Table

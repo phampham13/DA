@@ -12,10 +12,8 @@ const sendEmailCreateOrder = async (email, orderItems) => {
       pass: env.MAIL_PASSWORD, // generated ethereal password
     },
   });
-  //transporter.use('compile', inlineBase64({cidPrefix: 'somePrefix_'}));
 
   let listItem = '';
-  //const attachImage = []
   orderItems.forEach((product) => {
     listItem += `<div>
     <div>
@@ -63,7 +61,6 @@ const sendEmailCreateSlipBorrower = async (email, books, dueDate) => {
     </div>`
   })
 
-  // send mail with defined transport object
   let info = await transporter.sendMail({
     from: env.MAIL_ACCOUNT, // sender address
     to: email, // list of receivers
@@ -78,31 +75,49 @@ const sendReminderEmail = async (emails) => {
   let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
-    secure: true, // true for 465, false for other ports
+    secure: true,
     auth: {
-      user: env.MAIL_ACCOUNT, // generated ethereal user
-      pass: env.MAIL_PASSWORD, // generated ethereal password
+      user: env.MAIL_ACCOUNT,
+      pass: env.MAIL_PASSWORD,
     },
   });
 
-  const listEmail = emails.map(email => `'${email}'`);
-
-  // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: env.MAIL_ACCOUNT, // sender address
-    to: listEmail.join(','), // list of receivers
+    from: env.MAIL_ACCOUNT,
+    to: emails.join(','),
     subject: "Bạn có phiếu mượn quá hạn",
     text: "Hello world?",
     html: `<div>
     Bạn đọc có phiếu mượn quá hạn tại DFreebook. Bạn hãy kiểm tra và sớm trả lại sách cho bọn
     mình. Nếu không tài khoản của bạn sẽ bị khóa và sẽ tính phí phạt theo quy định của thư viện.
-    </div>`, //
-    //attachments: attachImage,
+    </div>`,
   });
 }
+
+const sendResetLink = async (email, token) => {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: env.MAIL_ACCOUNT,
+      pass: env.MAIL_PASSWORD,
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: env.MAIL_ACCOUNT,
+    to: email,
+    subject: "Reset password Dfree",
+    text: "Hello world?",
+    html: `<div><b>Ấn vào liên kết sau để lấy lại mật khẩu</b></div> <a href="${env.CLIENT_PORT}/passwordReset?token=${token}"> Reset Password </a>`,
+  });
+}
+
 
 module.exports = {
   sendEmailCreateOrder,
   sendEmailCreateSlipBorrower,
-  sendReminderEmail
+  sendReminderEmail,
+  sendResetLink,
 }

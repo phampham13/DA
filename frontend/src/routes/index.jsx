@@ -5,10 +5,11 @@ import NotFound404 from '../pages/NotFound404/NotFound404';
 import Forbiden403 from '../pages/Forbiden403/Forbiden403';
 import Home from '../pages/users/Home/Home';
 import Login from '../pages/auths/Login/Login';
+import ResetPassword from '../pages/auths/Login/ResetPassword';
 import Signup from '../pages/auths/Signup';
 import BooksList from '../pages/users/BooksList/BooksList';
 import { BookDetail } from '../pages/users/BooksList/BookDetail';
-import LibraryAddress from '../pages/users/Address/LibraryAddress';
+import Policy from '../pages/users/Policy/Policy';
 import HandmadeItems from '../pages/users/handmadeItems/handmadeItems';
 import BorrowerCard from '../pages/users/BorrowerCard/BorrowerCard';
 import Cart from '../pages/users/Cart/Cart';
@@ -32,11 +33,12 @@ import { LibraryAdd } from '@mui/icons-material';
 
 const userRoutes = [
     { path: routesConfig.login, component: Login, layout: null },
+    { path: routesConfig.resetPassword, component: ResetPassword, layout: null },
     { path: routesConfig.signup, component: Signup, layout: null },
     { path: routesConfig.home, component: Home, layout: null, title: 'Tổng quan' },
     { path: routesConfig.listBooks, component: BooksList, layout: null, title: 'Tủ sách' },
     { path: routesConfig.bookDetail, component: BookDetail, layout: null, title: 'Chi tiết về sách' },
-    { path: routesConfig.address, component: LibraryAddress, layout: null, title: 'Địa chỉ' },
+    { path: routesConfig.policy, component: Policy, layout: null, title: 'Quy định' },
     { path: routesConfig.handmadeItem, component: HandmadeItems, layout: null, title: 'Tiệm hand' },
     { path: routesConfig.borrowerCard, component: BorrowerCard, layout: null, title: 'Thẻ đọc' },
     { path: routesConfig.cart, component: Cart, layout: null, title: 'Giỏ hàng' },

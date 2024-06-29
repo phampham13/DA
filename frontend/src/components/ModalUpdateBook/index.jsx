@@ -9,14 +9,19 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(book ? book.coverImg : "");
   const [categories, setCategories] = useState([]);
+  const [ortherCategory, setOrtherCategory] = useState("")
+  const [isOrtherCate, setIsOrtherCate] = useState(false)
+
   useEffect(() => {
     getAllCate();
     if (book) {
       form.setFieldsValue(book);
       setImageUrl(book.coverImg);
+      setIsOrtherCate(false);
     } else {
       form.resetFields();
       setImageUrl("");
+      setIsOrtherCate(false);
     }
   }, [book, form]);
   const getAllCate = async () => {
@@ -28,18 +33,29 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
     form
       .validateFields()
       .then((values) => {
+        let dataToSave = {}
         values.coverImg = imageUrl; // Include the updated image URL
         console.log(values.coverImg);
+        if (isOrtherCate) {
+          values.categoryName = ortherCategory
+
+        }
         onSave(values);
+        console.log("có book chưa", book)
         let res = {};
         if (book) {
           res = ApiBOOK.UpdateBook(book._id, values).then((res) => {
             toast.success("Update thành công");
           });
         } else {
-          console.log(values);
+          console.log("tạo", values);
           res = ApiBOOK.AddBook(values).then((res) => {
-            toast.success("Tạo thành công");
+            console.log('kết quả tạo', res)
+            if (res.status === "OK") {
+              toast.success("Tạo thành công");
+            } else {
+              toast.error(res.message);
+            }
           });
         }
 
@@ -52,6 +68,16 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
 
   const handleUploadComplete = (url) => {
     setImageUrl(url);
+    console.log("upload ảnh chưa", url)
+  };
+
+  const handleCategoryChange = (value) => {
+    if (value === "orther") {
+      setIsOrtherCate(true);
+      form.setFieldsValue({ categoryName: "" });
+    } else {
+      setIsOrtherCate(false);
+    }
   };
 
   return (
@@ -112,14 +138,32 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
             { required: true, message: "Please input the category name!" },
           ]}
         >
-          <Select placeholder="Select a category">
+          <Select
+            placeholder="Select a category"
+            onChange={handleCategoryChange}
+          >
             {categories.map((category) => (
               <Option key={category._id} value={category.categoryName}>
                 {category.categoryName}
               </Option>
             ))}
+            <Option key='orther' value='orther'>Khác</Option>
           </Select>
         </Form.Item>
+        {isOrtherCate && (
+          <Form.Item
+            name="categoryName"
+            label="Thể loại khác"
+            rules={[
+              { required: true, message: "Please input the orther category!" },
+            ]}
+          >
+            <Input
+              value={ortherCategory}
+              onChange={(e) => setOrtherCategory(e.target.value)}
+            />
+          </Form.Item>
+        )}
         <Form.Item
           name="quantityTotal"
           label="Tổng số lượng"

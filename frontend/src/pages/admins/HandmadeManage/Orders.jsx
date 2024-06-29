@@ -360,7 +360,7 @@ const Orders = () => {
             </Space>
           </Modal.Footer>
         </Modal>
-        <Modal show={showDetailModal} onHide={handleCloseModal}>
+        <Modal show={showDetailModal} onHide={handleCloseModal} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>Xem chi tiết</Modal.Title>
           </Modal.Header>

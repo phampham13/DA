@@ -54,7 +54,7 @@ export const AuthContextProvider = ({ children }) => {
         //console.log("refresh_token inter", r_token)
         if (a_token && r_token) {
             console.log(1)
-            if (decoded?.exp < currentTime.getTime() / 1000) {
+            if (decoded?.exp + 10 < currentTime.getTime() / 1000) {
                 const decodedRefreshToken = jwtDecode(r_token)
                 console.log("decode re token", decodedRefreshToken?.exp)
                 if (decodedRefreshToken?.exp > currentTime.getTime() / 1000) {

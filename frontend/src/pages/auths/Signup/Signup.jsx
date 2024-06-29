@@ -7,13 +7,13 @@ import classNames from "classnames/bind";
 import styles from "./Signup.module.scss";
 import { signup } from "/src/services/auth/signup";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
 export default function Signup() {
     const navigateTo = useNavigate();
-    const phoneRegExp = /^[0-9]{10,}$/;
+    const phoneRegExp = /^0\d{9}$/;
 
     const formik = useFormik({
         initialValues: {

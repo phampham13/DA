@@ -1,7 +1,8 @@
 import classNames from "classnames/bind";
 import styles from "./Cart.module.scss";
 import React, { useEffect, useState, useMemo } from 'react'
-import { Checkbox, InputNumber } from 'antd'
+import { Checkbox, InputNumber } from 'antd';
+import { Modal, Button } from "react-bootstrap";
 import { useContext } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { updateCart } from "../../../services/CartService";
@@ -95,12 +96,6 @@ const Cart = () => {
     const handleOnclickEmpty = () => {
         navigate("/handmadeItems");
     };
-
-    const handlePayOrder = (payUrl) => {
-        setUrlPayOrder(payUrl);
-        console.log("em lấy được url rồi", urlPayOrder)
-        //setShowModalPay(true)
-    }
 
     const totalPriceMemo = useMemo(() => {
         const result = cart?.productsSelected?.reduce((total, cur) => {
@@ -197,8 +192,17 @@ const Cart = () => {
                         <button onClick={handleOnclickEmpty}>Tới tiệm hand</button>
                     </div>
                 )}
-                <ModalOrder show={showModal} handleClose={() => setShowModal(false)} listProduct={cart?.productsSelected} itemsPrice={totalPriceMemo} listChecked={listChecked} handlePayOrder={handlePayOrder} />
+                <ModalOrder show={showModal} handleClose={() => setShowModal(false)} listProduct={cart?.productsSelected} itemsPrice={totalPriceMemo} listChecked={listChecked} />
             </div>
+            <Modal show={showModalPay} onHide={() => setShowModalPay(false)} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>Link thanh toán</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {urlPayOrder && <iframe src={payUrl} style={{ width: '100%', height: '100%' }} />}
+                    {urlPayOrder && (<a ref={urlPayOrder}>Nhấn vào đây để tiếp tục thanh toán</a>)}
+                </Modal.Body>
+            </Modal>
         </div>
     )
 }

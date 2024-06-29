@@ -30,7 +30,7 @@ const createPayment = async (req, res) => {
     var ipnUrl = ipnBase + ipn
     console.log("call", ipnUrl)
     //var orderId = id + new Date().getTime()
-    var requestId = orderId + new Date().getTime();
+    var requestId = orderId;
 
     //const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=captureMoMoWallet`;
 
@@ -157,10 +157,10 @@ const handlePayPenalty = async (req, res) => {
 
 const handlePayOrder = async (req, res) => {
     console.log(req.body);
-    const { orderId, resultCode } = req.body;
+    const { orderId, resultCode, transId } = req.body;
     try {
         if (resultCode === 0) {
-            const response = await OrderService.payOrderSuccess(orderId)
+            const response = await OrderService.payOrderSuccess(orderId, transId)
             res.status(200).json(response);
         }
         else {
@@ -205,7 +205,7 @@ const transactionCheck = async (req, res) => {
 };
 
 const refund = async (req, res) => {
-    const { transId, amount, requestId } = req.body;
+    const { transId, amount } = req.body; //requestId
     let {
         accessKey,
         secretKey,
@@ -220,6 +220,7 @@ const refund = async (req, res) => {
         lang,
     } = momoConfig
     var orderId = partnerCode + new Date().getTime() + "1";
+    var requestId = orderId
     const description = "Hủy đơn hàng"
 
     const rawSignature = `accessKey=${accessKey}&amount=${amount}&description=${description}&orderId=${orderId}&partnerCode=${partnerCode}&requestId=${requestId}&transId=${transId}`

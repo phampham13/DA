@@ -24,7 +24,7 @@ const BorrowerSlips = () => {
     const [payUrl, setPayUrl] = useState('')
 
     useEffect(() => {
-        getAll(token, user.id)
+        getAll()
     }, [])
 
     const getAll = async () => {
@@ -153,7 +153,10 @@ const BorrowerSlips = () => {
                 </div>
             ) : (
                 <div className={cx("list")}>
-                    Bạn chưa mượn phiếu nào!
+                    <div style={{ margin: 'auto' }}>
+                        <img src="../lucky.png" style={{ width: "200px", height: '200px' }} /><br></br>
+                        <p style={{ fontSize: '1.2em' }}>Bạn chưa mượn phiếu nào!</p>
+                    </div>
                 </div>
             )}
             <Modal show={showCancelModal} onHide={handleCloseCancelModal} size="sm">
@@ -165,7 +168,7 @@ const BorrowerSlips = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" className={cx("btn-close-modal")} style={{ backgroundColor: "#36a2eb" }} onClick={handleCloseCancelModal}>
-                        Hủy
+                        Không
                     </Button>
                     <Button variant="danger" onClick={() => handleConfirmCancel()}>
                         Xác nhận hủy

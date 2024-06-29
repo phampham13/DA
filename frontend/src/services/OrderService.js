@@ -42,6 +42,20 @@ export const getAllOrder = async (token) => {
     }
 }
 
+export const getAllUserOrder = async (token, id) => {
+    try {
+        const res = await axiosJWT.get(`/order/get-user-order/${id}`, {
+            headers: {
+                token: `Bearer ${token}`,
+            }
+        })
+        return res.data
+    } catch (err) {
+        console.log("err", err);
+        throw err
+    }
+}
+
 export const getDetailOrder = async (token, id) => {
     try {
         const res = await axiosJWT.get(`/order/get-detail-order/${id}`, {
@@ -73,6 +87,20 @@ export const UpdateOrderStatus = async (token, id, body) => {
 export const DeleteOrder = async (token, id) => {
     try {
         const res = await axiosJWT.delete(`/order/delete/${id}`, {
+            headers: {
+                token: `Bearer ${token}`,
+            }
+        })
+        return res.data
+    } catch (err) {
+        console.log("err:", err);
+        throw err
+    }
+}
+
+export const cancelOrder = async (token, id) => {
+    try {
+        const res = await axiosJWT.delete(`/order/cancel-order/${id}`, {
             headers: {
                 token: `Bearer ${token}`,
             }

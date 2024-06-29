@@ -6,7 +6,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import { Button } from "@mui/material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { IoLibrary } from "react-icons/io5";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useSelector } from "react-redux";
@@ -29,44 +28,23 @@ function Header() {
             <Link to="/">TRANG CHỦ</Link>
           </div>
           <div className={cx("category-item")}>
+            <Link to="/policy">QUY ĐỊNH</Link>
+          </div>
+          <div className={cx("category-item")}>
             <Link to="/books">
               <IoLibrary style={{ fontSize: '16px' }} />
               {"  "}
               TỦ SÁCH
             </Link>
-            {/*<div className={cx("list-item")}>
-
-                            <ul>
-                                 {
-                                listCategory.map((category) => (
-                                    <li><Link to={category.id}>{category.name}</Link></li>
-                                ))
-                            } 
-
-                                Đây là mẫu thôi, gọi api thì xóa đi
-                                <li><Link to="/">Áo khoác</Link></li>
-                                <li><Link to="/">Quần</Link></li>
-                                <li><Link to="/">Áo </Link></li>
-                            </ul>
-                        </div>*/}
           </div>
           <div className={cx("category-item")}>
             <Link to="/handmadeItems">TIỆM HAND</Link>
           </div>
-          <div className={cx("category-item")}>
-            <Link to="/address">ĐỊA CHỈ</Link>
-          </div>
         </div>
         <div className={cx("user")}>
           <div>
-            {token &&
-              (<Button>
-                <NotificationsIcon />
-              </Button>)}
-          </div>
-          <div>
             <Button>
-              <PersonIcon />
+              <PersonIcon style={{ color: 'var(--sub-color2)' }} />
             </Button>
             {token ? (
               <ul style={{ width: "150px" }}>
@@ -91,7 +69,7 @@ function Header() {
           {token && (
             <div className={cx('card')}>
               <Button>
-                <LibraryBooksIcon />
+                <LibraryBooksIcon style={{ color: 'var(--sub-color2)' }} />
               </Button>
               {token && books.length > 0 ? <p>{books.length}</p> : null}
               {token && (
@@ -110,7 +88,7 @@ function Header() {
             <div className={cx('cart')}>
               <Button>
                 <Link to='/cart'>
-                  <ShoppingCartIcon />
+                  <ShoppingCartIcon style={{ color: 'var(--sub-color2)' }} />
                 </Link>
               </Button>
               {token && products.length > 0 ? <p>{products.length}</p> : null}

@@ -19,17 +19,16 @@ const createOrder = async (req, res) => {
     }
 }
 
-const getAllOrderDetails = async (req, res) => {
+const getAllUserOrder = async (req, res) => {
     try {
         const userId = req.params.id
-        console.log(userId)
         if (!userId) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The userId is required'
             })
         }
-        const response = await OrderService.getAllOrderDetails(userId)
+        const response = await OrderService.getAllUserOrder(userId)
         return res.status(200).json(response)
     } catch (e) {
         // console.log(e)
@@ -58,17 +57,18 @@ const getDetailsOrder = async (req, res) => {
     }
 }
 
-const cancelOrderDetails = async (req, res) => {
+const cancelOrder = async (req, res) => {
     try {
         //const data = req.body.orderItems
         const orderId = req.params.id
+        console.log("order", orderId)
         if (!orderId) {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'The orderId is required'
             })
         }
-        const response = await OrderService.cancelOrderDetails(orderId)
+        const response = await OrderService.cancelOrder(orderId)
         return res.status(200).json(response)
     } catch (e) {
         // console.log(e)
@@ -168,9 +168,9 @@ const revenueStatistic = async (req, res) => {
 
 module.exports = {
     createOrder,
-    getAllOrderDetails,
+    getAllUserOrder,
     getDetailsOrder,
-    cancelOrderDetails,
+    cancelOrder,
     getAllOrder,
     deleteOrder,
     deleteManyOrder,

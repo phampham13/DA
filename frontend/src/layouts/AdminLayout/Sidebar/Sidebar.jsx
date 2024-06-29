@@ -1,10 +1,7 @@
 import classNames from 'classnames/bind';
 import styles from './Sidebar.module.scss';
 
-import SupportAgentIcon from '@mui/icons-material/SupportAgent';
-import WarehouseIcon from '@mui/icons-material/Warehouse';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { HomeIcon, ClientIcon, StatsIcon, SalesCounterIcon, SearchIcon, BookIcon, SlipIcon, EventIcon } from '../../../components/Icons';
+import { HomeIcon, StatsIcon, BookIcon, SlipIcon } from '../../../components/Icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faPaintBrush } from '@fortawesome/free-solid-svg-icons';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -26,7 +23,6 @@ function Sidebar({ setToggleButton }) {
 
     const [active, setActive] = useState({
         listBook: true,
-        listCategory: false,
         listBorrower: false,
         listOnSlip: false,
         listOffSlip: false,
@@ -52,7 +48,6 @@ function Sidebar({ setToggleButton }) {
     const handleActive = (detailName) => {
         setActive((prevState) => ({
             listBook: false,
-            listCategory: false,
             listOnSlip: false,
             listOnSlip: false,
             listOffSlip: false,
@@ -121,7 +116,7 @@ function Sidebar({ setToggleButton }) {
                             {/* Sách*/}
                             <div
                                 className={cx('homeMenuItem', 'itemNav', {
-                                    active: active.listBook || active.listCategory,
+                                    active: active.listBook
                                 })}
                                 onClick={() => handleShowDetail('showDetailBook')}
                             >
@@ -158,19 +153,8 @@ function Sidebar({ setToggleButton }) {
                                             <span>Thống kê sách</span>
                                         </div>
                                     </Link>
-                                    <Link
-                                        to="/admin/bookCategories"
-                                        className={cx('homeMenuItem', 'itemNav', 'innerWrapCollapseItem')}
-                                        onClick={() => handleActive('listCategory')}
-                                    >
-                                        <div className={cx('menuItemTitle')}>
-                                            <span>Danh sách thể loại sách</span>
-                                        </div>
-                                    </Link>
                                 </div>
                             )}
-
-
 
                             {/* mượn trả sách */}
                             <div
@@ -328,7 +312,6 @@ function Sidebar({ setToggleButton }) {
                                     </Link>
                                 </div>
                             )}
-
 
                             <hr className={cx('menuDivider')}></hr>
 

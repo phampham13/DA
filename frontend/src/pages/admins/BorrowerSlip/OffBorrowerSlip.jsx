@@ -32,6 +32,7 @@ const OffBorrowerSlip = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
 
   const [IdDelete, setIdDelete] = useState();
+
   const ListstateUpdate = [
     {
       name: "Đang mượn",
@@ -331,13 +332,13 @@ const OffBorrowerSlip = () => {
       ...getColumnSearchProps("totalAmount"),
     },
     {
-      title: "Ngày trả",
-      dataIndex: "dueDate",
+      title: "Ngày mượn",
+      dataIndex: "createdAt",
 
       render: (_, record) => {
         return (
           <>
-            <p>{moment(record.dueDate).format("DD/MM/YYYY")}</p>
+            <p>{moment(record.createdAt).format("DD/MM/YYYY")}</p>
           </>
         );
       },
@@ -471,7 +472,7 @@ const OffBorrowerSlip = () => {
             <Button onClick={UpdateState} type="primary">
               Cập nhật
             </Button>
-            <Button htmlType="reset">Hủy</Button>
+            <Button htmlType="reset" onClick={handleCloseModal}>Hủy</Button>
           </Space>
         </Modal.Footer>
       </Modal>

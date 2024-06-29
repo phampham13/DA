@@ -11,6 +11,7 @@ router.get('/getAll', authMiddleWare, userController.getAllUser)
 router.get('/get-detail/:id', authUserMiddleWare, userController.getDetailUser)
 router.post('/verify', userController.verifyToken);
 router.post('/refresh-token', userController.refreshToken)
-
+router.post('/password-send-email', userController.sendResetLinkEmail)
+router.post('/password-reset', userController.resetPassword)
 
 module.exports = router

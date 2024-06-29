@@ -20,7 +20,7 @@ import Loading from "../../../components/LoadingComponent/Loading";
 import { createPayment } from "../../../services/PaymentService";
 
 const cx = classNames.bind(styles);
-const ModalOrder = ({ show, handleClose, listProduct, itemsPrice, listChecked, handlePayOrder }) => {
+const ModalOrder = ({ show, handleClose, listProduct, itemsPrice, listChecked }) => {
     const dispatch = useDispatch()
     const navigateTo = useNavigate()
     const { user, token } = useContext(AuthContext)
@@ -52,6 +52,13 @@ const ModalOrder = ({ show, handleClose, listProduct, itemsPrice, listChecked, h
         console.log(listProduct, itemsPrice)
     }, []);
 
+    useEffect(() => {
+        if (payUrl) {
+            handleClose();
+            window.open(payUrl, "_blank");
+        }
+    }, [payUrl, handleClose]);
+
     const handleCityChange = (e) => {
         const cityName = e.target.value;
         const selectedCityData = cities.find((city) => city.Name === cityName);
@@ -72,9 +79,6 @@ const ModalOrder = ({ show, handleClose, listProduct, itemsPrice, listChecked, h
         formik.setFieldValue("ward", wardName);
     };
 
-    const handleCard = () => {
-        dispatch(resetCard())
-    }
     const formik = useFormik({
         initialValues: {
             receiverName: userInfo.name,
@@ -123,17 +127,17 @@ const ModalOrder = ({ show, handleClose, listProduct, itemsPrice, listChecked, h
                 dispatch(removeAllOrderProduct({ listChecked }))
                 await updateCart(userInfo.id, token, { products: dataToSave })
                 if (values.paymentMethod === "momo") {
-                    const url = createPayment({
+                    const url = await createPayment({
                         orderId: res.data._id,
                         ipn: "payOrder",
                         amount: res.data.itemsPrice
                     })
-                    setPayUrl(url.data.PayUrl)
+                    console.log("url model", url)
+                    setPayUrl(url.payUrl)
                 }
                 toast.success("Đặt hàng thành công, CTV sẽ sớm xác nhận đơn hàng")
             }
             setIsLoading(false)
-            handlePayOrder(payUrl)
             handleClose()
         },
     })
@@ -273,7 +277,7 @@ const ModalOrder = ({ show, handleClose, listProduct, itemsPrice, listChecked, h
                                         </div>
                                     ))}
                                 </div>
-                                <p style={{ fontWeight: '550' }}>Tổng giá: {itemsPrice} VND</p>
+                                <p style={{ fontWeight: '550' }}>Tổng giá: {convertPrice(itemsPrice)}</p>
                             </div>
                         </div>
                         <Modal.Footer>
