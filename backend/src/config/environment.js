@@ -5,6 +5,8 @@ export const env = {
     MONGO_DB: process.env.MONGO_DB,
     DATABASE_NAME: process.env.DATABASE_NAME,
     APP_HOST: process.env.APP_HOST,
+    SERVER_PORT: process.env.SERVER_PORT,
+    CLIENT_PORT: process.env.CLIENT_PORT,
     APP_PORT: process.env.APP_PORT,
     AUTHOR: process.env.AUTHOR,
     SECRET_KEY: process.env.SECRET_KEY,

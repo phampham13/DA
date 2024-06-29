@@ -1,30 +1,14 @@
 import classNames from "classnames/bind";
 import styles from "./Sidebar.module.scss";
 
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import {
-  HomeIcon,
-  ClientIcon,
-  StatsIcon,
-  SalesCounterIcon,
-  SearchIcon,
-  BookIcon,
-  SlipIcon,
-  EventIcon,
-} from "../../../components/Icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faAngleLeft,
-  faAngleRight,
-  faPaintBrush,
-} from "@fortawesome/free-solid-svg-icons";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
-import { AuthContext } from "../../../contexts/AuthContext";
-import routes from "../../../config/routes";
+import { HomeIcon, StatsIcon, BookIcon, SlipIcon } from '../../../components/Icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleLeft, faAngleRight, faPaintBrush } from '@fortawesome/free-solid-svg-icons';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { AuthContext } from '../../../contexts/AuthContext';
+import routes from '../../../config/routes';
 
 const cx = classNames.bind(styles);
 
@@ -45,7 +29,7 @@ function Sidebar({ setToggleButton }) {
     listOffSlip: false,
     statisticSale: false,
     listProduct: false,
-    listOrder: false,
+    listOrder: false
   });
   const [toggle, setToggle] = useState({
     action: false,
@@ -65,9 +49,8 @@ function Sidebar({ setToggleButton }) {
   const handleActive = (detailName) => {
     setActive((prevState) => ({
       listBook: false,
-      listCategory: false,
       listOnSlip: false,
-
+      listOnSlip: false,
       listOffSlip: false,
       statisticSale: false,
       listOrder: false,
@@ -136,27 +119,28 @@ function Sidebar({ setToggleButton }) {
           </div>
         </div>
 
-        <div className={cx("menuInnerWrapper")}>
-          <div className={cx("menuPrimaryInner")}>
-            <nav className={cx("menuList")}>
+        <div className={cx('menuInnerWrapper')}>
+          <div className={cx('menuPrimaryInner')}>
+            <nav className={cx('menuList')}>
+
               {/* Sách*/}
               <div
-                className={cx("homeMenuItem", "itemNav", {
-                  active: active.listBook || active.listCategory,
+                className={cx('homeMenuItem', 'itemNav', {
+                  active: active.listBook
                 })}
-                onClick={() => handleShowDetail("showDetailBook")}
+                onClick={() => handleShowDetail('showDetailBook')}
               >
-                <div className={cx("wrapIconItem")}>
+                <div className={cx('wrapIconItem')}>
                   <BookIcon />
                 </div>
                 {!toggle.action && (
                   <>
-                    <div className={cx("menuItemTitle")}>
+                    <div className={cx('menuItemTitle')}>
                       <span>Quản lý sách</span>
                     </div>
                     <div>
                       <FontAwesomeIcon
-                        className={cx("iconArrowRight", {
+                        className={cx('iconArrowRight', {
                           activeIcon: details.showDetailBook,
                         })}
                         icon={faAngleRight}
@@ -168,34 +152,15 @@ function Sidebar({ setToggleButton }) {
               {/* Chi tiết trong quản lý sách */}
               {!toggle.action && (
                 <div
-                  className={cx("wrapCollapseItem", {
-                    showCollapseItem: details.showDetailBook,
-                  })}
+                  className={cx('wrapCollapseItem', { showCollapseItem: details.showDetailBook })}
                 >
                   <Link
                     to="/admin/books"
-                    className={cx(
-                      "homeMenuItem",
-                      "itemNav",
-                      "innerWrapCollapseItem"
-                    )}
-                    onClick={() => handleActive("listBook")}
+                    className={cx('homeMenuItem', 'itemNav', 'innerWrapCollapseItem')}
+                    onClick={() => handleActive('listBook')}
                   >
-                    <div className={cx("menuItemTitle")}>
+                    <div className={cx('menuItemTitle')}>
                       <span>Thống kê sách</span>
-                    </div>
-                  </Link>
-                  <Link
-                    to="/admin/bookCategories"
-                    className={cx(
-                      "homeMenuItem",
-                      "itemNav",
-                      "innerWrapCollapseItem"
-                    )}
-                    onClick={() => handleActive("listCategory")}
-                  >
-                    <div className={cx("menuItemTitle")}>
-                      <span>Danh sách thể loại sách</span>
                     </div>
                   </Link>
                 </div>
@@ -343,22 +308,22 @@ function Sidebar({ setToggleButton }) {
 
               {/* Thống kê*/}
               <div
-                className={cx("homeMenuItem", "itemNav", {
-                  active: active.statisticSale,
+                className={cx('homeMenuItem', 'itemNav', {
+                  active: active.statisticSale
                 })}
-                onClick={() => handleShowDetail("showDetailStats")}
+                onClick={() => handleShowDetail('showDetailStats')}
               >
-                <div className={cx("wrapIconItem")}>
+                <div className={cx('wrapIconItem')}>
                   <StatsIcon />
                 </div>
                 {!toggle.action && (
                   <>
-                    <div className={cx("menuItemTitle")}>
+                    <div className={cx('menuItemTitle')}>
                       <span>Thống kê</span>
                     </div>
                     <div>
                       <FontAwesomeIcon
-                        className={cx("iconArrowRight", {
+                        className={cx('iconArrowRight', {
                           activeIcon: details.showDetailStats,
                         })}
                         icon={faAngleRight}
@@ -370,27 +335,21 @@ function Sidebar({ setToggleButton }) {
               {/* Chi tiết trong thống kê */}
               {!toggle.action && (
                 <div
-                  className={cx("wrapCollapseItem", {
-                    showCollapseItem: details.showDetailStats,
-                  })}
+                  className={cx('wrapCollapseItem', { showCollapseItem: details.showDetailStats })}
                 >
                   <Link
                     to="/admin/stats"
-                    className={cx(
-                      "homeMenuItem",
-                      "itemNav",
-                      "innerWrapCollapseItem"
-                    )}
-                    onClick={() => handleActive("statisticSale")}
+                    className={cx('homeMenuItem', 'itemNav', 'innerWrapCollapseItem')}
+                    onClick={() => handleActive('statisticSale')}
                   >
-                    <div className={cx("menuItemTitle")}>
+                    <div className={cx('menuItemTitle')}>
                       <span>Thống kê</span>
                     </div>
                   </Link>
                 </div>
               )}
 
-              <hr className={cx("menuDivider")}></hr>
+              <hr className={cx('menuDivider')}></hr>
 
               <Link
                 to="/login"

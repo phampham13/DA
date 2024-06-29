@@ -12,7 +12,7 @@ const createBook = async (req, res) => {
             })
         }
         const checkCategory = await CategoryService.checkCategory(categoryName)
-        //console.log(checkCategory)
+
         if (checkCategory === null) {
             CategoryService.createCategory(categoryName)
         }
@@ -30,7 +30,11 @@ const updateBook = async (req, res) => {
     try {
         const id = req.params.id
         const data = req.body
-        //console.log(id)
+        const checkCategory = await CategoryService.checkCategory(data.categoryName)
+
+        if (checkCategory === null) {
+            CategoryService.createCategory(data.categoryName)
+        }
         if (!id) {
             resolve({
                 status: 'ERR',
@@ -77,6 +81,19 @@ const getAllBook = async (req, res) => {
     }
 }
 
+//Dành cho phía user
+const getAll = async (req, res) => {
+    try {
+        const { limit, page, categoryName, keyword } = req.query
+        const response = await BookService.getAll(Number(limit) || null, Number(page) || 1, categoryName, keyword)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e.message
+        })
+    }
+}
+
 const getDetailBook = async (req, res) => {
     try {
         const bookId = req.params.id
@@ -118,6 +135,7 @@ module.exports = {
     updateBook,
     deleteBook,
     getAllBook,
+    getAll,
     getDetailBook,
     deleteMany
 }

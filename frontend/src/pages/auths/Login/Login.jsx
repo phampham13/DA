@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -7,10 +7,12 @@ import styles from "./Login.module.scss";
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { login } from "/src/services/auth/login";
+import { Modal, Button } from "react-bootstrap";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { sendRequest } from "../../../services/auth/passwordReset";
 //import { useMutationHooks } from "../../../hooks/useMutationHook";
 //import { getListItem } from "../../../reactRedux/action/actions";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,10 +22,12 @@ const cx = classNames.bind(styles);
 export default function Login() {
     //const dispatch = useDispatch();
     const { handleLoggedin } = React.useContext(AuthContext);
+    const [showModal, setShowModal] = useState(false)
     const navigateTo = useNavigate();
     const location = useLocation()
+    const [email, setEmail] = useState('')
 
-    const phoneRegExp = /^[0-9]{10,}$/;
+    const phoneRegExp = /^0\d{9}$/;
 
     const formikForm = useFormik({
         initialValues: {
@@ -56,13 +60,12 @@ export default function Login() {
                     } else {
                         if (user.id && user.role === "admin") {
                             handleLoggedin(token, refresh_token, user);
-                            toast.success("Đăng nhập thành công");
                             navigateTo("/admin/books");
+                            toast.success("Đăng nhập thành công");
                         } else {
                             toast.error("Sai email hoặc mật khẩu");
                         }
                     }
-                    //localStorage.setItem('token', JSON.stringify(response?.access_token))
                 } else {
                     toast.error(`Đăng nhập thất bại!!! ${response.message}`);
                 }
@@ -71,6 +74,27 @@ export default function Login() {
             }
         }
     });
+
+    const handleForgetPassword = () => {
+        console.log("ấn vào p")
+        setShowModal(true)
+    }
+
+    const handleCloseModal = () => {
+        setShowModal(false)
+    }
+
+    const handleConfirm = async () => {
+        const res = await sendRequest({
+            email: email
+        })
+        if (res.status !== "OK") {
+            toast.error(res.message)
+        } else {
+            toast.success("Vui lòng kiểm tra email")
+        }
+        setShowModal(false)
+    }
 
     return (
         <div className={cx("container")}>
@@ -101,11 +125,29 @@ export default function Login() {
                     <input required id="password" name="password" type="password" placeholder="Mật khẩu" value={formikForm.values.password} onChange={formikForm.handleChange} className={cx("form-control")} />
                     {formikForm.errors.password && formikForm.touched.password && <span className={cx("form-message")}>{formikForm.errors.password}</span>}
                 </div>
-                <Link to={"/"} style={{ marginLeft: '0px' }}>Quên mật khẩu?</Link>
+                <p onClick={handleForgetPassword} style={{ textDecoration: 'underline', color: 'blue' }}>Quên mật khẩu</p>
                 <button className={cx("form-submit")} type="submit" disabled={!formikForm.values.phoneNumber || !formikForm.values.password}>
                     Đăng nhập
                 </button>
             </form>
+            <Modal show={showModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Email đăng kí</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <label htmlFor="email"> Email đăng kí tài khoản:
+                        <input id="email" value={email} onChange={(e) => setEmail(e.target.value)}></input>
+                    </label>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="light" style={{ border: '1px solid #aaa' }} onClick={handleCloseModal}>
+                        Đóng
+                    </Button>
+                    <Button variant="primary" onClick={() => handleConfirm()}>
+                        Lấy lại mật khẩu
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

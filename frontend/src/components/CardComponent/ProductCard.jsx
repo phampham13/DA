@@ -35,7 +35,7 @@ const ProductCard = ({ product, onAddToCart }) => {
                 </div>
                 <div className={cx("card-right")}>
                     <h2 className={cx("card-title")}>{product.name}</h2>
-                    <p className={cx("card-price")}>Giá: {convertPrice(product.price)}</p>
+                    <p className={cx("card-price")}>Giá:<span style={{ color: '#e92727' }}>{convertPrice(product.price)}</span></p>
                     <p className={cx("card-availability")}>Sẵn có: {product.quantity}</p>
                     <div className={cx("card-add")}>
                         <input type="number" min="1" max={product.quantity} onChange={handleInputChange} defaultValue="0" />

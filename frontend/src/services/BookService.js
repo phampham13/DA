@@ -16,6 +16,20 @@ class APIBOOK {
       throw error;
     }
   }
+
+  async getBooks(limit, page, categoryName, keyword) {
+    let res = {};
+    try {
+      res = await req.get(
+        `/books/get-by-user?limit=${limit}&page=${page}&categoryName=${categoryName}&keyword=${keyword}`
+      );
+      return res.data;
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      throw error;
+    }
+  }
+
   async UpdateBook(id, body) {
     let res = {};
     try {

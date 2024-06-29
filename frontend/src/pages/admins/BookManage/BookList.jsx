@@ -12,11 +12,6 @@ import {
 import { Modal, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ModalBookDetail from "./ModalBookDetail";
-import {
-  fetchBooks,
-  selectAllBooks,
-  deleteBook,
-} from "../../../redux/slides/booksSlice";
 
 import { toast } from "react-toastify";
 import { SearchOutlined } from "@ant-design/icons";

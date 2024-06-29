@@ -3,9 +3,8 @@ import styles from "./BooksList.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { ApiBOOK } from "../../../services/BookService";
-import { useQuery } from "@tanstack/react-query";
+import Loading from "../../../components/LoadingComponent/Loading";
 
 const cx = classNames.bind(styles);
 
@@ -14,36 +13,27 @@ const BooksList = () => {
 
     //const books = useSelector(selectAllBooks)
     const [books, setBooks] = useState([])
-    const [originalBooks, setOriginalBooks] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState("Tất cả");
-    const [keyword, setKeyword] = useState('')
     const [categories, setCategories] = useState([])
-    const navigate = useNavigate();
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [keyword, setKeyword] = useState('')
+    const [page, setPage] = useState(1)
+    const [totalPage, setTotalPage] = useState(1)
+    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false)
 
-    const [data, setData] = useState([]);
-    const [request, setRequest] = useState({
-        limit: 20,
-        page: 0,
-        sort: "quantityTotal",
-    });
     useEffect(() => {
-        getAll();
+        fetchBooks();
         getCategory()
     }, []);
-    const getAll = async () => {
-        const res = await ApiBOOK.getAllBook(
-            request.limit,
-            request.page,
-            request.sort
-        );
-        setData(res.data);
-        setOriginalBooks(res.data)
-        setBooks(res.data)
-    };
 
-    //useEffect(() => {
-    //    fetchApi()
-    //}, [])
+    const fetchBooks = async (page = 1, append = false, selectedCategory = "", keyword = "") => {
+        setIsLoading(true)
+        const res = await ApiBOOK.getBooks(5, page, selectedCategory, keyword);
+        setBooks((prevBooks) => (append ? [...prevBooks, ...res.data] : res.data));
+        setPage(res.pageCurrent)
+        setTotalPage(res.totalPage)
+        setIsLoading(false)
+    };
 
     const getCategory = async () => {
         const res = await ApiBOOK.getAllCate()
@@ -52,52 +42,24 @@ const BooksList = () => {
         setCategories(cate)
     }
 
-    //const query = useQuery({ queryKey: ['todos'], queryFn: fetchApi })
-    //console.log('query', query)
-
-    /*useEffect(() => {
-        async function getAllCategory() {
-            const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-            const data = await response.json();
-            //console.log(data);
-        }
-        getAllCategory();
-        setCategories(fakeCate)
-        console.log(categories)
-
-    }, [])
-
-    useEffect(() => {
-        dispatch(fetchBooks())
-    }, [dispatch])*/
-
     const handleCategoryChange = (event) => {
-        setSelectedCategory(event.target.value);
-        const filteredBooks = originalBooks.filter(book => book.categoryName === selectedCategory)
-        setBooks(filteredBooks)
+        const newCategory = event.target.value
+        setSelectedCategory(newCategory)
+        setKeyword("")
+        fetchBooks(1, false, event.target.value)
     };
 
-    const handleInputChange = (keyword) => {
-        console.log(keyword)
-    }
-
-    function handleSearch(e) {
+    const handleSearch = () => {
         if (keyword.trim()) {
-            const booksByAuthor = originalBooks.filter(book => book.author.toLowerCase().includes(keyword.toLowerCase()));
-
-            // Lọc sách có tên sách chứa từ khóa
-            const booksByName = originalBooks.filter(book => book.name.toLowerCase().includes(keyword.toLowerCase()));
-
-            // Kết hợp hai mảng kết quả
-            const combinedBooks = [...booksByAuthor, ...booksByName];
-
-            // Loại bỏ các sách trùng lặp trong mảng kết quả
-            const uniqueBooks = combinedBooks.filter((book, index) =>
-                combinedBooks.findIndex(b => b._id === book._id) === index
-            );
-            setBooks(uniqueBooks)
+            fetchBooks(1, false, selectedCategory, keyword)
         }
     }
+
+    const handleLoadMore = () => {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchBooks(nextPage, true, selectedCategory, keyword);
+    };
 
     const redirectToOtherPage = (bookId) => {
         navigate(`/bookDetail/${bookId}`);
@@ -112,7 +74,6 @@ const BooksList = () => {
             <div className={cx("info")}>
                 <h5 className={cx('name')}>{book.name}</h5>
                 <p>Tác giả: {book.author}</p>
-                <p>Tổng số lượng: {book.quantityTotal}</p>
                 <p>Sẵn có: <span>{book.quantityAvailable}</span></p>
             </div>
         </div>
@@ -120,10 +81,10 @@ const BooksList = () => {
 
     return (
         <div className={cx('wrapper')}>
-            <h3>Tủ sách của Dfree</h3>
+            <img src='../slogan.png' style={{ height: '80px', objectFit: 'contain' }}></img>
             <div className={cx('search-bar')}>
                 <select value={selectedCategory} onChange={handleCategoryChange}>
-                    <option value="">Tất cả loại</option>
+                    <option value="">Tất cả</option>
                     {categories.map((category, index) => (
                         <option key={index} value={category}>
                             {category}
@@ -134,11 +95,32 @@ const BooksList = () => {
                     type="text"
                     className={cx('search-input')}
                     placeholder="Tìm kiếm theo tên sách hoặc tác giả"
+                    value={keyword}
                     onChange={e => setKeyword(e.target.value)}
                 />
                 <button className={cx('search-button')} onClick={handleSearch}>Tìm Kiếm</button>
             </div>
-            <div className={cx('book-container')}>{renderedBooks}</div>
+            <Loading isLoading={isLoading}>
+                {books.length > 0 ? (
+                    <div className={cx('book-container')}>
+                        <div className={cx('list-book')}>
+                            {renderedBooks}
+                        </div>
+                        {page < totalPage && (
+                            <div style={{ display: 'flex', justifyContent: 'space-around' }} className={cx('more')}>
+                                <button onClick={handleLoadMore} style={{ margin: 'auto' }}>
+                                    Xem thêm
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div><img src="../searchBook_empty.png" style={{ width: '300px', height: '300px', objectFit: 'contain' }} /></div>
+                        <div><p style={{ fontSize: '1.2em' }}>Không có quyển sách nào được tìm thấy</p></div>
+                    </div>
+                )}
+            </Loading>
         </div>
     )
 }

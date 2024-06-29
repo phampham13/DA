@@ -142,6 +142,7 @@ const updateState = async (req, res) => {
     try {
         const bSlipId = req.params.id;
         const newState = req.body.newState
+        const lateFee = req.body.lateFee
 
         if (!newState) {
             return res.status(400).json({
@@ -150,7 +151,7 @@ const updateState = async (req, res) => {
             });
         }
 
-        const response = await BorrowerSlipService.updateState(bSlipId, newState)
+        const response = await BorrowerSlipService.updateState(bSlipId, newState, lateFee)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({

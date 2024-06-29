@@ -63,6 +63,42 @@ const loginUser = async (req, res) => {
     }
 }
 
+const sendResetLinkEmail = async (req, res) => {
+    try {
+        const { email } = req.body
+        if (!email) {
+            return res.status(200).json({
+                status: "ERR",
+                message: "Email is require"
+            })
+        }
+        const response = await UserService.sendResetLinkEmail(email)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e.message
+        })
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const { email, token, password } = req.body
+        if (!email || !token || !password) {
+            return res.status(200).json({
+                status: "ERR",
+                message: "Input is required"
+            })
+        }
+        const response = await UserService.resetPassword(email, token, password)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e.message
+        })
+    }
+}
+
 const updateUser = async (req, res) => {
     try {
         const userId = req.params.id
@@ -199,6 +235,8 @@ const logoutUser = async (req, res) => {
 module.exports = {
     createUser,
     loginUser,
+    sendResetLinkEmail,
+    resetPassword,
     updateUser,
     deleteUser,
     getAllUser,

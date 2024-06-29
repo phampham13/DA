@@ -13,10 +13,9 @@ export const revenueStatistic = async (token, id) => {
         throw err
     }
 }
-
-export const createOrder = async (token, data) => {
+export const getAllOrder = async (token) => {
     try {
-        const res = await axiosJWT.post(`order/create`, data, {
+        const res = await axiosJWT.get(`/order/get-all-order`, {
             headers: {
                 token: `Bearer ${token}`,
             }
@@ -27,10 +26,9 @@ export const createOrder = async (token, data) => {
         throw err
     }
 }
-
-export const getAllOrder = async (token) => {
+export const createOrder = async (token, data) => {
     try {
-        const res = await axiosJWT.get(`/order/get-all-order`, {
+        const res = await axiosJWT.post(`order/create`, data, {
             headers: {
                 token: `Bearer ${token}`,
             }
@@ -55,7 +53,6 @@ export const getDetailOrder = async (token, id) => {
         throw err
     }
 }
-
 export const UpdateOrderStatus = async (token, id, body) => {
     try {
         const res = await axiosJWT.put(`/order/update-status/${id}`, body, {
@@ -69,23 +66,9 @@ export const UpdateOrderStatus = async (token, id, body) => {
         throw err
     }
 }
-
 export const DeleteOrder = async (token, id) => {
     try {
         const res = await axiosJWT.delete(`/order/delete/${id}`, {
-            headers: {
-                token: `Bearer ${token}`,
-            }
-        })
-        return res.data
-    } catch (err) {
-        console.log("err:", err);
-        throw err
-    }
-}
-export const DeleteOrderMany = async (token, body) => {
-    try {
-        const res = await axiosJWT.post(`/order/delete-many`,body, {
             headers: {
                 token: `Bearer ${token}`,
             }

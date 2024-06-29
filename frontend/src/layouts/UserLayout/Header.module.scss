@@ -7,7 +7,7 @@
     justify-content: center;
     align-items: center;
     height: 65px;
-    border-bottom: 2px solid #D7F9FA;
+    border-bottom: 1.5px solid var(--sub-color2);
     //border-bottom: 2px solid var(--sub-color);
     background-color: white;
     font-weight: 700;
@@ -30,6 +30,7 @@
 
         .category {
             width: 90%; // Giảm chiều rộng của category
+            height: 100%;
             display: flex;
             flex-direction: row;
             justify-content: space-around;
@@ -37,15 +38,15 @@
 
             .category-item {
                 min-width: 80px; // Giảm chiều rộng tối thiểu của các mục
-                height: 65px;
+                height: 100%;
 
                 >a {
                     display: block;
                     padding-left: 8px;
                     padding-right: 8px;
-                    line-height: 65px;
+                    line-height: 63.4px;
                     text-decoration: none;
-                    color: #30A7B4;
+                    color: var(--sub-color2);
                 }
 
                 .list-item {
@@ -55,7 +56,7 @@
             }
 
             .category-item:hover {
-                background-color: #44bec7;
+                background-color: var(--sub-color2);
 
                 >a {
                     color: white;
@@ -92,7 +93,7 @@
                         text-align: start;
 
                         a {
-                            color: #30A7B4;
+                            color: var(--sub-color2);
                             font-size: 12px;
                             line-height: 35px;
                             display: block;

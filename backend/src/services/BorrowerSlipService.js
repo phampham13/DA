@@ -292,7 +292,7 @@ const deleteBorrowerSlip = (id) => {
     })
 }
 
-const updateState = (id, newState) => {
+const updateState = (id, newState, lateFee) => {
     return new Promise(async (resolve, reject) => {
         try {
             const bSlip = await BorrowerSlip.findById(id)
@@ -336,6 +336,8 @@ const updateState = (id, newState) => {
                                 new: true
                             })
                     }
+                    bSlip.lateFee = lateFee
+                    await bSlip.save()
                 }
                 const promises = listBook.map(async (book) => {
                     const bookData = await Book.findOneAndUpdate(

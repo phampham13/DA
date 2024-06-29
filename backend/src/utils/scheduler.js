@@ -5,6 +5,7 @@ const BorrowerSlip = require('../models/BorrowerSlipModel')
 const OffBorrowerSlip = require('../models/OffBorrowerSlipModel')
 const User = require('../models/UserModel')
 const BlockedPhone = require('../models/BlockedPhoneModel')
+const EmailService = require('../services/EmailService')
 
 // Lập lịch chạy một lần mỗi ngày
 const slipCheck = cron.schedule('0 0 * * *', async () => {
@@ -13,6 +14,8 @@ const slipCheck = cron.schedule('0 0 * * *', async () => {
         const newOverdueOnSlips = await BorrowerSlip.find({
             state: 1
         });
+        //mảng chứa email của ng trả quá hạn
+        const emails = []
 
         for (const borrowerSlip of newOverdueOnSlips) {
             const currentDate = new Date()
@@ -20,12 +23,21 @@ const slipCheck = cron.schedule('0 0 * * *', async () => {
             if (diffDays > 0) {
                 borrowerSlip.state = 3
                 const user = await User.findOne({ _id: borrowerSlip.userId })
-                console.log("user", user)
+                emails.push(user.email)
                 user.state = 1
-                await BlockedPhone.create({phoneNumber:user.phoneNumber})
+
+                const existingBlockedPhone = await BlockedPhone.findOne({ phoneNumber: user.phoneNumber });
+                if (!existingBlockedPhone) {
+                    await BlockedPhone.create({ phoneNumber: user.phoneNumber });
+                }
+
                 await borrowerSlip.save()
                 await user.save()
             }
+        }
+        console.log("email", emails)
+        if (emails.length > 0) {
+            await EmailService.sendReminderEmail(emails)
         }
 
         const newOverdueOffSlips = await OffBorrowerSlip.find({
@@ -36,7 +48,10 @@ const slipCheck = cron.schedule('0 0 * * *', async () => {
             const currentDate = new Date()
             const diffDays = (currentDate - borrowerSlip.dueDate) / (1000 * 60 * 60 * 24)
             if (diffDays > 0) {
-                await BlockedPhone.create({ phoneNumber: borrowerSlip.phoneNumber })
+                const existingBlockedPhone = await BlockedPhone.findOne({ phoneNumber: borrowerSlip.phoneNumber });
+                if (!existingBlockedPhone) {
+                    await BlockedPhone.create({ phoneNumber: borrowerSlip.phoneNumber });
+                }
             }
         }
 

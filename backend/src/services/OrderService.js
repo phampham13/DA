@@ -94,12 +94,19 @@ const createOrder = (newOrder) => {
     })
 }
 
-const getAllOrderDetails = (id) => {
+const getAllUserOrder = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             const orders = await Order.find({
                 user: id
+            }).populate({
+                path: 'orderItems.productId',
+                select: 'name image price'
+            }).populate({
+                path: 'user',
+                select: 'name phoneNumber'
             }).sort({ createdAt: -1, updatedAt: -1 })
+
             if (orders === null) {
                 return resolve({
                     status: 'ERR',
@@ -150,7 +157,7 @@ const getOrderDetails = (id) => {
     })
 }
 
-const cancelOrderDetails = (id) => {
+const cancelOrder = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             const order = await Order.findById(id)
@@ -160,6 +167,7 @@ const cancelOrderDetails = (id) => {
                     message: "Không thể hủy đơn sau khi đơn đã được ship"
                 })
             }
+            const data = order.orderItems
             const promises = data.map(async (item) => {
                 const productData = await Product.findOneAndUpdate(
                     {
@@ -401,10 +409,11 @@ const totalRevenueStatistic = (year) => {
     })
 }
 
-const payOrderSuccess = async (orderId) => {
+const payOrderSuccess = async (orderId, transId) => {
     try {
         const order = await Order.findById(orderId)
-        order.isPaid = true;
+        order.isPaid = true
+        order.transId = transId
         await order.save()
         return {
             status: "OK",
@@ -420,9 +429,9 @@ const payOrderSuccess = async (orderId) => {
 
 module.exports = {
     createOrder,
-    getAllOrderDetails,
+    getAllUserOrder,
     getOrderDetails,
-    cancelOrderDetails,
+    cancelOrder,
     getAllOrder,
     deleteManyOrder,
     deleteOrder,
