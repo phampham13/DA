@@ -4,7 +4,6 @@ const updateCart = async (req, res) => {
     try {
         const userId = req.params.id
         const data = req.body
-        //console.log(id)
         if (!userId) {
             resolve({
                 status: 'ERR',
@@ -24,7 +23,6 @@ const updateCart = async (req, res) => {
 const addProductToCart = async (req, res) => {
     try {
         const userId = req.params.id
-        //console.log(userId, req.body)
         const response = await CartService.addProductToCart(userId, req.body)
         return res.status(200).json(response)
     } catch (e) {

@@ -24,7 +24,6 @@ const createBorrowerSlip = async (req, res) => {
 const getAllUserSlip = async (req, res) => {
     try {
         const userId = req.params.id
-        //console.log(userId)
         if (!userId) {
             return res.status(200).json({
                 status: 'ERR',

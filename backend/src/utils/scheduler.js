@@ -35,7 +35,7 @@ const slipCheck = cron.schedule('0 0 * * *', async () => {
                 await user.save()
             }
         }
-        console.log("email", emails)
+        //console.log("email", emails)
         if (emails.length > 0) {
             await EmailService.sendReminderEmail(emails)
         }

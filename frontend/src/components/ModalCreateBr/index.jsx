@@ -59,7 +59,7 @@ const ModalCreateUpdateBorrowerSlip = ({
       values.totalAmount = values.bookIds.length;
       onSave(values);
       createBorrowerSlip(token, values).then((res) => {
-        console.log(res);
+        //console.log(res);
         if (res.status !== "OK") {
           toast.error(res.message);
           setReload(!reload);

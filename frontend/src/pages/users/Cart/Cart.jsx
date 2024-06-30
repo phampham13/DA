@@ -12,7 +12,6 @@ import { convertPrice } from "../../../utils/utils";
 import { toast } from 'react-toastify';
 import ModalOrder from "./ModalOrder"
 import { DeleteFilled, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { getCart } from "../../../services/CartService";
 
 const cx = classNames.bind(styles);
 const Cart = () => {

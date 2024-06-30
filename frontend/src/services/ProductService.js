@@ -2,7 +2,7 @@ import axios from "axios";
 import { createAuthHeader } from "./auth/authHeader";
 import { axiosJWT } from "../utils/httpRequest";
 
-const token = localStorage.getItem("token");
+//const token = localStorage.getItem("token");
 class ProductAPI {
   async getAllProduct(limit, page, sort) {
     let res = {};
@@ -28,7 +28,7 @@ class ProductAPI {
       throw error;
     }
   }
-  async addProduct(body) {
+  async addProduct(body, token) {
     const res = await axiosJWT.post(`/products/create`, body, {
       headers: {
         token: `Bearer ${token}`,
@@ -36,7 +36,7 @@ class ProductAPI {
     })
     return res.data
   }
-  async updateProduct(id, body) {
+  async updateProduct(id, body, token) {
     const res = await axiosJWT.put(`/products/update/${id}`, body, {
       headers: {
         token: `Bearer ${token}`,
@@ -44,7 +44,7 @@ class ProductAPI {
     })
     return res.data
   }
-  async deleteProduct(id) {
+  async deleteProduct(id, token) {
     const res = await axiosJWT.delete(`/products/delete/${id}`, {
       headers: {
         token: `Bearer ${token}`,
@@ -52,7 +52,7 @@ class ProductAPI {
     })
     return res.data
   }
-  async deleteProductmany(ids) {
+  async deleteProductmany(ids, token) {
     const body = {
       ids: ids,
     };

@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import classNames from "classnames/bind";
 import styles from "./BookDetail.module.scss";
-import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

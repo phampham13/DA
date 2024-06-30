@@ -10,7 +10,7 @@ import Signup from '../pages/auths/Signup';
 import BooksList from '../pages/users/BooksList/BooksList';
 import { BookDetail } from '../pages/users/BooksList/BookDetail';
 import Policy from '../pages/users/Policy/Policy';
-import HandmadeItems from '../pages/users/handmadeItems/handmadeItems';
+import HandmadeItems from '../pages/users/HandmadeItems/HandmadeItems';
 import BorrowerCard from '../pages/users/BorrowerCard/BorrowerCard';
 import Cart from '../pages/users/Cart/Cart';
 import Profile from '../pages/users/Profile/Profile';
@@ -26,7 +26,6 @@ import Orders from '../pages/admins/HandmadeManage/Orders';
 
 import Statistics from '../pages/admins/Statistics/Statistics';
 import DefaultLayout from '../layouts/AdminLayout/DefaultLayout/DefaultLayout';
-import { LibraryAdd } from '@mui/icons-material';
 //import layout
 
 //public route

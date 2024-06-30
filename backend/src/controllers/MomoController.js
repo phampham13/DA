@@ -25,14 +25,10 @@ const createPayment = async (req, res) => {
         lang,
     } = momoConfig
 
-    //var amount = '10000';
-    //var orderId = partnerCode + new Date().getTime();
     var ipnUrl = ipnBase + ipn
-    console.log("call", ipnUrl)
-    //var orderId = id + new Date().getTime()
-    var requestId = orderId;
+    //console.log("call", ipnUrl)
 
-    //const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=captureMoMoWallet`;
+    var requestId = orderId;
 
     var rawSignature =
         'accessKey=' +
@@ -90,12 +86,10 @@ const createPayment = async (req, res) => {
                 'Content-Type': 'application/json',
             },
         });
-        console.log(result)
+        //console.log(result)
         const { payUrl } = result.data;
 
-        //await Order.create({ orderId, amount, status: 'pending' });
         res.json({ payUrl });
-        //res.status(200).json(result.data)
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Something went wrong!' });

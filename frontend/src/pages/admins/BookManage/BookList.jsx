@@ -2,13 +2,6 @@ import classNames from "classnames/bind";
 import styles from "./BookList.module.scss";
 
 import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faTrashAlt,
-  faSearch,
-} from "@fortawesome/free-solid-svg-icons";
 import { Modal, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ModalBookDetail from "./ModalBookDetail";
@@ -18,13 +11,13 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import ModalForm from "../../../components/ModalUpdateBook";
-import { useMutationHooks } from "../../../hooks/useMutationHook";
 const cx = classNames.bind(styles);
 
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import { ApiBOOK } from "../../../services/BookService";
 const BookList = () => {
+  const token = localStorage.getItem('token')
   const [data, setData] = useState([]);
   const [page, setPage] = useState(10);
 
@@ -338,7 +331,7 @@ const BookList = () => {
     setReload(!reload);
   };
   const handleDelete = () => {
-    ApiBOOK.DeleteBook(IdDelete)
+    ApiBOOK.DeleteBook(IdDelete, token)
       .then((res) => {
         if (res) {
           toast.success("Xóa sách thành công");
@@ -359,7 +352,7 @@ const BookList = () => {
   const handleDeleteMany = async () => {
     console.log(selectedRowKeys);
     const ids = [...selectedRowKeys];
-    const res = await ApiBOOK.DeleteManyBook(ids);
+    const res = await ApiBOOK.DeleteManyBook(ids, token);
     setReload(!reload);
     selectedRowKeys.length = 0;
 

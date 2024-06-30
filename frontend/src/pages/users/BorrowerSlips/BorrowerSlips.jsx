@@ -30,7 +30,7 @@ const BorrowerSlips = () => {
     const getAll = async () => {
         const res = await getUserBrSlip(token, user.id)
         const data = res.data
-        setLateBrSlip(data.filter((item) => item.state === 2 && item.hasOwnProperty('lateFee'))) //
+        setLateBrSlip(data.filter((item) => item.state === 2 && item.lateFee && item.lateFee > 0)) //
         setOverDueBrSlip(data.filter((item) => item.state === 3))
         setBookTotal(data.reduce((sum, cur) => sum + cur.totalAmount, 0))
         setlistBS(res.data)
@@ -68,29 +68,21 @@ const BorrowerSlips = () => {
     }
 
     const handlePayFee = async () => {
-        let bookFee = 0
-        let lateFee = 0
+        console.log('ấn rồi')
+        let penaltyFee = 0
         const orderId = overDueBrSlip.length > 0 ? overDueBrSlip[0]._id : lateBrSlip[0]._id
         if (overDueBrSlip.length > 0) {
-            bookFee = overDueBrSlip.reduce((sum, cur) => sum + cur.totalAmount * 50000, 0)
+            penaltyFee = overDueBrSlip.reduce((sum, cur) => sum + cur.totalAmount * 50000, 0)
         }
         if (lateBrSlip.length > 0) {
-            bookFee = bookFee + lateBrSlip.reduce((sum, cur) => sum + cur.lateFee, 0)
-            for (const slip of lateBrSlip) {
-                let r = new Date(slip.returnDate)
-                let d = new Date(slip.dueDate)
-                let differenceMs = r.getTime() - d.getTime()
-                if (differenceMs < 0) return
-                let diffDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24))
-                lateFee = lateFee + (diffDays < 15 ? diffDays * 2000 : diffDays * 3000)
-            }
+            penaltyFee = penaltyFee + lateBrSlip.reduce((sum, cur) => sum + cur.lateFee, 0)
         }
-        const fee = bookFee + lateFee
         const payPenalty = await createPayment({
             orderId: orderId,
             ipn: "handlePayPenalty",
-            amount: fee
+            amount: penaltyFee
         })
+        console.log('phí', penaltyFee)
         setPayUrl(payPenalty.payUrl)
     }
 

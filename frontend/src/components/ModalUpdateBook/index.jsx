@@ -7,6 +7,7 @@ import { ApiBOOK } from "../../services/BookService";
 const { Option } = Select;
 const { TextArea } = Input;
 const ModalForm = ({ visible, onCancel, onSave, book }) => {
+  const token = localStorage.getItem('token')
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(book ? book.coverImg : "");
   const [categories, setCategories] = useState([]);
@@ -42,12 +43,17 @@ const ModalForm = ({ visible, onCancel, onSave, book }) => {
         console.log("có book chưa", book)
         let res = {};
         if (book) {
-          res = ApiBOOK.UpdateBook(book._id, values).then((res) => {
-            toast.success("Update thành công");
-          });
+          res = ApiBOOK.UpdateBook(book._id, values, token)
+            .then((res) => {
+              if (res.status === "OK") {
+                toast.success("Update thành công");
+              } else {
+                toast.error(res.message)
+              }
+            });
         } else {
           console.log("tạo", values);
-          res = ApiBOOK.AddBook(values).then((res) => {
+          res = ApiBOOK.AddBook(values, token).then((res) => {
             console.log('kết quả tạo', res)
             if (res.status === "OK") {
               toast.success("Tạo thành công");

@@ -70,7 +70,6 @@ const createUser = (newUser) => {
 const loginUser = (user) => {
     return new Promise(async (resolve, reject) => {
         const { password, phoneNumber } = user
-        //console.log(name, email, phoneNumber)
         try {
             const checkUser = await User.findOne({
                 phoneNumber: phoneNumber

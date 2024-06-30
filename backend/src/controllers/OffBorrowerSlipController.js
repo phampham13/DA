@@ -23,7 +23,6 @@ const createOffSlip = async (req, res) => {
 const getAllOffSlip = async (req, res) => {
     try {
         const phoneNumber = req.params.id
-        //console.log(userId)
         if (!phoneNumber) {
             return res.status(200).json({
                 status: 'ERR',

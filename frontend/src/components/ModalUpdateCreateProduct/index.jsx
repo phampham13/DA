@@ -7,6 +7,7 @@ import { ApiBOOK } from "../../services/BookService";
 import { ApiProduct } from "../../services/ProductService";
 const { Option } = Select;
 const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
+  const token = localStorage.getItem('token')
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(product ? product.coverImg : "");
   const [categories, setCategories] = useState([]);
@@ -34,11 +35,11 @@ const ModalFormProduct = ({ visible, onCancel, onSave, product }) => {
         onSave(values);
         let res = {};
         if (product) {
-          res = ApiProduct.updateProduct(product._id, values);
+          res = ApiProduct.updateProduct(product._id, values, token);
           toast.success("Update thành công");
         } else {
           console.log(values);
-          res = ApiProduct.addProduct(values);
+          res = ApiProduct.addProduct(values, token);
           toast.success("Tạo thành công");
         }
 

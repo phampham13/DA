@@ -22,15 +22,11 @@ const createBorrowerSlip = (newBorrowerSlip) => {
         state: { $in: [1] },
       });
 
-      //console.log(borroweredSlips)
-
       if (borroweredSlips.length > 0) {
         const count = borroweredSlips.reduce((count, slip) => {
           return count + slip.totalAmount;
         }, 0);
         if (count + totalAmount > 3) {
-          //console.log("t", count + totalAmount)
-          //console.log("count", count)
           return resolve({
             status: "ERR",
             message: `Bạn đọc đã mượn ${count} quyển, không thể mượn cùng lúc nhiều hơn 3`,
@@ -117,7 +113,6 @@ const getAllOffSlip = (phoneNumber) => {
         data: bSlip,
       });
     } catch (e) {
-      // console.log('e', e)
       reject(e);
     }
   });
@@ -143,7 +138,6 @@ const getDetailOffSlip = (id) => {
         data: bSlip,
       });
     } catch (e) {
-      // console.log('e', e)
       reject(e);
     }
   });
