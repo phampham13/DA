@@ -24,7 +24,6 @@ const START_SERVER = () => {
   const port = env.APP_PORT || 8017
 
   app.get('/', (req, res) => {
-    //console.log(await GET_DB().listCollections().toArray())
     res.end('<h1>Hello World!</h1><hr>')
   })
 

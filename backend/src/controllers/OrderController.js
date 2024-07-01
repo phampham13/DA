@@ -71,7 +71,6 @@ const cancelOrder = async (req, res) => {
         const response = await OrderService.cancelOrder(orderId)
         return res.status(200).json(response)
     } catch (e) {
-        // console.log(e)
         return res.status(404).json({
             message: e
         })

@@ -31,8 +31,6 @@ const createBorrowerSlip = (newBorrowerSlip) => {
                     return count + slip.totalAmount
                 }, 0)
                 if (count + totalAmount > 5) {
-                    //console.log("t", count + totalAmount)
-                    //console.log("count", count)
                     return resolve({
                         status: "ERR",
                         message: `Bạn đang mượn ${count} quyển, không thể mượn cùng lúc nhiều hơn 5`
@@ -338,7 +336,6 @@ const updateState = (id, newState, lateFee) => {
                     }
                     bSlip.lateFee = lateFee
                     await bSlip.save()
-                    console.log("lưu", bSlip)
                 }
                 const promises = listBook.map(async (book) => {
                     const bookData = await Book.findOneAndUpdate(
@@ -475,7 +472,6 @@ const callSlipStatistic = (year) => {
 
 const payFeeSuccess = async (slipId) => {
     try {
-        console.log("đến được đây rồi")
         const bslip = await BorrowerSlip.findById(slipId)
         const user = await User.findOne({ _id: bslip.userId })
         user.state = 0
@@ -521,7 +517,6 @@ const payFeeSuccess = async (slipId) => {
             }
         }
 
-        console.log("Phí phạt đã được thanh toán thành công.");
     } catch (error) {
         console.error("Có lỗi xảy ra:", error);
         throw new Error("Không thể thanh toán phí phạt.");

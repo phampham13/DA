@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 const cx = classNames.bind(styles);
 
 const Products = () => {
+  const token = localStorage.getItem('token')
   const [data, setData] = useState([]);
   const [product, setProduct] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -101,7 +102,7 @@ const Products = () => {
     setIdDelete(id);
   };
   const handleDeleteAccept = () => {
-    ApiProduct.deleteProduct(IdDelete)
+    ApiProduct.deleteProduct(IdDelete, token)
       .then((res) => {
         if (res) {
           toast.success("Xóa sản phẩm công");

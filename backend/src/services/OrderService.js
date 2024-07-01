@@ -88,7 +88,6 @@ const createOrder = (newOrder) => {
                 message: 'success'
             })
         } catch (e) {
-            //   console.log('e', e)
             reject(e)
         }
     })
@@ -120,7 +119,6 @@ const getAllUserOrder = (id) => {
                 data: orders
             })
         } catch (e) {
-            // console.log('e', e)
             reject(e)
         }
     })
@@ -151,7 +149,6 @@ const getOrderDetails = (id) => {
                 data: order
             })
         } catch (e) {
-            // console.log('e', e)
             reject(e)
         }
     })

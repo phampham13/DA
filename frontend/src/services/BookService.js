@@ -2,7 +2,7 @@ import axios from "axios";
 import { createAuthHeader } from "./auth/authHeader";
 import { axiosJWT, req } from "../utils/httpRequest";
 
-const token = localStorage.getItem("token");
+//const token = localStorage.getItem("token");
 class APIBOOK {
   async getAllBook(limit, page, sort) {
     let res = {};
@@ -30,9 +30,10 @@ class APIBOOK {
     }
   }
 
-  async UpdateBook(id, body) {
+  async UpdateBook(id, body, token) {
     let res = {};
     try {
+      console.log("token", token)
       res = await axiosJWT.put(
         `/books/update/${id}`,
         body,
@@ -46,7 +47,7 @@ class APIBOOK {
       throw error;
     }
   }
-  async DeleteBook(id) {
+  async DeleteBook(id, token) {
     let res = {};
     try {
       res = await axiosJWT.delete(
@@ -61,7 +62,7 @@ class APIBOOK {
       throw error;
     }
   }
-  async DeleteManyBook(ids) {
+  async DeleteManyBook(ids, token) {
     let res = {};
     try {
       const body = {
@@ -80,7 +81,7 @@ class APIBOOK {
       throw error;
     }
   }
-  async AddBook(body) {
+  async AddBook(body, token) {
     let res = {};
     try {
       res = await axiosJWT.post(

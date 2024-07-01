@@ -15,6 +15,7 @@ import { ApiUserBr } from "../../../services/UserBrrowers";
 const cx = classNames.bind(styles);
 
 const BorrowerList = () => {
+  const token = localStorage.getItem('token')
   const [data, setData] = useState([]);
   const [product, setProduct] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -25,7 +26,7 @@ const BorrowerList = () => {
     sort: "price",
   });
   const getAllData = async () => {
-    const res = await ApiUserBr.GetAll();
+    const res = await ApiUserBr.GetAll(token);
     setData(res.data);
   };
 
@@ -87,7 +88,7 @@ const BorrowerList = () => {
         state: 1,
       };
     }
-    const res = await ApiUserBr.UpdateState(userid, body);
+    const res = await ApiUserBr.UpdateState(userid, body, token);
     console.log("aa");
     setProduct(res.data);
     setshowModalUpdate(true);
@@ -100,7 +101,7 @@ const BorrowerList = () => {
     setIdDelete(id);
   };
   const handleDeleteAccept = () => {
-    ApiUserBr.DeleteUser(IdDelete)
+    ApiUserBr.DeleteUser(IdDelete, token)
       .then((res) => {
         if (res) {
           toast.success("Xóa tài khoản công");
@@ -116,7 +117,7 @@ const BorrowerList = () => {
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
   const handleDeleteMany = async () => {
     const ids = [...selectedRowKeys];
-    const res = await ApiProduct.deleteProductmany(ids);
+    const res = await ApiProduct.deleteProductmany(ids, token);
 
     setReload(!reload);
     if (res) {

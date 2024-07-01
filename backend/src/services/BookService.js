@@ -110,7 +110,6 @@ const getAllBook = (limit, page, sort, filter) => {
       const totalBook = await Book.countDocuments();
       let allBook = [];
       if (filter) {
-        //console.log(filter)
         const label = filter[0];
         const allObjectFilter = await Book.find({
           [label]: { $regex: filter[1] },
@@ -175,7 +174,6 @@ const getAll = (limit, page, categoryName, keyword) => {
       }
 
       if (keyword) {
-        console.log("jcdcwh", keyword)
         query.$or = [
           { name: { $regex: keyword, $options: "i" } },
           { author: { $regex: keyword, $options: "i" } }

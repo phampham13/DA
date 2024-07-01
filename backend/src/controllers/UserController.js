@@ -20,7 +20,6 @@ const createUser = async (req, res) => {
                 message: 'The input is not email'
             })
         }
-        //console.log('isCheckEmail', isCheckEmail)
         const response = await UserService.createUser(req.body)
         return res.status(200).json(response)
     } catch (e) {
@@ -191,13 +190,10 @@ const verifyToken = (req, res) => {
         if (!token) {
             return res.status(400).json({ message: "Token is required" });
         }
-        //console.log("Received token:", token);
         const kq = jwt.verify(token, env.SECRET_KEY);
-
-        console.log("kq", kq)
+        //console.log("kq", kq)
 
         if (kq) {
-            console.log("kq", kq)
             return res.status(200).json({
                 status: "OK",
                 message: "Verify successful",
