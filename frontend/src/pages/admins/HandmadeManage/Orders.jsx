@@ -20,6 +20,7 @@ import ModalOrderDetail from "./ModalOrderDetail";
 import { Modal } from "react-bootstrap";
 import { getDetailOrder } from "../../../services/OrderService";
 import { toast } from "react-toastify";
+import Loading from "../../../components/LoadingComponent/Loading";
 const cx = classNames.bind(styles);
 
 const Orders = () => {
@@ -42,6 +43,8 @@ const Orders = () => {
   const [showDeleteModalMany, setShowDeleteModalMany] = useState(false);
 
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [IsLoad, setIsLoad] = useState(false);
+
   const ListstateUpdate = [
     {
       name: "Pending",
@@ -57,6 +60,8 @@ const Orders = () => {
     },
   ];
   const getAllData = async () => {
+    setIsLoad(true);
+
     const res = await getAllOrder(token);
     const orders = res.data;
     const ordersWithUserDetails = await Promise.all(
@@ -69,6 +74,7 @@ const Orders = () => {
       setPage(res.data.length);
     }
     setData(ordersWithUserDetails);
+    setIsLoad(false);
   };
 
   useEffect(() => {
@@ -356,18 +362,20 @@ const Orders = () => {
             </>
           )}
         </div>
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={dataTable}
-          pagination={{
-            pageSize: 10,
-            total: page,
-          }}
-          showSorterTooltip={{
-            target: "sorter-icon",
-          }}
-        />
+        <Loading isLoading={IsLoad}>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataTable}
+            pagination={{
+              pageSize: 10,
+              total: page,
+            }}
+            showSorterTooltip={{
+              target: "sorter-icon",
+            }}
+          />
+        </Loading>
         <Modal show={showModalUpdate} onHide={handleCloseModal}>
           <Modal.Header closeButton>
             <Modal.Title>Xác thay đổi trạng thái</Modal.Title>

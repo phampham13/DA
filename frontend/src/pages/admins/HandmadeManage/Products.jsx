@@ -11,16 +11,17 @@ import { Modal } from "react-bootstrap";
 import ModalProduct from "./ModalHandmade";
 import ModalFormProduct from "../../../components/ModalUpdateCreateProduct";
 import { toast } from "react-toastify";
-
+import Loading from "../../../components/LoadingComponent/Loading";
 const cx = classNames.bind(styles);
 
 const Products = () => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem("token");
   const [data, setData] = useState([]);
   const [product, setProduct] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [IdDelete, setIdDelete] = useState();
   const [page, setPage] = useState(10);
+  const [IsLoad, setIsLoad] = useState(false);
 
   const [request, setRequest] = useState({
     limit: 40,
@@ -28,6 +29,8 @@ const Products = () => {
     sort: "price",
   });
   const getAllProduct = async () => {
+    setIsLoad(true);
+
     const res = await ApiProduct.getAllProduct(
       request.limit,
       request.page,
@@ -37,7 +40,7 @@ const Products = () => {
       setPage(res.data.length);
     }
     setData(res.data);
-    console.log(res.data);
+    setIsLoad(false);
   };
 
   const dataTable = data?.map((product, index) => {
@@ -362,20 +365,21 @@ const Products = () => {
             </>
           )}
         </div>
-
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={dataTable}
-          onChange={onChange}
-          pagination={{
-            pageSize: 10,
-            total: page,
-          }}
-          showSorterTooltip={{
-            target: "sorter-icon",
-          }}
-        />
+        <Loading isLoading={IsLoad}>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataTable}
+            onChange={onChange}
+            pagination={{
+              pageSize: 10,
+              total: page,
+            }}
+            showSorterTooltip={{
+              target: "sorter-icon",
+            }}
+          />
+        </Loading>
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
           <Modal.Header closeButton>
             <Modal.Title>Xác nhận hủy</Modal.Title>

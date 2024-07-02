@@ -16,8 +16,9 @@ const cx = classNames.bind(styles);
 import { FaPen } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
 import { ApiBOOK } from "../../../services/BookService";
+import Loading from "../../../components/LoadingComponent/Loading";
 const BookList = () => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem("token");
   const [data, setData] = useState([]);
   const [page, setPage] = useState(10);
 
@@ -43,9 +44,9 @@ const BookList = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [IsLoad, setIsLoad] = useState(false);
 
   const searchInput = useRef(null);
-  const dispatch = useDispatch();
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -53,6 +54,7 @@ const BookList = () => {
     setSearchedColumn(dataIndex);
   };
   const getAll = async () => {
+    setIsLoad(true);
     const res = await ApiBOOK.getAllBook(
       request.limit,
       request.page,
@@ -62,6 +64,7 @@ const BookList = () => {
       setPage(res.data.length);
     }
     setData(res.data);
+    setIsLoad(false);
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -375,12 +378,13 @@ const BookList = () => {
             </>
           )}
         </div>
-
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={dataTable}
-        />
+        <Loading isLoading={IsLoad}>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataTable}
+          />
+        </Loading>
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
           <Modal.Header closeButton>
             <Modal.Title>Xác nhận hủy</Modal.Title>

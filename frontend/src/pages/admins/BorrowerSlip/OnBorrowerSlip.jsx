@@ -37,6 +37,7 @@ import {
 } from "../../../services/BorrowerSlipService";
 import { getDetailsUser } from "../../../services/UserService";
 import ModalDetail from "../../../components/ModalBrSlipDetail/ModalDetail";
+import Loading from "../../../components/LoadingComponent/Loading";
 const cx = classNames.bind(styles);
 const { RangePicker } = DatePicker;
 const OnBorrowerSlip = () => {
@@ -53,6 +54,7 @@ const OnBorrowerSlip = () => {
   const [showInput, setshowInput] = useState(false);
 
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [IsLoad, setIsLoad] = useState(false);
 
   const [IdDelete, setIdDelete] = useState();
   const ListstateUpdate = [
@@ -81,9 +83,10 @@ const OnBorrowerSlip = () => {
     sort: "price",
   });
   const getAllData = async () => {
+    setIsLoad(true);
+
     const res = await GetAllSlipOn(token);
     const orders = res.data;
-    console.log(orders);
     const ordersWithUserDetails = await Promise.all(
       orders.map(async (order) => {
         const userDetails = await getDetailsUser(order.userId, token);
@@ -91,6 +94,7 @@ const OnBorrowerSlip = () => {
       })
     );
     setData(ordersWithUserDetails);
+    setIsLoad(false);
   };
 
   const dataTable = data?.map((product, index) => {
@@ -115,13 +119,11 @@ const OnBorrowerSlip = () => {
     fetchData();
   }, [selectedRow, reload]);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
     if (dataIndex === "dueDate") {
       const dateOutput = moment(selectedKeys[0], "DD/MM/YYYY").format(
         "YYYY-MM-DD"
       );
       setSearchText(dateOutput);
-      console.log(searchText);
     } else {
       setSearchText(selectedKeys[0]);
     }
@@ -543,11 +545,13 @@ const OnBorrowerSlip = () => {
             </>
           )}
         </div>
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={dataTable}
-        />
+        <Loading isLoading={IsLoad}>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataTable}
+          />
+        </Loading>
       </div>
       <Modal show={showModalUpdate} onHide={handleCloseModal}>
         <Modal.Header closeButton>
