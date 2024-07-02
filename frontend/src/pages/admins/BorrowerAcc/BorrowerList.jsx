@@ -11,23 +11,29 @@ import { Modal } from "react-bootstrap";
 
 import { toast } from "react-toastify";
 import { ApiUserBr } from "../../../services/UserBrrowers";
+import Loading from "../../../components/LoadingComponent/Loading";
 
 const cx = classNames.bind(styles);
 
 const BorrowerList = () => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem("token");
   const [data, setData] = useState([]);
   const [product, setProduct] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [IdDelete, setIdDelete] = useState();
+  const [IsLoad, setIsLoad] = useState(false);
+
   const [request, setRequest] = useState({
     limit: 10,
     page: 0,
     sort: "price",
   });
   const getAllData = async () => {
+    setIsLoad(true);
+
     const res = await ApiUserBr.GetAll(token);
     setData(res.data);
+    setIsLoad(false);
   };
 
   const dataTable = data?.map((product, index) => {
@@ -379,11 +385,13 @@ const BorrowerList = () => {
             </>
           )}
         </div>
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={dataTable}
-        />
+        <Loading isLoading={IsLoad}>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataTable}
+          />
+        </Loading>
         <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
           <Modal.Header closeButton>
             <Modal.Title>Xác nhận xóa</Modal.Title>
